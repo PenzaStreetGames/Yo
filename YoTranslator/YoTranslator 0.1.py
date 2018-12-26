@@ -101,9 +101,17 @@ def command_split(tokens):
     return commands
 
 
+def command_analise():
+    pass
+
+
+def expression_analise():
+    pass
+
+
 if __name__ == '__main__':
     with open(f"{input()}.yotext", "r", encoding="utf-8") as infile:
         stage_1 = token_split(infile.read())
-        print(stage_1)
-        stage_2 = command_split(stage_1)
-        print(stage_2)
+    print(stage_1)
+    stage_2 = command_split(stage_1)
+    print(stage_2)
