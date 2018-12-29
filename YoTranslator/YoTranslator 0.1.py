@@ -1,4 +1,5 @@
 key_words = ["while", "if"]
+structure_words = ["while", "if"]
 functions = ["print"]
 signs = ["=", "[", "]", "<", ">", ":", "+", "(", ")", ","]
 space, empty = " ", ""
@@ -20,6 +21,10 @@ pre_token = ""
 # for token_analise
 pre_group = ""
 
+# for structure_analise
+pre_command = ""
+pre_indent = 0
+
 group_priority = {
     "object": 1,
     "brackets": 2,
@@ -31,7 +36,7 @@ group_priority = {
     "equating": 8,
     "structure": 9,
     "key_word": 10,
-    "": 100
+    "indent": 100
 }
 
 priority = {
@@ -98,14 +103,18 @@ priority = {
         "while": 1,
         "if": 1
     },
-    "":
+    "indent":
     {
-        "": 1
+        "indent": 1
     }
 }
 
 
 class TokenError(Exception):
+    pass
+
+
+class StructureError(Exception):
     pass
 
 
@@ -127,6 +136,10 @@ class Token:
 
     def __repr__(self):
         return self.__str__()
+
+
+class Command:
+    pass
 
 
 def token_split(text):
@@ -222,7 +235,7 @@ def token_analise(out_commands):
             group = ""
             sub_group = ""
             if token.startswith(special_symbols["indent"]):
-                pass
+                group = "indent"
             elif token.isdigit():
                 group = "object"
                 sub_group = "number"
@@ -244,14 +257,15 @@ def token_analise(out_commands):
                     else:
                         group = "sub_object"
                 elif token == "]":
-                    group = "sub_object"
+                    group = "object"
+                    sub_group = "list"
                 elif token == "(":
                     if pre_group != "object":
                         group = "brackets"
                     else:
                         group = "call"
                 elif token == ")":
-                    group = "call"
+                    group = "brackets"
                 elif token == ",":
                     group = "brackets"
             elif token in key_words:
@@ -263,17 +277,44 @@ def token_analise(out_commands):
                 raise TokenError(f"Неизвестный токен {token}")
             if sub_group == empty:
                 sub_group = token
-            if not token.startswith(special_symbols["indent"]):
+            if group != "indent":
                 token_priority = [group_priority[group],
                                   priority[group][sub_group]]
             else:
-                token_priority = [group_priority[group], 1]
+                token_priority = [group_priority[group],
+                                  priority[group]["indent"]]
             token = Token(token, group, sub_group, token_priority)
             result[-1] += [token]
             pre_group = group
     commands = result.copy()
 
     return result
+
+
+def structure_analise(commands):
+    structure = []
+    base_indent = int(commands[0][0].name[2:])
+    nested_structure = []
+    structured = False
+    for command in commands:
+        indent = int(command[0].name[2:])
+        if structured:
+            if indent > base_indent:
+                nested_structure += [command]
+            else:
+                structure[-1] += [structure_analise(nested_structure.copy())]
+                structure += [command[1:]]
+                structured = False
+        else:
+            structure += [command[1:]]
+        if command[1].name in structure_words and not structured:
+            if command[-1].name != ":":
+                raise StructureError("Конструкция {command}\ "
+                                     "не закончена знаком \":\"")
+            structure[-1] = structure[-1][:-1]
+            structured = True
+
+    return structure
 
 
 def command_analise():
@@ -305,4 +346,5 @@ if __name__ == '__main__':
     # print(stage_2)
     stage_3 = token_analise(stage_2)
     # print(stage_3)
-    command_analise()
+    stage_4 = structure_analise(stage_3)
+    print(stage_4)
