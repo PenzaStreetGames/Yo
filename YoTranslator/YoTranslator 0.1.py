@@ -25,6 +25,8 @@ pre_group = ""
 pre_command = ""
 pre_indent = 0
 
+global_expressions = []
+
 group_priority = {
     "object": 1,
     "brackets": 2,
@@ -118,6 +120,10 @@ class StructureError(Exception):
     pass
 
 
+class BracketError(Exception):
+    pass
+
+
 class Token:
     def __init__(self, name, group, sub_group, priority):
         self.name = name
@@ -138,8 +144,31 @@ class Token:
         return self.__str__()
 
 
-class Command:
-    pass
+class Expression:
+    def __init__(self, parent, children, index):
+        self.parent = parent
+        self.children = []
+        self.tokens = []
+        self.index = index
+
+    def get_level(self):
+        if self.parent is not None:
+            return self.parent.get_level() + [self.index]
+        return []
+
+    def __str__(self):
+        if self.parent is None:
+            name = "root"
+        else:
+            name = "expression"
+        return f"{name} {self.get_level()} {self.children}"
+
+    def __repr__(self):
+        if self.parent is None:
+            name = "root"
+        else:
+            name = "expression"
+        return f"{name} {self.get_level()}"
 
 
 def token_split(text):
@@ -317,6 +346,58 @@ def structure_analise(commands):
     return structure
 
 
+def expression_transform(root, expressions, nesting):
+    total_expressions = []
+    index = 0
+    for i in range(len(expressions)):
+        expression = expressions[i]
+        if isinstance(expression, list):
+            new_root = Expression(root, [], index)
+            index += 1
+            total_expressions += expression_transform(new_root, expression,
+                                                      nesting + 1)
+            root.tokens += [new_root]
+            root.children += [new_root]
+        else:
+            root.tokens += [expression]
+    total_expressions += [root]
+
+    return total_expressions
+
+
+
+
+"""
+def program_list_analise(commands):
+    structure = []
+    for command in commands:
+        structured = False
+        listed = False
+        for token in command:
+            if isinstance(token, list):
+                structured = True
+            if isinstance(token, Token):
+                if token.sub_group == "list" and token.name == "[":
+                    listed = True
+                elif token.group == "call" and token.name == "(":
+                    listed = True
+        print(structured, listed)
+
+    return structure
+
+
+def list_analise(expression, sign):
+    structure = []
+    find = False
+    begins, ends = 0, 0
+    for token in expression:
+        if isinstance(token, Token):
+            if (sign == "[" and token.sub_group == "list" and
+                    token.name == sign and not find):
+                find = True
+"""
+
+
 def command_analise():
     global commands
 
@@ -347,4 +428,9 @@ if __name__ == '__main__':
     stage_3 = token_analise(stage_2)
     # print(stage_3)
     stage_4 = structure_analise(stage_3)
-    print(stage_4)
+    for elem in stage_4:
+        print(elem)
+    root = Expression(None, stage_4, [0])
+    stage_5 = [root] + expression_transform(root, stage_4, 0)
+    for elem in stage_5:
+        print(elem)
