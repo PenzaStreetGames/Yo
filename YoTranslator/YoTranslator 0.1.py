@@ -25,7 +25,10 @@ pre_group = ""
 pre_command = ""
 pre_indent = 0
 
-global_expressions = []
+expression_list = []
+
+# for bracket_analise
+brackets, begins, ends, category, sign = [], 0, 0, "", ""
 
 group_priority = {
     "object": 1,
@@ -145,16 +148,22 @@ class Token:
 
 
 class Expression:
-    def __init__(self, parent, children, index):
+    def __init__(self, parent):
         self.parent = parent
         self.children = []
         self.tokens = []
-        self.index = index
+        self.index = 0
+        self.free_index = 0
 
     def get_level(self):
         if self.parent is not None:
             return self.parent.get_level() + [self.index]
         return []
+
+    def add_children(self, expression):
+        self.children += [expression]
+        expression.index = self.free_index
+        self.free_index += 1
 
     def __str__(self):
         if self.parent is None:
@@ -348,16 +357,14 @@ def structure_analise(commands):
 
 def expression_transform(root, expressions, nesting):
     total_expressions = []
-    index = 0
     for i in range(len(expressions)):
         expression = expressions[i]
         if isinstance(expression, list):
-            new_root = Expression(root, [], index)
-            index += 1
+            new_root = Expression(root)
             total_expressions += expression_transform(new_root, expression,
                                                       nesting + 1)
             root.tokens += [new_root]
-            root.children += [new_root]
+            root.add_children(new_root)
         else:
             root.tokens += [expression]
     total_expressions += [root]
@@ -365,37 +372,100 @@ def expression_transform(root, expressions, nesting):
     return total_expressions
 
 
-
-
-"""
-def program_list_analise(commands):
-    structure = []
-    for command in commands:
-        structured = False
-        listed = False
-        for token in command:
+def program_bracket_analise(expressions):
+    result = []
+    for expression in expressions:
+        result_tokens = bracket_analise(expression)
+        result += [expression]
+        new_tokens = []
+        for token in result_tokens:
             if isinstance(token, list):
-                structured = True
-            if isinstance(token, Token):
-                if token.sub_group == "list" and token.name == "[":
-                    listed = True
-                elif token.group == "call" and token.name == "(":
-                    listed = True
-        print(structured, listed)
+                mini_expression = Expression(expression)
+                mini_expression.tokens = token.copy()
+                expression.add_children(mini_expression)
+                new_tokens += [mini_expression]
+                result += [mini_expression]
+            else:
+                new_tokens += [token]
+        expression.tokens = new_tokens.copy()
 
-    return structure
+    return result
 
 
-def list_analise(expression, sign):
+def bracket_analise(expression):
+    global brackets, begins, ends, category, sign
+
+    def default():
+        global brackets, begins, ends, category, sign
+        brackets, begins, ends, category, sign = [], 0, 0, "", ""
+
     structure = []
-    find = False
-    begins, ends = 0, 0
+    default()
+    if isinstance(expression, Expression):
+        expression = expression.tokens.copy()
     for token in expression:
         if isinstance(token, Token):
-            if (sign == "[" and token.sub_group == "list" and
-                    token.name == sign and not find):
-                find = True
-"""
+            if token.name == "[":
+                if category == "":
+                    if token.sub_group == "list":
+                        category = "list"
+                    elif token.group == "sub_object":
+                        category = "sub_object"
+                    begins += 1
+                    structure += [Token(category, token.group, token.sub_group,
+                                        token.priority)]
+                else:
+                    if (token.sub_group == category or
+                            token.sub_group == category):
+                        begins += 1
+                    brackets += [token]
+            elif token.name == "]":
+                if category in ["list", "sub_object"]:
+                    ends += 1
+                if begins > ends:
+                    brackets += [token]
+                elif begins < ends:
+                    raise BracketError("Слищком много закрывающих скобок")
+                else:
+                    structure += [bracket_analise(brackets)]
+                    default()
+            elif token.name == "(":
+                if category == "":
+                    if token.group == "brackets":
+                        category = "brackets"
+                    elif token.group == "call":
+                        category = "call"
+                    begins += 1
+                    structure += [Token(category, token.group, token.sub_group,
+                                        token.priority)]
+                else:
+                    if token.group in ["brackets", "call"]:
+                        begins += 1
+                    brackets += [token]
+            elif token.name == ")":
+                if category in ["brackets", "call"]:
+                    ends += 1
+                if begins > ends:
+                    brackets += [token]
+                elif begins < ends:
+                    raise BracketError("Слищком много закрывающих скобок")
+                else:
+                    structure += [bracket_analise(brackets)]
+                    default()
+            elif token.name == ",":
+                if category in ["list", "call"]:
+                    pass
+                else:
+                    raise BracketError("Неуместная запятая")
+            else:
+                if category == "":
+                    structure += [token]
+                else:
+                    brackets += [token]
+        else:
+            structure += [token]
+
+    return structure
 
 
 def command_analise():
@@ -428,9 +498,11 @@ if __name__ == '__main__':
     stage_3 = token_analise(stage_2)
     # print(stage_3)
     stage_4 = structure_analise(stage_3)
-    for elem in stage_4:
-        print(elem)
-    root = Expression(None, stage_4, [0])
-    stage_5 = [root] + expression_transform(root, stage_4, 0)
-    for elem in stage_5:
-        print(elem)
+    # print(stage_4)
+    root = Expression(None)
+    stage_5 = expression_transform(root, stage_4, 0)
+    expression_list = stage_5.copy()
+    # print(stage_5)
+    stage_6 = program_bracket_analise(stage_5)
+    for elem in stage_6:
+        print(elem, elem.tokens)
