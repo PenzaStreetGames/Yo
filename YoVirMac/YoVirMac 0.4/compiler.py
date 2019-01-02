@@ -67,6 +67,15 @@ def rjust(num):
     return num.rjust(32, "0")
 
 
+def byte_get(cell):
+    number, factor = 0, 1
+    for i in range(8):
+        if cell[i]:
+            number += factor
+        factor *= 2
+    return number
+
+
 def bit_gen(infile, outfile):
     with open(infile, mode="r", encoding="utf-8") as file:
         strings = list(map(lambda string: string.strip(), file.readlines()))
@@ -74,16 +83,21 @@ def bit_gen(infile, outfile):
         for line in strings:
             if line != "":
                 output += [rjust(set(int(line)))]
-            else:
-                output += [""]
 
         byte_array = []
         for i in range(len(output)):
-            for j in range(len(output[i])):
-                byte_array += [output[i][j] == "1"]
+            for j in range(4):
+                if not output[i]:
+                    break
+                byte = list(map(lambda x: x == "1",
+                                output[i][j * 8: (j + 1) * 8]))
+                print(i, byte)
+                byte_array += [byte_get(byte)]
 
     with open(outfile, mode="wb") as file:
-        byte_array = bytearray(byte_array)
+        byte_array = bytes(byte_array)
+        for byte in byte_array:
+            print(byte)
         file.write(byte_array)
 
 

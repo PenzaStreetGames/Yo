@@ -659,14 +659,20 @@ functions = {"end": End, "use": Use, "mov": Mov, "chg": Chg, "clr": Clr,
 
 
 def load_program(filename):
+
+    def byte_set(number):
+        cell = []
+        for i in range(8):
+            cell += [bool(number % 2)]
+            number //= 2
+        return cell
+
     with open(filename, mode="rb") as file:
         binary = file.read()
         cells = []
-        print(len(binary) // 4 + 1)
-        for i in range(len(binary) // 4 + 1):
-            cells += [binary[size // 8 * i: size // 8 * (i + 1)]]
-            print(cells[i])
-        binary = list(map(list, cells))
+        for i in range(len(binary)):
+            cells += byte_set(binary[i])
+        binary = cells.copy()
         sys, code = binary[:16 * size], binary[16 * size:]
         tape = Sgt(sys[12 * size: 13 * size])
         Use(tape)
@@ -676,7 +682,7 @@ def load_program(filename):
 
 def work():
     load_program(input())
-    # print_code()
+    # print_tape()
     cell = Srd(system["cell"])
     while cell != system["cell"]:
         # print(Sgt(cell))
