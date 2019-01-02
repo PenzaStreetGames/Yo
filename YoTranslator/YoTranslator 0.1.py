@@ -28,7 +28,6 @@ pre_indent = 0
 expression_list = []
 
 # for bracket_analise
-brackets, begins, ends, category, sign = [], 0, 0, "", ""
 
 group_priority = {
     "object": 1,
@@ -393,7 +392,7 @@ def program_bracket_analise(expressions):
 
 
 def bracket_analise(expression):
-    global brackets, begins, ends, category, sign
+    brackets, begins, ends, category, sign = [], 0, 0, "", ""
 
     def default():
         global brackets, begins, ends, category, sign
@@ -456,7 +455,7 @@ def bracket_analise(expression):
                 if category in ["list", "call"]:
                     pass
                 else:
-                    raise BracketError("Неуместная запятая")
+                    raise BracketError(f"Неуместная запятая {expression}")
             else:
                 if category == "":
                     structure += [token]

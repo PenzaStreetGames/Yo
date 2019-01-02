@@ -1,0 +1,9 @@
+structure:
+    head:
+        encoding: "UTF-8"
+        title: "Title"
+    body:
+        p: "Simple text"
+        i: "Italic text"
+        "\n"
+        b: "Bold text"
