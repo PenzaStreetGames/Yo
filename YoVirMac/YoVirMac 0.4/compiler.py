@@ -77,13 +77,16 @@ def bit_gen(infile, outfile):
             else:
                 output += [""]
 
+        byte_array = []
         for i in range(len(output)):
-            output[i] = str(output[i])
+            for j in range(len(output[i])):
+                byte_array += [output[i][j] == "1"]
 
-    with open(outfile, mode="w", encoding="utf-8") as file:
-        file.write("\n".join(output))
+    with open(outfile, mode="wb") as file:
+        byte_array = bytearray(byte_array)
+        file.write(byte_array)
 
 
 prog = input()
 byte_gen(prog + ".yobyte", prog + ".yobit")
-bit_gen(prog + ".yobit", prog + ".yobin")
+bit_gen(prog + ".yobit", prog + ".yovircode")

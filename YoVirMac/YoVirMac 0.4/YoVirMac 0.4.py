@@ -659,9 +659,14 @@ functions = {"end": End, "use": Use, "mov": Mov, "chg": Chg, "clr": Clr,
 
 
 def load_program(filename):
-    with open(filename, mode="r") as file:
-        binary = "".join(file.read().split())
-        binary = list(map(lambda x: x == "1", binary))
+    with open(filename, mode="rb") as file:
+        binary = file.read()
+        cells = []
+        print(len(binary) // 4 + 1)
+        for i in range(len(binary) // 4 + 1):
+            cells += [binary[size // 8 * i: size // 8 * (i + 1)]]
+            print(cells[i])
+        binary = list(map(list, cells))
         sys, code = binary[:16 * size], binary[16 * size:]
         tape = Sgt(sys[12 * size: 13 * size])
         Use(tape)
