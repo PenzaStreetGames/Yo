@@ -663,7 +663,7 @@ def load_program(filename):
     def byte_set(number):
         cell = []
         for i in range(8):
-            cell += [bool(number % 2)]
+            cell.insert(0, bool(number % 2))
             number //= 2
         return cell
 
@@ -675,6 +675,7 @@ def load_program(filename):
         binary = cells.copy()
         sys, code = binary[:16 * size], binary[16 * size:]
         tape = Sgt(sys[12 * size: 13 * size])
+        print(sys)
         Use(tape)
         Wrc(system["cell"], sys, Sst(16))
         Wrc(Sst(Sgt(Srd(system["st_csg"])) + 2), code, Sst(len(code) // size))

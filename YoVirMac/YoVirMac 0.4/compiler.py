@@ -69,7 +69,7 @@ def rjust(num):
 
 def byte_get(cell):
     number, factor = 0, 1
-    for i in range(8):
+    for i in range(7, -1, -1):
         if cell[i]:
             number += factor
         factor *= 2
@@ -91,16 +91,13 @@ def bit_gen(infile, outfile):
                     break
                 byte = list(map(lambda x: x == "1",
                                 output[i][j * 8: (j + 1) * 8]))
-                print(i, byte)
                 byte_array += [byte_get(byte)]
 
     with open(outfile, mode="wb") as file:
         byte_array = bytes(byte_array)
-        for byte in byte_array:
-            print(byte)
         file.write(byte_array)
 
 
 prog = input()
 byte_gen(prog + ".yobyte", prog + ".yobit")
-bit_gen(prog + ".yobit", prog + ".yovircode")
+bit_gen(prog + ".yobit", prog + ".yovc")
