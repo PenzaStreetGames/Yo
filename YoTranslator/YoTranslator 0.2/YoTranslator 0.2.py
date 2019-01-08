@@ -98,9 +98,9 @@ priority = {
 args_number = {
     "object":
     {
-        "name": "unary",
-        "number": "unary",
-        "list": "unary"
+        "name": "no",
+        "number": "no",
+        "list": "many"
     },
     "brackets":
     {
@@ -179,7 +179,8 @@ class Object:
         self.parent = parent
         self.func = func
         self.args = args
-        self.priority = priority
+        self.priority = [group_priority[func["group"]],
+                         priority[func["group"]][func["sub_group"]]]
 
     def __str__(self):
         return f"{self.func['name']}"
