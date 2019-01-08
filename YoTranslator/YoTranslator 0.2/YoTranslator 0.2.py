@@ -174,34 +174,58 @@ class TokenError(Exception):
     pass
 
 
+class SyntaxError(Exception):
+    pass
+
+
 class Object:
-    def __init__(self, parent, func, args, priority):
+    def __init__(self, parent, func):
         self.parent = parent
         self.func = func
-        self.args = args
+        self.args = []
         self.priority = [group_priority[func["group"]],
                          priority[func["group"]][func["sub_group"]]]
+        self.name = func["name"]
+        self.group = func["group"]
+        self.sub_group = func["sub_group"]
+        self.args_number = args_number[self.group][self.sub_group]
+        self.close = False
 
     def __str__(self):
-        return f"{self.func['name']}"
+        if self.sub_group == self.name:
+            return f"{self.group} \"{self.name}\" {self.priority}"
+        else:
+            return f"{self.sub_group} \"{self.name}\" {self.priority}"
 
     def __repr__(self):
         return self.__str__()
 
+    def __eq__(self, y):
+        return self.priority == y.priority
+
+    def __gt__(self, y):
+        if self.priority[0] != y.priority[0]:
+            return priority[0] > y.priority[0]
+        else:
+            return priority[1] > y.priority[1]
+
+    def __lt__(self, y):
+        if self.priority[0] != y.priority[0]:
+            return priority[0] < y.priority[0]
+        else:
+            return priority[1] < y.priority[1]
+
 
 def translate(program):
-    word, result = "", [Object(None, {"name": "prog", "group": "program",
-                                      "sub_group": "program"},
-                        [], [group_priority["program"],
-                        priority["program"]["program"]])]
+    word, result = "", []
 
     def add_word(word, result):
         if word != empty:
-            result += [token_analise(word, result)]
+            token = token_analise(word, result)
+            result = context_analise(token, result)
         word = ""
         return word, result
 
-    pre_categoty = ""
     pre_symbol = ""
     for symbol in program:
         if symbol == "\n" or symbol == "\r":
@@ -239,6 +263,7 @@ def translate(program):
             word += symbol
         else:
             raise TokenError(f"Неизвестный символ \"{symbol}\"")
+    add_word(word, result)
 
     return result
 
@@ -246,7 +271,10 @@ def translate(program):
 def token_analise(token, tokens):
     group = ""
     sub_group = ""
-    pre_group = tokens[-1].func["group"]
+    if tokens:
+        pre_group = tokens[-1].func["group"]
+    else:
+        pre_group = ""
     if token.startswith(special_symbols["indent"]):
         group = "indent"
     elif token.isdigit():
@@ -290,22 +318,25 @@ def token_analise(token, tokens):
         raise TokenError(f"Неизвестный токен {token}")
     if sub_group == empty:
         sub_group = token
-    if group != "indent":
-        token_priority = [group_priority[group],
-                          priority[group][sub_group]]
-    else:
-        token_priority = [group_priority[group],
-                          priority[group]["indent"]]
     token = {"name": token, "group": group, "sub_group": sub_group}
-    obj = Object(None, token, [], token_priority)
+    obj = Object(None, token)
     return obj
+
+
+def context_analise(token, tokens):
+    if not tokens:
+        if token.args_number == "binary":
+            raise SyntaxError(f"Слева от {token.name} ничего нет")
+        return [token]
+    pre_token = tokens[-1]
+    # дописать
+    tokens += [token]
+
+    return tokens
 
 
 if __name__ == '__main__':
     with open(f"{input()}.yotext", "r", encoding="utf-8") as infile:
-        objects = [Object(None, "program",
-                          [], [group_priority["program"],
-                               priority["program"]["program"]])]
+        objects = []
         result = translate(infile.read())
     print(result)
-0
