@@ -192,6 +192,10 @@ class YoSyntaxError(Exception):
     pass
 
 
+class YoObject:
+    pass
+
+
 def translate(program):
     pre_symbol, word, quote = "", "", ""
     result = []
