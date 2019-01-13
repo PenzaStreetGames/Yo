@@ -2,6 +2,7 @@ key_words = ["while", "if", "else", "break", "continue"]
 functions = ["print", "input", "len"]
 signs = ["=", "[", "]", "(", ")", "{", "}", ",", ";", ":", "+", "-", "*", "/",
          "%", "|", ">", "<", "?"]
+sign_combos = ["=?"]
 space, empty = " ", ""
 special_symbols = {"command_end": "*ce",
                    "indent": "*i",
@@ -26,7 +27,10 @@ priority = {
     "object":
     {
         "name": 1,
+        "none": 1,
+        "logic": 1,
         "number": 1,
+        "string": 1,
         "list": 1
     },
     "brackets":
@@ -103,7 +107,10 @@ args_number = {
     "object":
     {
         "name": "no",
+        "none": "no",
+        "logic": "no",
         "number": "no",
+        "string": "no",
         "list": "many"
     },
     "brackets":
@@ -135,18 +142,13 @@ args_number = {
         "*": "binary",
         "/": "binary",
         "%": "binary",
-        "^": "binary",
-        "^/": "binary",
         "|": "unary"
     },
     "comparison":
     {
         "=?": "binary",
-        "!=": "binary",
         ">": "binary",
-        "<": "binary",
-        ">=": "binary",
-        "<=": "binary"
+        "<": "binary"
     },
     "logic":
     {
@@ -161,12 +163,15 @@ args_number = {
     },
     "structure":
     {
-        ":": "no"
+        ":": "no",
+        "{": "many",
+        "}": "no"
     },
     "key_word":
     {
         "while": "binary_right",
-        "if": "binary_right"
+        "if": "binary_right",
+        "else": "unary"
     },
     "indent":
     {
@@ -183,61 +188,28 @@ class TokenError(Exception):
     pass
 
 
-class SyntaxError(Exception):
+class YoSyntaxError(Exception):
     pass
 
 
-class Object:
-    def __init__(self, parent, func):
-        self.parent = parent
-        self.func = func
-        self.args = []
-        self.priority = [group_priority[func["group"]],
-                         priority[func["group"]][func["sub_group"]]]
-        self.name = func["name"]
-        self.group = func["group"]
-        self.sub_group = func["sub_group"]
-        self.args_number = args_number[self.group][self.sub_group]
-        self.close = False
-
-    def __str__(self):
-        if self.sub_group == self.name:
-            return f"{self.group} \"{self.name}\" {self.priority}"
-        else:
-            return f"{self.sub_group} \"{self.name}\" {self.priority}"
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __eq__(self, y):
-        return self.priority == y.priority
-
-    def __gt__(self, y):
-        if self.priority[0] != y.priority[0]:
-            return priority[0] > y.priority[0]
-        else:
-            return priority[1] > y.priority[1]
-
-    def __lt__(self, y):
-        if self.priority[0] != y.priority[0]:
-            return priority[0] < y.priority[0]
-        else:
-            return priority[1] < y.priority[1]
-
-
 def translate(program):
-    word, result = "", []
+    pre_symbol, word, quote = "", "", ""
+    result = []
 
     def add_word(word, result):
         if word != empty:
-            token = token_analise(word, result)
-            result = context_analise(token, result)
+            result += [word]
         word = ""
         return word, result
 
-    pre_symbol = ""
     for symbol in program:
-        if symbol == "\n" or symbol == "\r":
+        if quote != empty:
+            word += symbol
+            if symbol != quote and pre_symbol != "backslash":
+                quote = ""
+                word, result = add_word(word, result)
+                pre_symbol = "sign"
+        elif symbol == "\n" or symbol == "\r":
             if word != special_symbols["command_end"]:
                 word, result = add_word(word, result)
                 pre_symbol = "sign"
@@ -257,7 +229,8 @@ def translate(program):
             else:
                 pass
         elif symbol in signs:
-            word, result = add_word(word, result)
+            if not(pre_symbol == "sign" and word + symbol in sign_combos):
+                word, result = add_word(word, result)
             pre_symbol = "sign"
             word += symbol
         elif symbol.isalpha():
@@ -275,73 +248,6 @@ def translate(program):
     add_word(word, result)
 
     return result
-
-
-def token_analise(token, tokens):
-    group = ""
-    sub_group = ""
-    if tokens:
-        pre_group = tokens[-1].func["group"]
-    else:
-        pre_group = ""
-    if token.startswith(special_symbols["indent"]):
-        group = "indent"
-    elif token.isdigit():
-        group = "object"
-        sub_group = "number"
-    elif token in signs:
-        if token == "+":
-            group = "math"
-        elif token == "=":
-            group = "equating"
-        elif token == ">":
-            group = "comparison"
-        elif token == "<":
-            group = "comparison"
-        elif token == ":":
-            group = "structure"
-        elif token == "[":
-            if pre_group != "object":
-                group = "object"
-                sub_group = "list"
-            else:
-                group = "sub_object"
-        elif token == "]":
-            group = "object"
-            sub_group = "list"
-        elif token == "(":
-            if pre_group != "object":
-                group = "brackets"
-            else:
-                group = "call"
-        elif token == ")":
-            group = "brackets"
-        elif token == ",":
-            group = "brackets"
-    elif token in key_words:
-        group = "key_word"
-    elif token[0].isalpha():
-        group = "object"
-        sub_group = "name"
-    else:
-        raise TokenError(f"Неизвестный токен {token}")
-    if sub_group == empty:
-        sub_group = token
-    token = {"name": token, "group": group, "sub_group": sub_group}
-    obj = Object(None, token)
-    return obj
-
-
-def context_analise(token, tokens):
-    if not tokens:
-        if token.args_number == "binary":
-            raise SyntaxError(f"Слева от {token.name} ничего нет")
-        return [token]
-    pre_token = tokens[-1]
-    # дописать
-    tokens += [token]
-
-    return tokens
 
 
 if __name__ == '__main__':
