@@ -1,8 +1,11 @@
-key_words = ["while", "if", "else", "break", "continue"]
+key_words = ["while", "if", "else", "break", "continue", "none", "true",
+             "false", "not", "and", "or", "xor"]
 functions = ["print", "input", "len"]
 signs = ["=", "[", "]", "(", ")", "{", "}", ",", ";", ":", "+", "-", "*", "/",
          "%", "|", ">", "<", "?"]
 sign_combos = ["=?"]
+quotes = ["'", '"']
+comment = "#"
 space, empty = " ", ""
 special_symbols = {"command_end": "*ce",
                    "indent": "*i",
@@ -197,61 +200,74 @@ class YoObject:
 
 
 def translate(program):
-    pre_symbol, word, quote = "", "", ""
+    # token_split
+    pre_symbol, word, pre_group, quote = "", "", "", ""
     result = []
 
     def add_word(word, result):
         if word != empty:
             result += [word]
-        word = ""
-        return word, result
+        return "", result
 
     for symbol in program:
-        if quote != empty:
+        if symbol == comment:
+            if pre_group != "comment":
+                if quote == empty:
+                    word, result = add_word(word, result)
+                    pre_group = "comment"
+                else:
+                    word += symbol
+        elif symbol in ["\n", "\r"]:
+            if pre_group != "line feed" and word:
+                word, result = add_word(word, result)
+                word += symbol
+                pre_group = "line feed"
+        elif pre_group == "comment":
+            pass
+        elif symbol in quotes:
+            if quote == empty:
+                word, result = add_word(word, result)
+                quote = symbol
+                pre_group = "quote"
+            elif symbol == quote:
+                if pre_symbol != "\\":
+                    quote = ""
             word += symbol
-            if symbol != quote and pre_symbol != "backslash":
-                quote = ""
-                word, result = add_word(word, result)
-                pre_symbol = "sign"
-        elif symbol == "\n" or symbol == "\r":
-            if word != special_symbols["command_end"]:
-                word, result = add_word(word, result)
-                pre_symbol = "sign"
-                # word = special_symbols["command_end"]
+        elif quote != empty:
+            word += symbol
         elif symbol == space:
-            if word == special_symbols["command_end"]:
+            if pre_group == "line feed":
+                word += symbol
+            elif pre_group != "space":
                 word, result = add_word(word, result)
-                word = special_symbols["indent"]
-                pre_symbol = "sign"
-            elif word == special_symbols["indent"]:
-                word, result = add_word(word, result)
-                word = special_symbols["indent"]
-                pre_symbol = "sign"
-            elif pre_symbol != space:
-                word, result = add_word(word, result)
-                pre_symbol = "space"
+                pre_group = "space"
             else:
                 pass
         elif symbol in signs:
-            if not(pre_symbol == "sign" and word + symbol in sign_combos):
+            if not(pre_group == "sign" and word + symbol in sign_combos):
                 word, result = add_word(word, result)
-            pre_symbol = "sign"
+            pre_group = "sign"
             word += symbol
         elif symbol.isalpha():
-            if pre_symbol == "sign":
+            if pre_group in ["sign", "line feed"]:
                 word, result = add_word(word, result)
-            pre_symbol = "alpha"
+            pre_group = "alpha"
             word += symbol
         elif symbol.isdigit():
-            if pre_symbol == "sign":
+            if pre_group in ["sign", "line feed"]:
                 word, result = add_word(word, result)
-            pre_symbol = "digit"
+            pre_group = "digit"
             word += symbol
         else:
             raise TokenError(f"Неизвестный символ \"{symbol}\"")
+        pre_symbol = symbol
     add_word(word, result)
 
     return result
+
+
+def token_analise(token, result):
+
 
 
 if __name__ == '__main__':
