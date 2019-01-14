@@ -13,15 +13,14 @@ special_symbols = {"command_end": "*ce",
 group_priority = {
     "object": 1,
     "brackets": 2,
-    "expression": 3,
-    "sub_object": 4,
-    "call": 5,
-    "math": 6,
-    "comparison": 7,
-    "logic": 8,
-    "equating": 9,
-    "structure": 10,
-    "key_word": 11,
+    "sub_object": 3,
+    "call": 4,
+    "math": 5,
+    "comparison": 6,
+    "logic": 7,
+    "equating": 8,
+    "structure": 9,
+    "key_word": 10,
     "indent": 99,
     "program": 100
 }
@@ -40,12 +39,6 @@ priority = {
     {
         "(": 1,
         ")": 1,
-        ",": 1
-    },
-    "expression":
-    {
-        "(": 1,
-        ")": 1
     },
     "sub_object":
     {
@@ -56,7 +49,8 @@ priority = {
     "call":
     {
         "(": 1,
-        ")": 1
+        ")": 1,
+        ",": 1
     },
     "math":
     {
@@ -120,12 +114,6 @@ args_number = {
     {
         "(": "many",
         ")": "no",
-        ",": "no"
-    },
-    "expression":
-    {
-        "(": "many",
-        ")": "no"
     },
     "sub_object":
     {
@@ -264,10 +252,6 @@ def translate(program):
     add_word(word, result)
 
     return result
-
-
-def token_analise(token, result):
-
 
 
 if __name__ == '__main__':
