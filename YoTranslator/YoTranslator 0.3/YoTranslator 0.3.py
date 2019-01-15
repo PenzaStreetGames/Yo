@@ -10,16 +10,27 @@ space, empty = " ", ""
 special_symbols = {"command_end": "*ce",
                    "indent": "*i",
                    "line_indent": "*i{}"}
+
+groups = {
+    "punctuation": [",", ";", "\n", "{", "}", ":", ")", "]"],
+    "math": ["+", "-", "*", "/", "%"],
+    "comparison": [">", "=?", "<"],
+    "logic": ["not", "and", "or", "xor"],
+    "equating": ["="],
+    "structure_words": ["if", "else", "while", "break", "continue"],
+    "logic_values": ["true", "false"]
+}
+
 group_priority = {
     "object": 1,
-    "brackets": 2,
+    "expression": 2,
     "sub_object": 3,
     "call": 4,
     "math": 5,
     "comparison": 6,
     "logic": 7,
     "equating": 8,
-    "structure": 9,
+    "punctuation": 9,
     "key_word": 10,
     "indent": 99,
     "program": 100
@@ -35,32 +46,26 @@ priority = {
         "string": 1,
         "list": 1
     },
-    "brackets":
+    "expression":
     {
-        "(": 1,
-        ")": 1,
+        "(": 1
     },
     "sub_object":
     {
-        ".": 1,
-        "[": 1,
-        "]": 1
+        "[": 1
     },
     "call":
     {
-        "(": 1,
-        ")": 1,
-        ",": 1
+        "(": 1
     },
     "math":
     {
-        "+": 4,
-        "-": 4,
-        "*": 3,
-        "/": 3,
-        "%": 3,
-        "~": 2,
-        "|": 1
+        "+": 3,
+        "-": 3,
+        "*": 2,
+        "/": 2,
+        "%": 2,
+        "~": 1
     },
     "comparison":
     {
@@ -79,11 +84,16 @@ priority = {
     {
         "=": 1
     },
-    "structure":
+    "punctuation":
     {
+        ",": 1,
+        ";": 1,
         ":": 1,
+        ")": 1,
+        "]": 1,
         "{": 1,
-        "}": 1
+        "}": 1,
+        "\n": 1
     },
     "key_word":
     {
@@ -184,17 +194,39 @@ class YoSyntaxError(Exception):
 
 
 class YoObject:
-    pass
+
+    def __init__(self, parent, func):
+        self.parent = parent
+        self.func = func
+        self.args = []
+        self.priority = [group_priority[func["group"]],
+                         priority[func["group"]][func["sub_group"]]]
+        self.name = func["name"]
+        self.sub_group = func["sub_group"]
+        self.group = func["group"]
+        self.close = False
+
+    def __str__(self):
+        if self.sub_group == self.name:
+            return f"{self.group} \"{self.name}\" {self.priority}"
+        else:
+            return f"{self.sub_group} \"{self.name}\" {self.priority}"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 def translate(program):
     # token_split
     pre_symbol, word, pre_group, quote = "", "", "", ""
     result = []
+    result += [YoObject(None, {"group": "program", "sub_group": "program",
+                               "name": "program"})]
 
     def add_word(word, result):
         if word != empty:
-            result += [word]
+            obj = token_analise(word, result)
+            result += [obj]
         return "", result
 
     for symbol in program:
@@ -225,6 +257,8 @@ def translate(program):
             word += symbol
         elif symbol == space:
             if pre_group == "line feed":
+                if pre_symbol in ["\n", "\r"]:
+                    word, result = add_word(word, result)
                 word += symbol
             elif pre_group != "space":
                 word, result = add_word(word, result)
@@ -252,6 +286,70 @@ def translate(program):
     add_word(word, result)
 
     return result
+
+
+def token_analise(token, tokens):
+    group, sub_group = "", ""
+
+    def is_close(pre_token):
+        return pre_token.close and pre_token.group in ["sub_object", "call",
+                                                       "object", "expression"]
+
+    pre_token = tokens[-1]
+    if token.startswith(space):
+        group = "indent"
+        sub_group = "indent"
+    elif token in groups["math"]:
+        group = "math"
+        if token == "-":
+            if is_close(pre_token):
+                sub_group = "-"
+            else:
+                sub_group = "~"
+    elif token in groups["comparison"]:
+        group = "comparison"
+    elif token in groups["logic"]:
+        group = "logic"
+    elif token in groups["structure_words"]:
+        group = "key_word"
+    elif token in groups["punctuation"]:
+        group = "punctuation"
+    elif token == "=":
+        group = "equating"
+    elif token == "[":
+        if is_close(pre_token):
+            group = "sub_object"
+        else:
+            group = "object"
+            sub_group = "list"
+    elif token == "(":
+        if is_close(pre_token):
+            group = "call"
+        else:
+            group = "expression"
+    elif token[0] in quotes:
+        group = "object"
+        sub_group = "string"
+    elif token.isdigit():
+        group = "object"
+        sub_group = "number"
+    elif token in groups["logic_values"]:
+        group = "object"
+        sub_group = "logic"
+    elif token == "none":
+        group = "object"
+        sub_group = "none"
+    elif token[0].isalpha():
+        group = "object"
+        sub_group = "name"
+    else:
+        raise TokenError(f"Неизвестный токен {token}")
+    if sub_group == empty:
+        sub_group = token
+    func = {"group": group, "sub_group": sub_group, "name": token}
+    obj = YoObject(pre_token, func)
+
+    return obj
 
 
 if __name__ == '__main__':
