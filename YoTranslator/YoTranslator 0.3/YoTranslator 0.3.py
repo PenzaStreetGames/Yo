@@ -7,9 +7,6 @@ sign_combos = ["=?"]
 quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
-special_symbols = {"command_end": "*ce",
-                   "indent": "*i",
-                   "line_indent": "*i{}"}
 
 groups = {
     "punctuation": [",", ";", "\n", "{", "}", ":", ")", "]"],
@@ -204,7 +201,25 @@ class YoObject:
         self.name = func["name"]
         self.sub_group = func["sub_group"]
         self.group = func["group"]
+        self.args_number = args_number[self.group][self.sub_group]
+        self.commas, self.self.points = get_punctuation(self)
         self.close = False
+
+    def check_close(self):
+        if self.args_number == "no":
+            self.close = True
+        elif self.args_number == "unary":
+            if len(self.args) == 1:
+                self.close = True
+            else:
+                raise YoSyntaxError(f"Неправильное число аргументов {self}")
+        elif self.args_number == "binary" or self.args_number == "binary_right":
+            if len(self.args) == 2:
+                self.close = True
+            else:
+                raise YoSyntaxError(f"Неправильное число аргументов {self}")
+        elif self.args_number == "many":
+            self.close = True
 
     def __str__(self):
         if self.sub_group == self.name:
@@ -350,6 +365,23 @@ def token_analise(token, tokens):
     obj = YoObject(pre_token, func)
 
     return obj
+
+
+def get_punctuation(yo_object):
+    if yo_object.group == "program":
+        return [";", "\n"], []
+    elif yo_object.group == "key_word":
+        return [":", "{"], ["}"]
+    elif yo_object.group == "list":
+        return [","], ["]"]
+    elif yo_object.group == "call":
+        return [","], [")"]
+    elif yo_object.group == "expression":
+        return [], [")"]
+    elif yo_object.group == "sub_object":
+        return [], ["]"]
+    else:
+        return [], []
 
 
 if __name__ == '__main__':
