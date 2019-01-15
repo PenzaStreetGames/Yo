@@ -202,7 +202,7 @@ class YoObject:
         self.sub_group = func["sub_group"]
         self.group = func["group"]
         self.args_number = args_number[self.group][self.sub_group]
-        self.commas, self.self.points = get_punctuation(self)
+        self.commas, self.points = get_punctuation(self)
         self.close = False
 
     def check_close(self):
