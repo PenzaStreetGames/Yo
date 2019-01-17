@@ -7,6 +7,7 @@ sign_combos = ["=?"]
 quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
+stores = []
 
 groups = {
     "punctuation": [",", ";", "\n", "{", "}", ":", ")", "]"],
@@ -193,6 +194,7 @@ class YoObject:
 
     def __init__(self, parent, func):
         self.parent = parent
+        self.children = []
         self.func = func
         self.args = []
         self.priority = [group_priority[func["group"]],
@@ -208,7 +210,8 @@ class YoObject:
 
     def check_close(self):
         if self.args_number == "no":
-            self.close = True
+            pass
+            # self.close = True
         elif self.args_number == "unary":
             if len(self.args) == 1:
                 self.close = True
@@ -220,7 +223,11 @@ class YoObject:
             else:
                 raise YoSyntaxError(f"Неправильное число аргументов {self}")
         elif self.args_number == "many":
-            self.close = True
+            return self.close
+        return True
+    
+    def set_close(self):
+        self.close = True
 
     def __str__(self):
         if self.sub_group == self.name:
@@ -238,6 +245,7 @@ def translate(program):
     result = []
     result += [YoObject(None, {"group": "program", "sub_group": "program",
                                "name": "program"})]
+    stores = [result[0]]
 
     def add_word(word, result):
         if word != empty:
@@ -307,10 +315,6 @@ def translate(program):
 def token_analise(token, tokens):
     group, sub_group = "", ""
 
-    def is_close(pre_token):
-        return pre_token.close and pre_token.group in ["sub_object", "call",
-                                                       "object", "expression"]
-
     pre_token = tokens[-1]
     if token.startswith(space):
         group = "indent"
@@ -318,7 +322,7 @@ def token_analise(token, tokens):
     elif token in groups["math"]:
         group = "math"
         if token == "-":
-            if is_close(pre_token):
+            if is_object(pre_token):
                 sub_group = "-"
             else:
                 sub_group = "~"
@@ -333,13 +337,13 @@ def token_analise(token, tokens):
     elif token == "=":
         group = "equating"
     elif token == "[":
-        if is_close(pre_token):
+        if is_object(pre_token):
             group = "sub_object"
         else:
             group = "object"
             sub_group = "list"
     elif token == "(":
-        if is_close(pre_token):
+        if is_object(pre_token):
             group = "call"
         else:
             group = "expression"
@@ -386,7 +390,43 @@ def get_punctuation(yo_object):
 
 
 def syntax_analise(yo_object, result):
-    pass
+    global stores
+    pre_object = result[-1]
+    last_store = stores[-1]
+    yo_object.indent = pre_object.indent
+    if yo_object.name in last_store.commas:
+        if not pre_object.check_close():
+            raise SyntaxError("Предыдущий перед запятой токен не закрыт")
+        pre_object.set_close()
+        last_store.children += [None]
+    elif yo_object.name in last_store.points:
+        if not pre_object.check_close():
+            raise SyntaxError("Предыдущий перед точкой токен не закрыт")
+        pre_object.set_close()
+        last_store.set_close()
+        stores = stores[:-1]
+    elif yo_object in groups["punctuation"]:
+        raise SyntaxError("Недопустимый в данном месте знак пунктуации")
+    elif yo_object.group == "indent":
+        yo_object.indent = len(yo_object.name)
+    else:
+        if yo_object.args_number == "no":
+            if is_object(pre_object) or pre_object.close:
+                raise SyntaxError("Неразделённые объекты")
+        elif yo_object.args_number == "unary":
+            pass
+        elif yo_object.args_number == "binary":
+            pass
+        elif yo_object.args_number == "binary_right":
+            pass
+        elif yo_object.args_number == "many":
+            pass
+    pre_object = yo_object
+
+
+def is_object(token):
+    return token.close and token.group in ["sub_object", "call",
+                                           "object", "expression"]
 
 
 if __name__ == '__main__':
