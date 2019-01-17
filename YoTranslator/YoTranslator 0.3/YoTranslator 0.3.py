@@ -117,21 +117,17 @@ args_number = {
         "string": "no",
         "list": "many"
     },
-    "brackets":
+    "expression":
     {
-        "(": "many",
-        ")": "no",
+        "(": "many"
     },
     "sub_object":
     {
-        ".": "binary",
-        "[": "binary",
-        "]": "no"
+        "[": "binary"
     },
     "call":
     {
-        "(": "binary",
-        ")": "no"
+        "(": "binary"
     },
     "math":
     {
@@ -139,8 +135,7 @@ args_number = {
         "-": "binary",
         "*": "binary",
         "/": "binary",
-        "%": "binary",
-        "|": "unary"
+        "%": "binary"
     },
     "comparison":
     {
@@ -159,17 +154,21 @@ args_number = {
     {
         "=": "binary"
     },
-    "structure":
+    "punctuation":
     {
-        ":": "no",
-        "{": "many",
-        "}": "no"
+        ",": 1,
+        ";": 1,
+        ":": 1,
+        ")": 1,
+        "]": 1,
+        "{": 1,
+        "}": 1,
+        "\n": 1
     },
     "key_word":
     {
-        "while": "binary_right",
-        "if": "binary_right",
-        "else": "unary"
+        "while": 1,
+        "if": 1
     },
     "indent":
     {
@@ -204,6 +203,8 @@ class YoObject:
         self.args_number = args_number[self.group][self.sub_group]
         self.commas, self.points = get_punctuation(self)
         self.close = False
+        self.indent = 0
+        self.indent_depend = True
 
     def check_close(self):
         if self.args_number == "no":
@@ -369,7 +370,7 @@ def token_analise(token, tokens):
 
 def get_punctuation(yo_object):
     if yo_object.group == "program":
-        return [";", "\n"], []
+        return [";", "\n"], ["}"]
     elif yo_object.group == "key_word":
         return [":", "{"], ["}"]
     elif yo_object.group == "list":
@@ -382,6 +383,10 @@ def get_punctuation(yo_object):
         return [], ["]"]
     else:
         return [], []
+
+
+def syntax_analise(yo_object, result):
+    pass
 
 
 if __name__ == '__main__':
