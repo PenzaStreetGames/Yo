@@ -7,7 +7,7 @@ sign_combos = ["=?"]
 quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
-stores = []
+stores, open_objects = [], []
 
 groups = {
     "punctuation": [",", ";", "\n", "{", "}", ":", ")", "]"],
@@ -194,7 +194,6 @@ class YoObject:
 
     def __init__(self, parent, func):
         self.parent = parent
-        self.children = []
         self.func = func
         self.args = []
         self.priority = [group_priority[func["group"]],
@@ -228,6 +227,15 @@ class YoObject:
     
     def set_close(self):
         self.close = True
+
+    def add_arg(self, yo_object):
+        self.args += [yo_object]
+        yo_object.parent = self
+
+    def remove_arg(self):
+        yo_object = self.args.pop()
+        yo_object.parent = None
+        return yo_object
 
     def __str__(self):
         if self.sub_group == self.name:
@@ -398,7 +406,7 @@ def syntax_analise(yo_object, result):
         if not pre_object.check_close():
             raise SyntaxError("Предыдущий перед запятой токен не закрыт")
         pre_object.set_close()
-        last_store.children += [None]
+        last_store.args += [None]
     elif yo_object.name in last_store.points:
         if not pre_object.check_close():
             raise SyntaxError("Предыдущий перед точкой токен не закрыт")
@@ -406,27 +414,91 @@ def syntax_analise(yo_object, result):
         last_store.set_close()
         stores = stores[:-1]
     elif yo_object in groups["punctuation"]:
-        raise SyntaxError("Недопустимый в данном месте знак пунктуации")
+        raise YoSyntaxError("Недопустимый в данном месте знак пунктуации")
     elif yo_object.group == "indent":
         yo_object.indent = len(yo_object.name)
-    else:
+    elif pre_object.args_number == "no":
+        if yo_object.args_number == "binary":
+            yo_object.add_arg(pre_object)
+            result[-1] = yo_object
+        else:
+            raise YoSyntaxError("Неразделённые объекты")
+    elif pre_object.args_number == "unary":
         if yo_object.args_number == "no":
-            if is_object(pre_object) or pre_object.close:
-                raise SyntaxError("Неразделённые объекты")
+            if len(pre_object.args) == 0:
+                pre_object.add_arg(yo_object)
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
         elif yo_object.args_number == "unary":
-            pass
+            if len(pre_object.args) == 0:
+                pre_object.add_arg(yo_object)
+                result += [yo_object]
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
         elif yo_object.args_number == "binary":
-            pass
-        elif yo_object.args_number == "binary_right":
-            pass
+            if len(pre_object.args) == 1:
+                yo_object.add_arg(pre_object)
+                result[-1] = yo_object
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
         elif yo_object.args_number == "many":
-            pass
-    pre_object = yo_object
+            if len(pre_object.args) == 0:
+                pre_object.add_arg(yo_object)
+                result += [yo_object]
+                stores += [yo_object]
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
+    elif pre_object.args_number == "binary":
+        if yo_object.args_number == "no":
+            if len(pre_object.args) == 1:
+                pre_object.add_arg(yo_object)
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
+        elif yo_object.args_number == "unary":
+            if len(pre_object.args) == 1:
+                pre_object.add_arg(yo_object)
+                result += [yo_object]
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
+        elif yo_object.args_number == "binary":
+            if len(pre_object.args) == 2:
+                priority = ""
+                left = pre_object.priority.copy()
+                right = yo_object.priority.copy()
+                if left[0] != right[0]:
+                    priority = "left" if left[0] >= right[0] else "right"
+                else:
+                    priority = "left" if left[1] >= right[1] else "right"
+                if priority == "left":
+                    arg2 = pre_object.remove_arg()
+                    yo_object.add_arg(arg2)
+                    pre_object.add_arg(yo_object)
+                    result += [yo_object]
+                elif priority == "right":
+                    yo_object.add_arg(pre_object)
+                    result[-1] = yo_object
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
+        elif yo_object.args_number == "many":
+            if len(pre_object.args) == 1:
+                pre_object.add_arg(yo_object)
+                result += [yo_object]
+                stores += [yo_object]
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
+    elif pre_object.args_number == "many":
+        if yo_object.args_number == "binary":
+            yo_object.add_arg(pre_object)
+            result[-1] = yo_object
+        else:
+            raise YoSyntaxError("Неразделённые объекты")
+    else:
+        raise YoSyntaxError("Неизвестный объект")
 
 
 def is_object(token):
-    return token.close and token.group in ["sub_object", "call",
-                                           "object", "expression"]
+    return token.check_close() and token.group in ["sub_object", "call",
+                                                   "object", "expression"]
 
 
 if __name__ == '__main__':
