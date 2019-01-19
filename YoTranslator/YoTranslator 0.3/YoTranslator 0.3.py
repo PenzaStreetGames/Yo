@@ -210,19 +210,18 @@ class YoObject:
     def check_close(self):
         if self.args_number == "no":
             pass
-            # self.close = True
         elif self.args_number == "unary":
-            if len(self.args) == 1:
-                self.close = True
-            else:
+            if len(self.args) != 1:
                 raise YoSyntaxError(f"Неправильное число аргументов {self}")
         elif self.args_number == "binary" or self.args_number == "binary_right":
-            if len(self.args) == 2:
-                self.close = True
-            else:
+            if len(self.args) != 2:
                 raise YoSyntaxError(f"Неправильное число аргументов {self}")
         elif self.args_number == "many":
-            return self.close
+            if not self.close:
+                raise YoSyntaxError("Незакрытоек перечисление")
+        for arg in self.args:
+            arg.check_close()
+            arg.set_close()
         return True
     
     def set_close(self):
@@ -405,12 +404,12 @@ def syntax_analise(yo_object, result):
     if yo_object.name in last_store.commas:
         if not pre_object.check_close():
             raise SyntaxError("Предыдущий перед запятой токен не закрыт")
-        pre_object.set_close()
-        last_store.args += [None]
+        last_store.args += [pre_object]
+        result.pop()
     elif yo_object.name in last_store.points:
         if not pre_object.check_close():
             raise SyntaxError("Предыдущий перед точкой токен не закрыт")
-        pre_object.set_close()
+        last_store.args += [pre_object]
         last_store.set_close()
         stores = stores[:-1]
     elif yo_object in groups["punctuation"]:
