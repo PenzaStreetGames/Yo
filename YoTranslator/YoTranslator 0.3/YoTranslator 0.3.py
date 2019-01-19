@@ -7,7 +7,7 @@ sign_combos = ["=?"]
 quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
-stores, open_objects = [], []
+stores = []
 
 groups = {
     "punctuation": [",", ";", "\n", "{", "}", ":", ")", "]"],
@@ -207,7 +207,7 @@ class YoObject:
         self.indent = 0
         self.indent_depend = True
 
-    def check_close(self):
+    def check_close(self, result):
         if self.args_number == "no":
             pass
         elif self.args_number == "unary":
@@ -218,14 +218,17 @@ class YoObject:
                 raise YoSyntaxError(f"Неправильное число аргументов {self}")
         elif self.args_number == "many":
             if not self.close:
-                raise YoSyntaxError("Незакрытоек перечисление")
+                raise YoSyntaxError("Незакрытое перечисление")
         for arg in self.args:
-            arg.check_close()
-            arg.set_close()
-        return True
+            arg.check_close(result)
+            result = arg.set_close(result).copy()
+        return result
     
-    def set_close(self):
+    def set_close(self, result):
         self.close = True
+        if result[-1] == self:
+            result = result[:-1]
+        return result
 
     def add_arg(self, yo_object):
         self.args += [yo_object]
@@ -238,27 +241,25 @@ class YoObject:
 
     def __str__(self):
         if self.sub_group == self.name:
-            return f"{self.group} \"{self.name}\" {self.priority}"
+            return f"{self.group} \"{self.name}\""
         else:
-            return f"{self.sub_group} \"{self.name}\" {self.priority}"
+            return f"{self.sub_group} \"{self.name}\""
 
     def __repr__(self):
-        return self.__str__()
+        if self.sub_group == self.name:
+            return f"{self.group} \"{self.name}\" {self.args}"
+        else:
+            return f"{self.sub_group} \"{self.name}\" {self.args}"
 
 
 def translate(program):
     # token_split
+    global stores
     pre_symbol, word, pre_group, quote = "", "", "", ""
     result = []
     result += [YoObject(None, {"group": "program", "sub_group": "program",
                                "name": "program"})]
     stores = [result[0]]
-
-    def add_word(word, result):
-        if word != empty:
-            obj = token_analise(word, result)
-            result += [obj]
-        return "", result
 
     for symbol in program:
         if symbol == comment:
@@ -319,17 +320,25 @@ def translate(program):
     return result
 
 
-def token_analise(token, tokens):
+def add_word(word, result):
+    global stores
+    if word != empty:
+        obj = token_analise(word, result)
+        result, stores = syntax_analise(obj, result, stores)
+    return "", result
+
+
+def token_analise(token, result):
     group, sub_group = "", ""
 
-    pre_token = tokens[-1]
+    pre_token = result[-1]
     if token.startswith(space):
         group = "indent"
         sub_group = "indent"
     elif token in groups["math"]:
         group = "math"
         if token == "-":
-            if is_object(pre_token):
+            if is_object(pre_token, result):
                 sub_group = "-"
             else:
                 sub_group = "~"
@@ -344,13 +353,13 @@ def token_analise(token, tokens):
     elif token == "=":
         group = "equating"
     elif token == "[":
-        if is_object(pre_token):
+        if is_object(pre_token, result):
             group = "sub_object"
         else:
             group = "object"
             sub_group = "list"
     elif token == "(":
-        if is_object(pre_token):
+        if is_object(pre_token, result):
             group = "call"
         else:
             group = "expression"
@@ -396,8 +405,7 @@ def get_punctuation(yo_object):
         return [], []
 
 
-def syntax_analise(yo_object, result):
-    global stores
+def syntax_analise(yo_object, result, stores):
     pre_object = result[-1]
     last_store = stores[-1]
     yo_object.indent = pre_object.indent
@@ -486,18 +494,33 @@ def syntax_analise(yo_object, result):
             else:
                 raise YoSyntaxError("Неразделённые объекты")
     elif pre_object.args_number == "many":
-        if yo_object.args_number == "binary":
-            yo_object.add_arg(pre_object)
-            result[-1] = yo_object
+        if pre_object.close:
+            if yo_object.args_number == "binary":
+                yo_object.add_arg(pre_object)
+                result[-1] = yo_object
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
         else:
-            raise YoSyntaxError("Неразделённые объекты")
+            if len(pre_object.args) == 0:
+                if pre_object.args_number in ["no", "unary"]:
+                    pre_object.add_arg(yo_object)
+                    result += [yo_object]
+                elif pre_object.args_number == "many":
+                    pre_object.add_arg(yo_object)
+                    result += [yo_object]
+                    stores += [yo_object]
+                elif pre_object.args_number == "many":
+                    raise YoSyntaxError("Неразделённые объекты")
+            else:
+                raise YoSyntaxError("Неразделённые объекты")
     else:
         raise YoSyntaxError("Неизвестный объект")
+    return result, stores
 
 
-def is_object(token):
-    return token.check_close() and token.group in ["sub_object", "call",
-                                                   "object", "expression"]
+def is_object(token, result):
+    return token.check_close(result) and token.group in ["sub_object", "call",
+                                                         "object", "expression"]
 
 
 if __name__ == '__main__':
