@@ -1,1 +1,2 @@
-a = 6 + 5 * 9 / 5
+#a = 6
+b = not true and false or true and false or not true

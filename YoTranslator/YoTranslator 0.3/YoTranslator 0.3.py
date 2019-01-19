@@ -220,7 +220,7 @@ class YoObject:
             if not self.close:
                 raise YoSyntaxError("Незакрытое перечисление")
         for arg in self.args:
-            arg.check_close(result)
+            result = arg.check_close(result)
             result = arg.set_close(result).copy()
         return result
     
@@ -236,7 +236,6 @@ class YoObject:
 
     def remove_arg(self):
         yo_object = self.args.pop()
-        yo_object.parent = None
         return yo_object
 
     def __str__(self):
@@ -270,9 +269,10 @@ def translate(program):
                 else:
                     word += symbol
         elif symbol in ["\n", "\r"]:
-            if pre_group != "line feed" and word:
-                word, result = add_word(word, result)
-                word += symbol
+            if pre_group != "line feed":
+                if word:
+                    word, result = add_word(word, result)
+                    word += symbol
                 pre_group = "line feed"
         elif pre_group == "comment":
             pass
@@ -315,7 +315,10 @@ def translate(program):
         else:
             raise TokenError(f"Неизвестный символ \"{symbol}\"")
         pre_symbol = symbol
-    add_word(word, result)
+    word, result = add_word(word, result)
+
+    result[0].set_close(result)
+    result[0].check_close(result)
 
     return result
 
@@ -410,14 +413,10 @@ def syntax_analise(yo_object, result, stores):
     last_store = stores[-1]
     yo_object.indent = pre_object.indent
     if yo_object.name in last_store.commas:
-        if not pre_object.check_close():
-            raise SyntaxError("Предыдущий перед запятой токен не закрыт")
-        last_store.args += [pre_object]
+        result = last_store.args[-1].check_close(result)
         result.pop()
     elif yo_object.name in last_store.points:
-        if not pre_object.check_close():
-            raise SyntaxError("Предыдущий перед точкой токен не закрыт")
-        last_store.args += [pre_object]
+        result = last_store.args[-1].check_close(result)
         last_store.set_close()
         stores = stores[:-1]
     elif yo_object in groups["punctuation"]:
@@ -426,6 +425,8 @@ def syntax_analise(yo_object, result, stores):
         yo_object.indent = len(yo_object.name)
     elif pre_object.args_number == "no":
         if yo_object.args_number == "binary":
+            pre_object.parent.remove_arg()
+            pre_object.parent.add_arg(yo_object)
             yo_object.add_arg(pre_object)
             result[-1] = yo_object
         else:
@@ -444,6 +445,8 @@ def syntax_analise(yo_object, result, stores):
                 raise YoSyntaxError("Неразделённые объекты")
         elif yo_object.args_number == "binary":
             if len(pre_object.args) == 1:
+                pre_object.parent.remove_arg()
+                pre_object.parent.add_arg(yo_object)
                 yo_object.add_arg(pre_object)
                 result[-1] = yo_object
             else:
@@ -482,6 +485,8 @@ def syntax_analise(yo_object, result, stores):
                     pre_object.add_arg(yo_object)
                     result += [yo_object]
                 elif priority == "right":
+                    pre_object.parent.remove_arg()
+                    pre_object.parent.add_arg(yo_object)
                     yo_object.add_arg(pre_object)
                     result[-1] = yo_object
             else:
@@ -496,20 +501,22 @@ def syntax_analise(yo_object, result, stores):
     elif pre_object.args_number == "many":
         if pre_object.close:
             if yo_object.args_number == "binary":
+                pre_object.parent.remove_arg()
+                pre_object.parent.add_arg(yo_object)
                 yo_object.add_arg(pre_object)
                 result[-1] = yo_object
             else:
                 raise YoSyntaxError("Неразделённые объекты")
         else:
             if len(pre_object.args) == 0:
-                if pre_object.args_number in ["no", "unary"]:
+                if yo_object.args_number in ["no", "unary"]:
                     pre_object.add_arg(yo_object)
                     result += [yo_object]
-                elif pre_object.args_number == "many":
+                elif yo_object.args_number == "many":
                     pre_object.add_arg(yo_object)
                     result += [yo_object]
                     stores += [yo_object]
-                elif pre_object.args_number == "many":
+                elif yo_object.args_number == "many":
                     raise YoSyntaxError("Неразделённые объекты")
             else:
                 raise YoSyntaxError("Неразделённые объекты")
@@ -525,6 +532,5 @@ def is_object(token, result):
 
 if __name__ == '__main__':
     with open(f"{input()}.yotext", "r", encoding="utf-8") as infile:
-        objects = []
         result = translate(infile.read())
     print(result)
