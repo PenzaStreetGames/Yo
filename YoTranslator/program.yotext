@@ -1,9 +1,0 @@
-array = [1, 6, 7, 5, 4, 3]
-length = 6
-index = 0
-max = array[0]
-while index < length:
-    if array[index] > max:
-        max = array[index]
-    index = index + 1
-print(max)
