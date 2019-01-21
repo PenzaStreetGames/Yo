@@ -10,7 +10,7 @@ space, empty = " ", ""
 stores = []
 
 groups = {
-    "punctuation": [",", ";", "\n", "{", "}", ":", ")", "]"],
+    "punctuation": [",", ";", "\n", "}", ":", ")", "]"],
     "math": ["+", "-", "*", "/", "%"],
     "comparison": [">", "=?", "<"],
     "logic": ["not", "and", "or", "xor"],
@@ -29,9 +29,9 @@ group_priority = {
     "logic": 7,
     "equating": 8,
     "punctuation": 9,
-    "key_word": 10,
-    "indent": 99,
-    "program": 100
+    "structure_word": 10,
+    "indent": 15,
+    "program": 20
 }
 
 priority = {
@@ -93,7 +93,7 @@ priority = {
         "}": 1,
         "\n": 1
     },
-    "key_word":
+    "structure_word":
     {
         "while": 1,
         "if": 1
@@ -104,7 +104,9 @@ priority = {
     },
     "program":
     {
-        "program": 1
+        "indent_program": 1,
+        "scopes_program": 1,
+        "oneline_program": 1
     }
 }
 
@@ -163,14 +165,14 @@ args_number = {
         ":": 1,
         ")": 1,
         "]": 1,
-        "{": 1,
         "}": 1,
         "\n": 1
     },
-    "key_word":
+    "structure_word":
     {
-        "while": 1,
-        "if": 1
+        "while": "many",
+        "if": "many",
+        "else": "many"
     },
     "indent":
     {
@@ -178,7 +180,9 @@ args_number = {
     },
     "program":
     {
-        "program": "many"
+        "indent_program": "many",
+        "scopes_program": "many",
+        "oneline_program": "many"
     }
 }
 
@@ -267,7 +271,8 @@ def translate(program):
     global stores
     pre_symbol, word, pre_group, quote = "", "", "", ""
     result = []
-    result += [YoObject(None, {"group": "program", "sub_group": "program",
+    result += [YoObject(None, {"group": "program",
+                               "sub_group": "indent_program",
                                "name": "program"})]
     stores = [result[0]]
 
@@ -328,8 +333,9 @@ def translate(program):
         pre_symbol = symbol
     word, result = add_word(word, result)
 
-    result = stores[-1].args[-1].check_close(result)
-    stores[-1].set_close(result)
+    result = stores[0].args[-1].check_close(result)
+    result = stores[0].set_close(result)
+    result = stores[0].check_close(result)
     stores = stores[:-1]
 
     return result
@@ -362,9 +368,7 @@ def token_analise(token, result):
     elif token in groups["logic"]:
         group = "logic"
     elif token in groups["structure_words"]:
-        group = "key_word"
-    elif token in groups["punctuation"]:
-        group = "punctuation"
+        group = "structure_word"
     elif token == "=":
         group = "equating"
     elif token == "[":
@@ -378,6 +382,14 @@ def token_analise(token, result):
             group = "call"
         else:
             group = "expression"
+    elif token == "{":
+        group = "program"
+        sub_group = "scopes_program"
+    elif token == ":":
+        group = "program"
+        sub_group = "oneline_program"
+    elif token in groups["punctuation"]:
+        group = "punctuation"
     elif token[0] in quotes:
         group = "object"
         sub_group = "string"
@@ -404,11 +416,15 @@ def token_analise(token, result):
 
 
 def get_punctuation(yo_object):
-    if yo_object.group == "program":
+    if yo_object.sub_group == "indent_program":
+        return [";", "\n"], []
+    elif yo_object.sub_group == "scopes_program":
         return [";", "\n"], ["}"]
+    elif yo_object.sub_group == "oneline_program":
+        return [], [";", "\n"]
     elif yo_object.group == "key_word":
         return [":", "{"], ["}"]
-    elif yo_object.group == "list":
+    elif yo_object.sub_group == "list":
         return [","], ["]"]
     elif yo_object.group == "call":
         return [","], [")"]
@@ -425,16 +441,23 @@ def syntax_analise(yo_object, result, stores):
     last_store = stores[-1]
     yo_object.indent = pre_object.indent
     if yo_object.name in last_store.commas:
+        if last_store.sub_group == "oneline_program":
+            if yo_object.name == "\n" and len(last_store.args) == 0:
+                last_store.sub_group = "indent_program"
+                last_store.commas, last_store.points = get_punctuation(
+                                                                    last_store)
         result = last_store.args[-1].check_close(result)
-        result.pop()
+        if result[-1] != last_store:
+            result.pop()
     elif yo_object.name in last_store.points:
         result = last_store.args[-1].check_close(result)
+        result = last_store.args[-1].set_close(result)
         result = last_store.set_close(result)
         stores = stores[:-1]
-    elif yo_object in groups["punctuation"]:
+    elif yo_object.name in groups["punctuation"]:
         raise YoSyntaxError("Недопустимый в данном месте знак пунктуации")
     elif yo_object.group == "indent":
-        yo_object.indent = len(yo_object.name)
+        pre_object.indent = len(yo_object.name)
     elif pre_object.args_number == "no":
         if yo_object.args_number == "binary":
             pre_object.parent.remove_arg()
@@ -550,8 +573,8 @@ def syntax_analise(yo_object, result, stores):
 
 
 def is_object(token):
-    return token.is_close() and token.group in ["sub_object", "call",
-                                                "object", "expression"]
+    return token.is_close() # and token.group in ["sub_object", "call",
+                                                # "object", "expression"]
 
 
 if __name__ == '__main__':

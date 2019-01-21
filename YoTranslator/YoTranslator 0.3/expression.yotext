@@ -1,2 +1,1 @@
-a = -3 * 7 + 5 / 3
-b = not true and false or true and false or not true
+  c = a[i]
