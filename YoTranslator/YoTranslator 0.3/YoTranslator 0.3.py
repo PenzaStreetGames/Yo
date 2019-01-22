@@ -345,6 +345,7 @@ def add_word(word, result):
     global stores
     if word != empty:
         obj = token_analise(word, result)
+        obj, result, stores = pre_syntax_analise(obj, result, stores)
         result, stores = syntax_analise(obj, result, stores)
     return "", result
 
@@ -434,6 +435,10 @@ def get_punctuation(yo_object):
         return [], ["]"]
     else:
         return [], []
+
+
+def pre_syntax_analise(yo_object, result, stores):
+    return yo_object, result, stores
 
 
 def syntax_analise(yo_object, result, stores):
@@ -565,10 +570,6 @@ def syntax_analise(yo_object, result, stores):
     else:
         raise YoSyntaxError("Неизвестный объект")
     return result, stores
-
-
-def pre_syntax_analise(yo_object, result, stores):
-    pass
 
 
 def is_object(token):
