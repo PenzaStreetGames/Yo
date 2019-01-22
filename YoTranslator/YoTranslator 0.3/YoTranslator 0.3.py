@@ -441,11 +441,6 @@ def syntax_analise(yo_object, result, stores):
     last_store = stores[-1]
     yo_object.indent = pre_object.indent
     if yo_object.name in last_store.commas:
-        if last_store.sub_group == "oneline_program":
-            if yo_object.name == "\n" and len(last_store.args) == 0:
-                last_store.sub_group = "indent_program"
-                last_store.commas, last_store.points = get_punctuation(
-                                                                    last_store)
         result = last_store.args[-1].check_close(result)
         if result[-1] != last_store:
             result.pop()
@@ -570,6 +565,10 @@ def syntax_analise(yo_object, result, stores):
     else:
         raise YoSyntaxError("Неизвестный объект")
     return result, stores
+
+
+def pre_syntax_analise(yo_object, result, stores):
+    pass
 
 
 def is_object(token):
