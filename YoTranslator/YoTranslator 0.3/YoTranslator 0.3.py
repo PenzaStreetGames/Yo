@@ -46,11 +46,13 @@ priority = {
     },
     "expression":
     {
-        "(": 1
+        "(": 1,
+        "call_expression": 1,
+        "index_expression": 1
     },
     "sub_object":
     {
-        "[": 1
+        "[": 1,
     },
     "call":
     {
@@ -122,7 +124,9 @@ args_number = {
     },
     "expression":
     {
-        "(": "many"
+        "(": "many",
+        "index_expression": "many",
+        "call_expression": "many"
     },
     "sub_object":
     {
@@ -160,13 +164,13 @@ args_number = {
     },
     "punctuation":
     {
-        ",": 1,
-        ";": 1,
-        ":": 1,
-        ")": 1,
-        "]": 1,
-        "}": 1,
-        "\n": 1
+        ",": "no",
+        ";": "no",
+        ":": "no",
+        ")": "no",
+        "]": "no",
+        "}": "no",
+        "\n": "no"
     },
     "structure_word":
     {
@@ -334,7 +338,7 @@ def translate(program):
     word, result = add_word(word, result)
 
     result = stores[0].args[-1].check_close(result)
-    result = stores[0].set_close(result)
+    stores[0].set_close(result)
     result = stores[0].check_close(result)
     stores = stores[:-1]
 
@@ -345,7 +349,6 @@ def add_word(word, result):
     global stores
     if word != empty:
         obj = token_analise(word, result)
-        obj, result, stores = pre_syntax_analise(obj, result, stores)
         result, stores = syntax_analise(obj, result, stores)
     return "", result
 
@@ -423,16 +426,16 @@ def get_punctuation(yo_object):
         return [";", "\n"], ["}"]
     elif yo_object.sub_group == "oneline_program":
         return [], [";", "\n"]
-    elif yo_object.group == "key_word":
+    elif yo_object.group == "structure_word":
         return [":", "{"], ["}"]
     elif yo_object.sub_group == "list":
         return [","], ["]"]
-    elif yo_object.group == "call":
+    elif yo_object.sub_group == "call_expression":
         return [","], [")"]
+    elif yo_object.sub_group == "index_expression":
+        return [], ["]"]
     elif yo_object.group == "expression":
         return [], [")"]
-    elif yo_object.group == "sub_object":
-        return [], ["]"]
     else:
         return [], []
 
@@ -445,17 +448,40 @@ def syntax_analise(yo_object, result, stores):
     pre_object = result[-1]
     last_store = stores[-1]
     yo_object.indent = pre_object.indent
-    if yo_object.name in last_store.commas:
+    if yo_object.group == "sub_object":
+        if pre_object.args_number == "no":
+            child = pre_object.parent.remove_arg()
+            yo_object.add_arg(child)
+        elif pre_object.args_number in ["unary", "binary"]:
+            if is_object(pre_object):
+                child = pre_object.remove_arg()
+                pre_object.add_arg(yo_object)
+                yo_object.add_arg(child)
+            else:
+                raise YoSyntaxError(f"Неправильный запрос индекса {pre_object} "
+                                    f"{yo_object}")
+        elif pre_object.args_number == "many":
+            if is_object(pre_object):
+                child = pre_object.parent.remove_arg()
+                yo_object.add_arg(child)
+        new_object = YoObject(None, {"group": "expression",
+                                     "sub_group": "index_expression",
+                                     "name": "["})
+        yo_object.add_arg(new_object)
+        result += [yo_object, new_object]
+        stores += [new_object]
+    elif yo_object.name in last_store.commas:
         result = last_store.args[-1].check_close(result)
-        if result[-1] != last_store:
-            result.pop()
+        # if result[-1] != last_store:
+        result = last_store.args[-1].set_close(result)
     elif yo_object.name in last_store.points:
         result = last_store.args[-1].check_close(result)
         result = last_store.args[-1].set_close(result)
         result = last_store.set_close(result)
         stores = stores[:-1]
     elif yo_object.name in groups["punctuation"]:
-        raise YoSyntaxError("Недопустимый в данном месте знак пунктуации")
+        raise YoSyntaxError(f"Недопустимый в данном месте знак пунктуации "
+                            f"{yo_object}")
     elif yo_object.group == "indent":
         pre_object.indent = len(yo_object.name)
     elif pre_object.args_number == "no":
@@ -483,7 +509,7 @@ def syntax_analise(yo_object, result, stores):
                                     f"{pre_object} {yo_object}")
         elif yo_object.args_number == "binary":
             if len(pre_object.args) == 1:
-                pre_object.parent.remove_arg()
+                pre_object = pre_object.parent.remove_arg()
                 pre_object.parent.add_arg(yo_object)
                 yo_object.add_arg(pre_object)
                 result[-1] = yo_object
@@ -568,13 +594,34 @@ def syntax_analise(yo_object, result, stores):
                 raise YoSyntaxError(f"Неразделённые объекты "
                                     f"{pre_object} {yo_object}")
     else:
-        raise YoSyntaxError("Неизвестный объект")
+        raise YoSyntaxError(f"Неизвестный объект {yo_object}")
     return result, stores
 
 
 def is_object(token):
-    return token.is_close() # and token.group in ["sub_object", "call",
-                                                # "object", "expression"]
+    objects = ["sub_object", "call", "object", "expression"]
+    if token.args_number == "no":
+        if token.group in objects:
+            return True
+        return False
+    elif token.args_number == "unary":
+        if len(token.args) == 1:
+            child = token.args[0]
+            if child.group in objects:
+                return True
+            return False
+        return False
+    elif token.args_number == "binary":
+        if len(token.args) == 2:
+            child = token.args[1]
+            if child.group in objects:
+                return True
+            return False
+        return False
+    elif token.args_number == "many":
+        if token.is_close() and token.group in objects:
+            return True
+        return False
 
 
 if __name__ == '__main__':
