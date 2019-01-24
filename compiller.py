@@ -85,6 +85,24 @@ def compile_simple_objects(tokens):
     return tokens
 
 
+def compile_brackets(tokens):
+    start, stop = None, None
+    for t in range(len(tokens)):
+        if t < len(tokens):
+            if tokens[t] == ['signs', '(']:
+                start = t
+            elif tokens[t] == ['signs', ')']:
+                if stop is None:
+                    stop = t
+    # pprint(tokens)
+    if start and stop:
+        this = tokens[start + 1:stop]
+        this = compile_operations(this)
+        tokens = tokens[:start] + this + tokens[stop + 1:]
+        tokens = compile_brackets(tokens)
+    return tokens
+
+
 def compile_complex_objects(tokens):
     start_pos, end_pos = None, 0
     cut_list, el_list = False, False
@@ -176,8 +194,9 @@ with open("test.yo", encoding="utf8") as file:
 tokens = compile_lexer(text)
 tokens = compile_simple_objects(tokens)
 tokens = compile_complex_objects(tokens)
-tokens = compile_operations(tokens)
 tokens = compile_call_operations(tokens)
+tokens = compile_brackets(tokens)
+tokens = compile_operations(tokens)
 tokens = compile_conditions(tokens)
 tokens = compile_levels(tokens)
 print("Программа:")
