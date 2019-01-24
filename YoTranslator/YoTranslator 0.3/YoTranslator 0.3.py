@@ -8,6 +8,7 @@ quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
 stores = []
+argument_words = ["while", "if"]
 
 groups = {
     "punctuation": [",", ";", "\n", "}", ":", ")", "]"],
@@ -98,7 +99,8 @@ priority = {
     "structure_word":
     {
         "while": 1,
-        "if": 1
+        "if": 1,
+        "else": 1
     },
     "indent":
     {
@@ -130,11 +132,11 @@ args_number = {
     },
     "sub_object":
     {
-        "[": "binary"
+        "[": "many"
     },
     "call":
     {
-        "(": "binary"
+        "(": "many"
     },
     "math":
     {
@@ -440,10 +442,6 @@ def get_punctuation(yo_object):
         return [], []
 
 
-def pre_syntax_analise(yo_object, result, stores):
-    return yo_object, result, stores
-
-
 def syntax_analise(yo_object, result, stores):
     pre_object = result[-1]
     last_store = stores[-1]
@@ -464,12 +462,60 @@ def syntax_analise(yo_object, result, stores):
             if is_object(pre_object):
                 child = pre_object.parent.remove_arg()
                 yo_object.add_arg(child)
+            else:
+                raise YoSyntaxError(f"Неправильный запрос индекса {pre_object} "
+                                    f"{yo_object}")
         new_object = YoObject(None, {"group": "expression",
                                      "sub_group": "index_expression",
                                      "name": "["})
         yo_object.add_arg(new_object)
         result += [yo_object, new_object]
         stores += [new_object]
+    elif yo_object.group == "call":
+        if pre_object.args_number == "no":
+            child = pre_object.remove_arg()
+            yo_object.add_arg(child)
+        elif pre_object.args_number in ["unary", "binary"]:
+            if is_object(pre_object):
+                child = pre_object.remove_arg()
+                pre_object.add_arg(yo_object)
+                yo_object.add_arg(child)
+            else:
+                raise YoSyntaxError(f"Неправильный запрос индекса {pre_object} "
+                                    f"{yo_object}")
+        elif pre_object.args_number == "many":
+            if is_object(pre_object):
+                child = pre_object.parent.remove_arg()
+                yo_object.add_arg(child)
+            else:
+                raise YoSyntaxError(f"Неправильный запрос индекса {pre_object} "
+                        f"{yo_object}")
+        new_object = YoObject(None, {"group": "expression",
+                                     "sub_group": "call_expression",
+                                     "name": "("})
+        yo_object.add_arg(new_object)
+        result += [yo_object, new_object]
+        stores += [new_object]
+    elif (last_store.group == "structure_word" and
+          yo_object.group == "program"):
+        if last_store.name in argument_words:
+            result = last_store.args[-1].check_close(result)
+            result = last_store.args[-1].set_close(result)
+        last_store.add_arg(yo_object)
+        result += [yo_object]
+        stores += [yo_object]
+    elif (last_store.sub_group == "oneline_program" and yo_object.name == "\n"
+          and len(last_store.args) == 0):
+        parent = last_store.parent
+        new_object = YoObject(None, {"group": "program",
+                                     "sub_group": "indent_program",
+                                     "name": ":"})
+        last_store.parent.remove_arg()
+        parent.add_arg(new_object)
+    elif (last_store.group == "structure_word" and pre_object.name == "else"
+          and yo_object.name == "if"):
+        pre_object.name += " if"
+        pre_object.sub_group += " if"
     elif yo_object.name in last_store.commas:
         result = last_store.args[-1].check_close(result)
         # if result[-1] != last_store:
@@ -479,6 +525,13 @@ def syntax_analise(yo_object, result, stores):
         result = last_store.args[-1].set_close(result)
         result = last_store.set_close(result)
         stores = stores[:-1]
+        if result[-1].group == "sub_object":
+            result = result[-1].set_close(result)
+        elif result[-1].group == "call":
+            result = result[-1].set_close(result)
+        elif result[-1].group == "structure_word":
+            result = result[-1].set_close(result)
+            stores = stores[:-1]
     elif yo_object.name in groups["punctuation"]:
         raise YoSyntaxError(f"Недопустимый в данном месте знак пунктуации "
                             f"{yo_object}")
