@@ -94,6 +94,7 @@ def compile_brackets(tokens):
             elif tokens[t] == ['signs', ')']:
                 if stop is None:
                     stop = t
+
     # pprint(tokens)
     if start and stop:
         this = tokens[start + 1:stop]
@@ -154,10 +155,17 @@ def compile_call_operations(tokens):
         if t < len(tokens):
             if tokens[t] == ['signs', '(']:
                 if tokens[t - 1][0] in ["id", "link"]:
-                    end, i = None, t
-                    while tokens[i] != ['signs', ')']:
+                    end, i = None, t + 1
+                    ignore = 0
+                    while tokens[i] != ['signs', ')'] or ignore:
+                        if tokens[i] == ['signs', '(']:
+                            ignore += 1
+                        elif tokens[i] == ['signs', ')'] and ignore:
+                            ignore -= 1
                         i += 1
-                    args = [el for el in tokens[t + 1:i] if el != ["signs", ","]]
+                    this = tokens[t + 1:i]
+                    this = compile_program(this)
+                    args = [el for el in this if el != ["signs", ","]]
                     tokens = tokens[:t - 1] + [[tokens[t - 1], args]] + tokens[i + 1:]
     return tokens
 
@@ -194,10 +202,14 @@ with open("test.yo", encoding="utf8") as file:
 tokens = compile_lexer(text)
 tokens = compile_simple_objects(tokens)
 tokens = compile_complex_objects(tokens)
-tokens = compile_call_operations(tokens)
-tokens = compile_brackets(tokens)
-tokens = compile_operations(tokens)
-tokens = compile_conditions(tokens)
+
+def compile_program(tokens):
+    tokens = compile_call_operations(tokens)
+    tokens = compile_brackets(tokens)
+    tokens = compile_operations(tokens)
+    tokens = compile_conditions(tokens)
+    return tokens
+tokens = compile_program(tokens)
 tokens = compile_levels(tokens)
 print("Программа:")
 pprint(tokens)
