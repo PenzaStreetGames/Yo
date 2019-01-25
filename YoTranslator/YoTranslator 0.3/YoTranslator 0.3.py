@@ -380,7 +380,6 @@ def add_indent(result):
 
 def token_analise(token, result):
     group, sub_group = "", ""
-
     pre_token = result[-1]
     if token.startswith(space) or token == empty:
         group = "indent"
@@ -444,7 +443,6 @@ def token_analise(token, result):
         obj.indent = result[-1].indent
     else:
         obj.indent = len(obj.name)
-
     return obj
 
 
@@ -736,6 +734,7 @@ def is_object(token):
         if token.is_close() and token.group in objects:
             return True
         return False
+    raise YoSyntaxError(f"Неизвестный объект {token}")
 
 
 if __name__ == '__main__':
