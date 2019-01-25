@@ -261,20 +261,34 @@ class YoObject:
 
     def __str__(self):
         if self.sub_group == self.name:
-            return f"{self.group} \"{self.name}\""
+            result = self.group
         else:
-            return f"{self.sub_group} \"{self.name}\""
+            result = self.sub_group
+        result += " " + self.name
+        for arg in self.args:
+            result += "\n" + "    " * self.get_nesting(0) + arg.__repr__()
+        return result
 
     def __repr__(self):
         if self.sub_group == self.name:
-            return f"{self.group} \"{self.name}\" {self.args}"
+            result = self.group
         else:
-            return f"{self.sub_group} \"{self.name}\" {self.args}"
+            result = self.sub_group
+        result += " " + self.name
+        for arg in self.args:
+            result += "\n" + "    " * self.get_nesting(0) + arg.__repr__()
+        return result
+
+    def get_nesting(self, number):
+        if self.parent is not None:
+            number = self.parent.get_nesting(number + 1)
+        return number
 
 
 def translate(program):
     # token_split
     global stores
+    program += "\n"
     pre_symbol, word, pre_group, quote = "\n", "", "line feed", ""
     result = []
     result += [YoObject(None, {"group": "program",
@@ -461,7 +475,9 @@ def syntax_analise(yo_object, result, stores):
     # обработка вызова индекса
     if yo_object.group == "sub_object":
         if pre_object.args_number == "no":
-            child = pre_object.parent.remove_arg()
+            parent = pre_object.parent
+            child = parent.remove_arg()
+            parent.add_arg(yo_object)
             yo_object.add_arg(child)
         elif pre_object.args_number in ["unary", "binary"]:
             if is_object(pre_object):
@@ -482,12 +498,15 @@ def syntax_analise(yo_object, result, stores):
                                      "sub_group": "index_expression",
                                      "name": "["})
         yo_object.add_arg(new_object)
-        result += [yo_object, new_object]
+        result[-1] = yo_object
+        result += [new_object]
         stores += [new_object]
     # обработка вызова функции
     elif yo_object.group == "call":
         if pre_object.args_number == "no":
-            child = pre_object.remove_arg()
+            parent = pre_object.parent
+            child = parent.remove_arg()
+            parent.add_arg(yo_object)
             yo_object.add_arg(child)
         elif pre_object.args_number in ["unary", "binary"]:
             if is_object(pre_object):
@@ -554,9 +573,9 @@ def syntax_analise(yo_object, result, stores):
         result = last_store.set_close(result)
         stores = stores[:-1]
         if result[-1].group == "sub_object":
-            result = result[-1].set_close(result)
+            result[-1].close = True
         elif result[-1].group == "call":
-            result = result[-1].set_close(result)
+            result[-1].close = True
         elif result[-1].group == "structure_word":
             result = result[-1].set_close(result)
             stores = stores[:-1]
@@ -722,4 +741,4 @@ def is_object(token):
 if __name__ == '__main__':
     with open(f"{input()}.yotext", "r", encoding="utf-8") as infile:
         result = translate(infile.read())
-    print(result)
+    print(result[0])
