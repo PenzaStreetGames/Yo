@@ -29,6 +29,28 @@ def functions_insert(object):
     return len(memory)
 
 
+def from_figure_brakets(text):
+    lines = text.split("\n")
+    quote = False
+    res = ""
+    ident = 0
+    for line in lines:
+        res += "\t" * ident
+        for i in range(len(line)):
+            if line[i] in ["'", '"']:
+                quote = not quote
+            if not quote:
+                if line[i] == "{":
+                    res += ":"
+                    ident += 1
+                elif line[i] == "}":
+                    ident -= 1
+                else:
+                    res += line[i]
+        res += "\n"
+    return res
+
+
 def compile_lexer(text):
     quote = False
     tokens = []
@@ -75,13 +97,16 @@ def compile_lexer(text):
 
 
 def compile_simple_objects(tokens):
-
     for t in range(len(tokens)):
         if tokens[t][0] == "numbers":
             if functions_contain(".", tokens[t][1]):
                 tokens[t] = ["link", functions_insert(["float", tokens[t][1]])]
             else:
                 tokens[t] = ["link", functions_insert(["int", tokens[t][1]])]
+        if tokens[t][1] == "пока":
+            tokens[t][0] = "cycle"
+        if tokens[t][1] == "если":
+            tokens[t][0] = "cond"
     return tokens
 
 
@@ -121,8 +146,9 @@ def compile_complex_objects(tokens):
                 if cut_list:
                     pass
                 if el_list:
-                    r = functions_insert(["part", tokens[start_pos - 1], tokens[start_pos + 1:end_pos]])
-                    tokens = tokens[:start_pos - 1] + [["link", r]] + tokens[end_pos + 1:]
+                    r = compile_program(tokens[start_pos + 1:end_pos])
+                    r = ["part", tokens[start_pos - 1], r]
+                    tokens = tokens[:start_pos - 1] + [r] + tokens[end_pos + 1:]
                 else:
                     els = [e for e in tokens[start_pos + 1:end_pos] if e != ["signs", ","]]
                     r = functions_insert(["list", els])
@@ -140,7 +166,7 @@ def compile_operations(tokens):
             where = []
             for t in range(len(tokens)):
                 if t <= len(tokens):
-                    if tokens[t][1] == op:
+                    if len(tokens[t]) >= 2 and tokens[t][1] == op:
                         where += [t]
 
             for i in range(len(where)):
@@ -173,9 +199,9 @@ def compile_call_operations(tokens):
 def compile_conditions(tokens):
     for t in range(len(tokens)):
         if t < len(tokens):
-            if tokens[t] == ['id', 'если']:
+            if tokens[t] == ['cond', 'если']:
                 tokens = tokens[:t] + [["cond", tokens[t + 1]]] + tokens[t + 3:]
-            if tokens[t] == ['id', 'пока']:
+            if tokens[t] == ['cycle', 'пока']:
                 tokens = tokens[:t] + [["cycle_cond", tokens[t + 1]]] + tokens[t + 3:]
     return tokens
 
@@ -197,18 +223,21 @@ def compile_levels(tokens):
     return structures
 
 
-with open("test.yo", encoding="utf8") as file:
-    text = file.read().split("\n")
-tokens = compile_lexer(text)
-tokens = compile_simple_objects(tokens)
-tokens = compile_complex_objects(tokens)
-
 def compile_program(tokens):
     tokens = compile_call_operations(tokens)
     tokens = compile_brackets(tokens)
     tokens = compile_operations(tokens)
     tokens = compile_conditions(tokens)
     return tokens
+
+
+with open("test.yo", encoding="utf8") as file:
+    text = file.read()
+    text = text.split("\n")
+tokens = compile_lexer(text)
+tokens = compile_simple_objects(tokens)
+tokens = compile_complex_objects(tokens)
+
 tokens = compile_program(tokens)
 tokens = compile_levels(tokens)
 print("Программа:")
