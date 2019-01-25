@@ -216,7 +216,7 @@ class YoObject:
         self.commas, self.points = get_punctuation(self)
         self.close = False
         self.indent = 0
-        self.indent_depend = True
+        self.inside_indent = 0
 
     def check_close(self, result):
         if self.args_number == "no":
@@ -275,7 +275,7 @@ class YoObject:
 def translate(program):
     # token_split
     global stores
-    pre_symbol, word, pre_group, quote = "", "", "", ""
+    pre_symbol, word, pre_group, quote = "\n", "", "line feed", ""
     result = []
     result += [YoObject(None, {"group": "program",
                                "sub_group": "indent_program",
@@ -283,6 +283,8 @@ def translate(program):
     stores = [result[0]]
 
     for symbol in program:
+        if pre_symbol == "\n" and symbol != space:
+            word, result = add_indent(result)
         if symbol == comment:
             if pre_group != "comment":
                 if quote == empty:
@@ -355,11 +357,18 @@ def add_word(word, result):
     return "", result
 
 
+def add_indent(result):
+    global stores
+    obj = token_analise("", result)
+    result, stores = syntax_analise(obj, result, stores)
+    return "\n", result
+
+
 def token_analise(token, result):
     group, sub_group = "", ""
 
     pre_token = result[-1]
-    if token.startswith(space):
+    if token.startswith(space) or token == empty:
         group = "indent"
         sub_group = "indent"
     elif token in groups["math"]:
@@ -417,6 +426,10 @@ def token_analise(token, result):
         sub_group = token
     func = {"group": group, "sub_group": sub_group, "name": token}
     obj = YoObject(pre_token, func)
+    if obj.group != "indent":
+        obj.indent = result[-1].indent
+    else:
+        obj.indent = len(obj.name)
 
     return obj
 
@@ -445,7 +458,7 @@ def get_punctuation(yo_object):
 def syntax_analise(yo_object, result, stores):
     pre_object = result[-1]
     last_store = stores[-1]
-    yo_object.indent = pre_object.indent
+    # обработка вызова индекса
     if yo_object.group == "sub_object":
         if pre_object.args_number == "no":
             child = pre_object.parent.remove_arg()
@@ -471,6 +484,7 @@ def syntax_analise(yo_object, result, stores):
         yo_object.add_arg(new_object)
         result += [yo_object, new_object]
         stores += [new_object]
+    # обработка вызова функции
     elif yo_object.group == "call":
         if pre_object.args_number == "no":
             child = pre_object.remove_arg()
@@ -496,6 +510,7 @@ def syntax_analise(yo_object, result, stores):
         yo_object.add_arg(new_object)
         result += [yo_object, new_object]
         stores += [new_object]
+    # обработка структурных слов
     elif (last_store.group == "structure_word" and
           yo_object.group == "program"):
         if last_store.name in argument_words:
@@ -504,6 +519,8 @@ def syntax_analise(yo_object, result, stores):
         last_store.add_arg(yo_object)
         result += [yo_object]
         stores += [yo_object]
+    # если в однострочной структуре встречается перенос строки -
+    # это отступозависимая структура
     elif (last_store.sub_group == "oneline_program" and yo_object.name == "\n"
           and len(last_store.args) == 0):
         parent = last_store.parent
@@ -512,10 +529,21 @@ def syntax_analise(yo_object, result, stores):
                                      "name": ":"})
         last_store.parent.remove_arg()
         parent.add_arg(new_object)
+        result[-1] = new_object
+        stores[-1] = new_object
+    # если после else идёт if, то это одна конструкция else if
     elif (last_store.group == "structure_word" and pre_object.name == "else"
           and yo_object.name == "if"):
         pre_object.name += " if"
         pre_object.sub_group += " if"
+    # переносы строк после открывающейся скобки до первого слова не считаются
+    elif (yo_object.name == "\n" and last_store.group == "program" and
+          len(last_store.args) == 0):
+        pass
+    # переносы между условием структуры и телом не считаются
+    elif (yo_object.name == "\n" and last_store.group == "structure_word" and
+          len(last_store.args) == 1):
+        pass
     elif yo_object.name in last_store.commas:
         result = last_store.args[-1].check_close(result)
         # if result[-1] != last_store:
@@ -536,7 +564,21 @@ def syntax_analise(yo_object, result, stores):
         raise YoSyntaxError(f"Недопустимый в данном месте знак пунктуации "
                             f"{yo_object}")
     elif yo_object.group == "indent":
-        pre_object.indent = len(yo_object.name)
+        if last_store.sub_group == "indent_program":
+            if len(last_store.args) == 0:
+                last_store.inside_indent = yo_object.indent
+            else:
+                if yo_object.indent < last_store.inside_indent:
+                    result = last_store.args[-1].check_close(result)
+                    result = last_store.args[-1].set_close(result)
+                    result = last_store.set_close(result)
+                    stores = stores[:-1]
+                    result = result[-1].set_close(result)
+                    stores = stores[:-1]
+                elif yo_object.indent == last_store.inside_indent:
+                    pass
+                elif yo_object.indent > last_store.inside_indent:
+                    raise YoSyntaxError(f"Неуместный отступ {pre_object}")
     elif pre_object.args_number == "no":
         if yo_object.args_number == "binary":
             pre_object.parent.remove_arg()
