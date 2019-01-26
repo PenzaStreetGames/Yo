@@ -288,7 +288,7 @@ class YoObject:
 def translate(program):
     # token_split
     global stores
-    program += "\n"
+    program += "\n\n"
     pre_symbol, word, pre_group, quote = "\n", "", "line feed", ""
     result = []
     result += [YoObject(None, {"group": "program",
@@ -355,7 +355,8 @@ def translate(program):
         pre_symbol = symbol
     word, result = add_word(word, result)
 
-    result = stores[0].args[-1].check_close(result)
+    if stores[0].args:
+        result = stores[0].args[-1].check_close(result)
     stores[0].set_close(result)
     result = stores[0].check_close(result)
     stores = stores[:-1]
@@ -525,8 +526,15 @@ def syntax_analise(yo_object, result, stores):
                                      "sub_group": "call_expression",
                                      "name": "("})
         yo_object.add_arg(new_object)
-        result += [yo_object, new_object]
+        result[-1] = yo_object
+        result += [new_object]
         stores += [new_object]
+    # пустые вызовы - тоже вызовы
+    elif (pre_object.sub_group == "call_expression"
+          and yo_object.name in last_store.points):
+        result = pre_object.set_close(result)
+        result = result[-1].set_close(result)
+        stores = stores[:-1]
     # обработка структурных слов
     elif (last_store.group == "structure_word" and
           yo_object.group == "program"):
@@ -574,7 +582,7 @@ def syntax_analise(yo_object, result, stores):
             result[-1].close = True
         elif result[-1].group == "call":
             result[-1].close = True
-        elif result[-1].group == "structure_word":
+        elif result[-1].group == "structure_word" and yo_object.name == "}":
             result = result[-1].set_close(result)
             stores = stores[:-1]
     elif yo_object.name in groups["punctuation"]:
@@ -585,17 +593,17 @@ def syntax_analise(yo_object, result, stores):
             if len(last_store.args) == 0:
                 last_store.inside_indent = yo_object.indent
             else:
-                if yo_object.indent < last_store.inside_indent:
-                    result = last_store.args[-1].check_close(result)
-                    result = last_store.args[-1].set_close(result)
-                    result = last_store.set_close(result)
-                    stores = stores[:-1]
-                    result = result[-1].set_close(result)
-                    stores = stores[:-1]
-                elif yo_object.indent == last_store.inside_indent:
-                    pass
-                elif yo_object.indent > last_store.inside_indent:
-                    raise YoSyntaxError(f"Неуместный отступ {pre_object}")
+                while yo_object.indent != last_store.inside_indent:
+                    if yo_object.indent < last_store.inside_indent:
+                        result = last_store.args[-1].check_close(result)
+                        result = last_store.args[-1].set_close(result)
+                        result = last_store.set_close(result)
+                        stores = stores[:-1]
+                        result = result[-1].set_close(result)
+                        stores = stores[:-1]
+                    elif yo_object.indent > last_store.inside_indent:
+                        raise YoSyntaxError(f"Неуместный отступ {pre_object}")
+                    last_store = stores[-1]
     elif pre_object.args_number == "no":
         if yo_object.args_number == "binary":
             pre_object.parent.remove_arg()

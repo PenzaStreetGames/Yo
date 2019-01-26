@@ -1,0 +1,5 @@
+while (3):
+    if true:
+        if true:
+            if true:
+                a = 0
