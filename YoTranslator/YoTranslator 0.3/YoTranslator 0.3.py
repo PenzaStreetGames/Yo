@@ -288,7 +288,6 @@ class YoObject:
 def translate(program):
     # token_split
     global stores
-    program += "\n"
     pre_symbol, word, pre_group, quote = "\n", "", "line feed", ""
     result = []
     result += [YoObject(None, {"group": "program",
@@ -525,7 +524,8 @@ def syntax_analise(yo_object, result, stores):
                                      "sub_group": "call_expression",
                                      "name": "("})
         yo_object.add_arg(new_object)
-        result += [yo_object, new_object]
+        result[-1] = yo_object
+        result += [new_object]
         stores += [new_object]
     # обработка структурных слов
     elif (last_store.group == "structure_word" and
