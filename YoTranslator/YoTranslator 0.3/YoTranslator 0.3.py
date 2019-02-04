@@ -285,6 +285,17 @@ class YoObject:
         return number
 
 
+class YoCodeObject:
+
+    def __init__(self, type, name):
+        self.type = type
+        self.name = name
+        self.args = []
+
+    def add_argument(self, argument):
+        self.args += [argument]
+
+
 def translate(program):
     # token_split
     global stores
@@ -360,6 +371,8 @@ def translate(program):
     stores[0].set_close(result)
     result = stores[0].check_close(result)
     stores = stores[:-1]
+
+    digit_res = materialization([], result[0])
 
     return result
 
@@ -743,6 +756,39 @@ def is_object(token):
             return True
         return False
     raise YoSyntaxError(f"Неизвестный объект {token}")
+
+
+def materialization(commands, yo_object):
+    for child in yo_object.args:
+        commands = materialization(commands, child)
+    if yo_object.sub_group == "number":
+        commands = add_command(commands, "non", "Crt", "int", yo_object.name)
+    elif yo_object.sub_group == "logic":
+        value = "1" if yo_object.name == "true" else "0"
+        commands = add_command(commands, "non", "Crt", "log", value)
+    elif yo_object.sub_group == "name":
+        commands = add_command(commands, "non", "Crt", "str", yo_object.name)
+        name = YoCodeObject("Str", yo_object.name)
+        new_command = YoCodeObject("Non", "Crt")
+        new_command.add_argument(name)
+        commands += [new_command]
+        new_command = YoCodeObject("Non", "Pop")
+        link = YoCodeObject("Lnk", "a")
+        new_command.add_argument(link)
+        commands += [new_command]
+        new_command = YoCodeObject("Non", "Fnd")
+        link = YoCodeObject("Lnk", "a")
+        new_command.add_argument(link)
+        commands += [new_command]
+    return commands
+
+
+def add_command(commands, command_type, command_name, arg_type, arg_name):
+    command = YoCodeObject(command_type, command_name)
+    arg = YoCodeObject(arg_type, arg_name)
+    command.add_argument(arg)
+    commands += [command]
+    return commands
 
 
 if __name__ == '__main__':
