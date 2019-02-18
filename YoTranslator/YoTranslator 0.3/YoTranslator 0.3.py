@@ -266,7 +266,7 @@ class YoObject:
             result = self.sub_group
         result += " " + self.name
         for arg in self.args:
-            result += "\n" + "    " * self.get_nesting(0) + arg.__repr__()
+            result += "\n" + "    " * self.get_nesting(1) + arg.__repr__()
         return result
 
     def __repr__(self):
@@ -276,7 +276,7 @@ class YoObject:
             result = self.sub_group
         result += " " + self.name
         for arg in self.args:
-            result += "\n" + "    " * self.get_nesting(0) + arg.__repr__()
+            result += "\n" + "    " * self.get_nesting(1) + arg.__repr__()
         return result
 
     def get_nesting(self, number):
@@ -285,15 +285,30 @@ class YoObject:
         return number
 
 
-class YoCodeObject:
+class Program:
 
-    def __init__(self, type, name):
-        self.type = type
+    def __init__(self, commands):
+        self.commands = commands
+
+    def insert(self, command, place):
+        self.commands.insert(command, place)
+
+    def add(self, command):
+        self.commands += [command]
+
+
+class Command:
+
+    def __init__(self, name, *arguments):
         self.name = name
-        self.args = []
+        self.args = arguments
 
-    def add_argument(self, argument):
-        self.args += [argument]
+
+class Argument:
+
+    def __init__(self, arg_type, value):
+        self.arg_type = arg_type
+        self.value = value
 
 
 def translate(program):
@@ -758,36 +773,75 @@ def is_object(token):
     raise YoSyntaxError(f"Неизвестный объект {token}")
 
 
-def materialization(commands, yo_object):
-    for child in yo_object.args:
-        commands = materialization(commands, child)
-    if yo_object.sub_group == "number":
-        commands = add_command(commands, "non", "Crt", "int", yo_object.name)
-    elif yo_object.sub_group == "logic":
-        value = "1" if yo_object.name == "true" else "0"
-        commands = add_command(commands, "non", "Crt", "log", value)
-    elif yo_object.sub_group == "name":
-        commands = add_command(commands, "non", "Crt", "str", yo_object.name)
-        name = YoCodeObject("Str", yo_object.name)
-        new_command = YoCodeObject("Non", "Crt")
-        new_command.add_argument(name)
-        commands += [new_command]
-        new_command = YoCodeObject("Non", "Pop")
-        link = YoCodeObject("Lnk", "a")
-        new_command.add_argument(link)
-        commands += [new_command]
-        new_command = YoCodeObject("Non", "Fnd")
-        link = YoCodeObject("Lnk", "a")
-        new_command.add_argument(link)
-        commands += [new_command]
-    return commands
+def get_vir_commands(yo_object):
+    commands = []
+    if yo_object.group == "object":
+        if yo_object.sub_group == "name":
+            commands = [Command("Crt", Argument("str", yo_object.name)),
+                        Command("Pop", Argument("lnk", "^a")),
+                        Command("Fnd", Argument("lnk", "*a"))]
+        elif yo_object.sub_group == "none":
+            commands = [Command("Crt", Argument("non", 0))]
+        elif yo_object.sub_group == "logic":
+            value = 1 if yo_object.name == "true" else 0
+            commands = [Command("Crt", Argument("log", value))]
+        elif yo_object.sub_group == "number":
+            commands = [Command("Crt", Argument("num", int(yo_object.name)))]
+        elif yo_object.sub_group == "string":
+            commands = [Command("Crt", Argument("str", yo_object.name))]
+        elif yo_object.sub_group == "list":
+            end_command_args = []
+            for i in range(len(yo_object.args)):
+                argument = yo_object.args[i]
+                commands += [get_vir_commands(argument)]
+                commands += [Command("Pop", Argument("lnk", f"^{i}"))]
+                end_command_args += [Argument("lnk", f"*{i}")]
+            commands += [Command("Crt", *end_command_args)]
+    elif yo_object.group == "expression":
+        if yo_object.sub_group == "(":
+            commands += [get_vir_commands(yo_object.args[0])]
+        elif yo_object.sub_group == "call_expression":
+            for child in yo_object.args:
+                commands += [get_vir_commands(child)]
+        elif yo_object.sub_group == "index_expression":
+            commands += [get_vir_commands(yo_object.args[0])]
+    elif yo_object.group == "sub_object":
+        commands += [get_vir_commands(yo_object.args[1]),
+                     get_vir_commands(yo_object.args[2])]
+        commands += [Command("Pop", Argument("lnk", "^a")),
+                     Command("Pop", Argument("lnk", "^b")),
+                     Command("Rar", Argument("lnk", "*a"),
+                             Argument("lnk", "*b"))]
+    elif yo_object.group == "call":
+        func_name = yo_object.args[0]
+        func_args = yo_object.args[1].args
+        length = len(func_args)
+        if func_name == "print":
+            if length == 1:
+                commands += [get_vir_commands(yo_object.args[1]),
+                             Command("Pop", Argument("lnk", "^a")),
+                             Command("Out", Argument("lnk", "*a"))]
+            else:
+                raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
+                                    f" {lenght}")
+        elif func_name == "input":
+            if length == 0:
+                commands += [Command("Inp")]
+            else:
+                raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
+                                    f" {lenght}")
+        elif func_name == "len":
+            if length == 1:
+                commands += [get_vir_commands(yo_object.args[1]),
+                             Command("Pop", Argument("lnk", "^a")),
+                             Command("Len", Argument("lnk", "*a"))]
+            else:
+                raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
+                                    f" {lenght}")
+        else:
+            raise YoSyntaxError(f"Функции не поддерживаются, кроме print,"
+                                f"len и input")
 
-
-def add_command(commands, command_type, command_name, arg_type, arg_name):
-    command = YoCodeObject(command_type, command_name)
-    arg = YoCodeObject(arg_type, arg_name)
-    command.add_argument(arg)
-    commands += [command]
     return commands
 
 
