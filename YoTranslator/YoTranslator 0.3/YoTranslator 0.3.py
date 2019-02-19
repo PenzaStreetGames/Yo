@@ -8,7 +8,7 @@ quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
 stores = []
-argument_words = ["while", "if"]
+argument_words = ["while", "if", "else if"]
 
 groups = {
     "punctuation": [",", ";", "\n", "}", ":", ")", "]"],
@@ -37,159 +37,177 @@ group_priority = {
 
 priority = {
     "object":
-    {
-        "name": 1,
-        "none": 1,
-        "logic": 1,
-        "number": 1,
-        "string": 1,
-        "list": 1
-    },
+        {
+            "name": 1,
+            "none": 1,
+            "logic": 1,
+            "number": 1,
+            "string": 1,
+            "list": 1
+        },
     "expression":
-    {
-        "(": 1,
-        "call_expression": 1,
-        "index_expression": 1
-    },
+        {
+            "(": 1,
+            "call_expression": 1,
+            "index_expression": 1
+        },
     "sub_object":
-    {
-        "[": 1,
-    },
+        {
+            "[": 1,
+        },
     "call":
-    {
-        "(": 1
-    },
+        {
+            "(": 1
+        },
     "math":
-    {
-        "+": 3,
-        "-": 3,
-        "*": 2,
-        "/": 2,
-        "%": 2,
-        "~": 1
-    },
+        {
+            "+": 3,
+            "-": 3,
+            "*": 2,
+            "/": 2,
+            "%": 2,
+            "~": 1
+        },
     "comparison":
-    {
-        "=?": 1,
-        ">": 1,
-        "<": 1,
-    },
+        {
+            "=?": 1,
+            ">": 1,
+            "<": 1,
+        },
     "logic":
-    {
-        "not": 1,
-        "and": 2,
-        "or": 3,
-        "xor": 3
-    },
+        {
+            "not": 1,
+            "and": 2,
+            "or": 3,
+            "xor": 3
+        },
     "equating":
-    {
-        "=": 1
-    },
+        {
+            "=": 1
+        },
     "punctuation":
-    {
-        ",": 1,
-        ";": 1,
-        ":": 1,
-        ")": 1,
-        "]": 1,
-        "{": 1,
-        "}": 1,
-        "\n": 1
-    },
+        {
+            ",": 1,
+            ";": 1,
+            ":": 1,
+            ")": 1,
+            "]": 1,
+            "{": 1,
+            "}": 1,
+            "\n": 1
+        },
     "structure_word":
-    {
-        "while": 1,
-        "if": 1,
-        "else": 1
-    },
+        {
+            "while": 1,
+            "if": 1,
+            "else": 1
+        },
     "indent":
-    {
-        "indent": 1
-    },
+        {
+            "indent": 1
+        },
     "program":
-    {
-        "indent_program": 1,
-        "scopes_program": 1,
-        "oneline_program": 1
-    }
+        {
+            "indent_program": 1,
+            "scopes_program": 1,
+            "oneline_program": 1
+        }
 }
 
 args_number = {
     "object":
-    {
-        "name": "no",
-        "none": "no",
-        "logic": "no",
-        "number": "no",
-        "string": "no",
-        "list": "many"
-    },
+        {
+            "name": "no",
+            "none": "no",
+            "logic": "no",
+            "number": "no",
+            "string": "no",
+            "list": "many"
+        },
     "expression":
-    {
-        "(": "many",
-        "index_expression": "many",
-        "call_expression": "many"
-    },
+        {
+            "(": "many",
+            "index_expression": "many",
+            "call_expression": "many"
+        },
     "sub_object":
-    {
-        "[": "many"
-    },
+        {
+            "[": "many"
+        },
     "call":
-    {
-        "(": "many"
-    },
+        {
+            "(": "many"
+        },
     "math":
-    {
-        "+": "binary",
-        "-": "binary",
-        "*": "binary",
-        "/": "binary",
-        "%": "binary",
-        "~": "unary"
-    },
+        {
+            "+": "binary",
+            "-": "binary",
+            "*": "binary",
+            "/": "binary",
+            "%": "binary",
+            "~": "unary"
+        },
     "comparison":
-    {
-        "=?": "binary",
-        ">": "binary",
-        "<": "binary"
-    },
+        {
+            "=?": "binary",
+            ">": "binary",
+            "<": "binary"
+        },
     "logic":
-    {
-        "not": "unary",
-        "and": "binary",
-        "or": "binary",
-        "xor": "binary"
-    },
+        {
+            "not": "unary",
+            "and": "binary",
+            "or": "binary",
+            "xor": "binary"
+        },
     "equating":
-    {
-        "=": "binary"
-    },
+        {
+            "=": "binary"
+        },
     "punctuation":
-    {
-        ",": "no",
-        ";": "no",
-        ":": "no",
-        ")": "no",
-        "]": "no",
-        "}": "no",
-        "\n": "no"
-    },
+        {
+            ",": "no",
+            ";": "no",
+            ":": "no",
+            ")": "no",
+            "]": "no",
+            "}": "no",
+            "\n": "no"
+        },
     "structure_word":
-    {
-        "while": "many",
-        "if": "many",
-        "else": "many"
-    },
+        {
+            "while": "many",
+            "if": "many",
+            "else": "many"
+        },
     "indent":
-    {
-        "indent": "no"
-    },
+        {
+            "indent": "no"
+        },
     "program":
-    {
-        "indent_program": "many",
-        "scopes_program": "many",
-        "oneline_program": "many"
-    }
+        {
+            "indent_program": "many",
+            "scopes_program": "many",
+            "oneline_program": "many"
+        }
+}
+
+virtual_commands = {
+    "[": "Rar",
+    "(": "Cal",
+    "+": "Add",
+    "-": "Sub",
+    "*": "Mul",
+    "/": "Div",
+    "%": "Mod",
+    "~": "Neg",
+    "=?": "Eql",
+    ">": "Grt",
+    "<": "Les",
+    "not": "Not",
+    "and": "And",
+    "or": "Or",
+    "xor": "Xor"
 }
 
 
@@ -244,7 +262,7 @@ class YoObject:
             return len(self.args) == 2
         elif self.args_number == "many":
             return self.close
-    
+
     def set_close(self, result):
         self.close = True
         if result[-1] == self:
@@ -362,7 +380,7 @@ def translate(program):
             else:
                 pass
         elif symbol in signs:
-            if not(pre_group == "sign" and word + symbol in sign_combos):
+            if not (pre_group == "sign" and word + symbol in sign_combos):
                 word, result = add_word(word, result)
             pre_group = "sign"
             word += symbol
@@ -386,8 +404,6 @@ def translate(program):
     stores[0].set_close(result)
     result = stores[0].check_close(result)
     stores = stores[:-1]
-
-    digit_res = materialization([], result[0])
 
     return result
 
@@ -549,7 +565,7 @@ def syntax_analise(yo_object, result, stores):
                 yo_object.add_arg(child)
             else:
                 raise YoSyntaxError(f"Неправильный запрос индекса {pre_object} "
-                        f"{yo_object}")
+                                    f"{yo_object}")
         new_object = YoObject(None, {"group": "expression",
                                      "sub_group": "call_expression",
                                      "name": "("})
@@ -774,6 +790,7 @@ def is_object(token):
 
 
 def get_vir_commands(yo_object):
+    global virtual_commands
     commands = []
     if yo_object.group == "object":
         if yo_object.sub_group == "name":
@@ -823,13 +840,13 @@ def get_vir_commands(yo_object):
                              Command("Out", Argument("lnk", "*a"))]
             else:
                 raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
-                                    f" {lenght}")
+                                    f" {length}")
         elif func_name == "input":
             if length == 0:
                 commands += [Command("Inp")]
             else:
                 raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
-                                    f" {lenght}")
+                                    f" {length}")
         elif func_name == "len":
             if length == 1:
                 commands += [get_vir_commands(yo_object.args[1]),
@@ -837,11 +854,68 @@ def get_vir_commands(yo_object):
                              Command("Len", Argument("lnk", "*a"))]
             else:
                 raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
-                                    f" {lenght}")
+                                    f" {length}")
         else:
             raise YoSyntaxError(f"Функции не поддерживаются, кроме print,"
                                 f"len и input")
-
+    elif yo_object.group == "math":
+        for child in yo_object.args:
+            commands += [get_vir_commands(child)]
+        func = virtual_commands[yo_object.sub_group]
+        if func != "Neg":
+            commands += [Command("Pop", Argument("lnk", "^b")),
+                         Command("Pop", Argument("lnk", "^a")),
+                         Command(func, Argument("lnk", "*a"),
+                                 Argument("lnk", "*b"))]
+        else:
+            commands += [Command("Pop", Argument("lnk", "^a")),
+                         Command(func, Argument("lnk", "*a"))]
+    elif yo_object.group == "comparison":
+        for child in yo_object.args:
+            commands += [get_vir_commands(child)]
+        func = virtual_commands[yo_object.sub_group]
+        commands += [Command("Pop", Argument("lnk", "^b")),
+                     Command("Pop", Argument("lnk", "^a")),
+                     Command(func, Argument("lnk", "*a"),
+                             Argument("lnk", "*b"))]
+    elif yo_object.group == "logic":
+        for child in yo_object.args:
+            commands += [get_vir_commands(child)]
+        func = virtual_commands[yo_object.sub_group]
+        if func != "Not":
+            commands += [Command("Pop", Argument("lnk", "^b")),
+                         Command("Pop", Argument("lnk", "^a")),
+                         Command(func, Argument("lnk", "*a"),
+                                 Argument("lnk", "*b"))]
+        else:
+            commands += [Command("Pop", Argument("lnk", "^a")),
+                         Command(func, Argument("lnk", "*a"))]
+    elif yo_object.group == "equating":
+        for child in yo_object.args:
+            commands += [get_vir_commands(child)]
+        commands += [Command("Pop", Argument("lnk", "^b")),
+                     Command("Pop", Argument("lnk", "^a")),
+                     Command("Eqt", Argument("lnk", "*a"),
+                             Argument("lnk", "*b"))]
+    elif yo_object.group == "structure_word":
+        if yo_object.sub_group in ["if", "else if"]:
+            commands += [get_vir_commands(yo_object.args[0]),
+                         Command("Pop", Argument("lnk", "^a")),
+                         Command("Jif", Argument("lnk", "*a"),
+                                 Argument("lnk", "^next")),
+                         get_vir_commands(yo_object.args[1]),
+                         Command("Jmp", Argument("lnk", "^end"))]
+        elif yo_object.sub_group == "else":
+            commands += [get_vir_commands(yo_object.args[0])]
+        elif yo_object.sub_group == "while":
+            commands += [get_vir_commands(yo_object.args[0]),
+                         Command("Pop", Argument("lnk", "^a")),
+                         Command("Jif", Argument("lnk", "*a"),
+                                 Argument("lnk", "^end")),
+                         get_vir_commands(yo_object.args[1]),
+                         Command("Jmp", Argument("lnk", "^begin"))]
+    elif yo_object.group == "program":
+        pass
     return commands
 
 
