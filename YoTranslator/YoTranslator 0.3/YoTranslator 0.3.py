@@ -321,12 +321,18 @@ class Command:
         self.name = name
         self.args = arguments
 
+    def __str__(self):
+        return f"{self.name} {' '.join(map(lambda arg: str(arg), self.args))}"
+
 
 class Argument:
 
     def __init__(self, arg_type, value):
         self.arg_type = arg_type
         self.value = value
+
+    def __str__(self):
+        return f"{self.arg_type} {str(self.value)}"
 
 
 def translate(program):
@@ -810,32 +816,32 @@ def get_vir_commands(yo_object):
             end_command_args = []
             for i in range(len(yo_object.args)):
                 argument = yo_object.args[i]
-                commands += [get_vir_commands(argument)]
+                commands += get_vir_commands(argument)
                 commands += [Command("Pop", Argument("lnk", f"^{i}"))]
                 end_command_args += [Argument("lnk", f"*{i}")]
             commands += [Command("Crt", *end_command_args)]
     elif yo_object.group == "expression":
         if yo_object.sub_group == "(":
-            commands += [get_vir_commands(yo_object.args[0])]
+            commands += get_vir_commands(yo_object.args[0])
         elif yo_object.sub_group == "call_expression":
             for child in yo_object.args:
-                commands += [get_vir_commands(child)]
+                commands += get_vir_commands(child)
         elif yo_object.sub_group == "index_expression":
-            commands += [get_vir_commands(yo_object.args[0])]
+            commands += get_vir_commands(yo_object.args[0])
     elif yo_object.group == "sub_object":
-        commands += [get_vir_commands(yo_object.args[1]),
-                     get_vir_commands(yo_object.args[2])]
+        commands += [*get_vir_commands(yo_object.args[0]),
+                     *get_vir_commands(yo_object.args[1])]
         commands += [Command("Pop", Argument("lnk", "^a")),
                      Command("Pop", Argument("lnk", "^b")),
                      Command("Rar", Argument("lnk", "*a"),
                              Argument("lnk", "*b"))]
     elif yo_object.group == "call":
-        func_name = yo_object.args[0]
+        func_name = yo_object.args[0].name
         func_args = yo_object.args[1].args
         length = len(func_args)
         if func_name == "print":
             if length == 1:
-                commands += [get_vir_commands(yo_object.args[1]),
+                commands += [*get_vir_commands(yo_object.args[1]),
                              Command("Pop", Argument("lnk", "^a")),
                              Command("Out", Argument("lnk", "*a"))]
             else:
@@ -849,18 +855,18 @@ def get_vir_commands(yo_object):
                                     f" {length}")
         elif func_name == "len":
             if length == 1:
-                commands += [get_vir_commands(yo_object.args[1]),
+                commands += [*get_vir_commands(yo_object.args[1]),
                              Command("Pop", Argument("lnk", "^a")),
                              Command("Len", Argument("lnk", "*a"))]
             else:
                 raise YoSyntaxError(f"Неправильное число аргументов {func_name}"
                                     f" {length}")
         else:
-            raise YoSyntaxError(f"Функции не поддерживаются, кроме print,"
-                                f"len и input")
+            raise YoSyntaxError(f"Функции не поддерживаются, кроме print, "
+                                f"len и input, но не {func_name}")
     elif yo_object.group == "math":
         for child in yo_object.args:
-            commands += [get_vir_commands(child)]
+            commands += get_vir_commands(child)
         func = virtual_commands[yo_object.sub_group]
         if func != "Neg":
             commands += [Command("Pop", Argument("lnk", "^b")),
@@ -872,7 +878,7 @@ def get_vir_commands(yo_object):
                          Command(func, Argument("lnk", "*a"))]
     elif yo_object.group == "comparison":
         for child in yo_object.args:
-            commands += [get_vir_commands(child)]
+            commands += get_vir_commands(child)
         func = virtual_commands[yo_object.sub_group]
         commands += [Command("Pop", Argument("lnk", "^b")),
                      Command("Pop", Argument("lnk", "^a")),
@@ -880,7 +886,7 @@ def get_vir_commands(yo_object):
                              Argument("lnk", "*b"))]
     elif yo_object.group == "logic":
         for child in yo_object.args:
-            commands += [get_vir_commands(child)]
+            commands += get_vir_commands(child)
         func = virtual_commands[yo_object.sub_group]
         if func != "Not":
             commands += [Command("Pop", Argument("lnk", "^b")),
@@ -892,30 +898,33 @@ def get_vir_commands(yo_object):
                          Command(func, Argument("lnk", "*a"))]
     elif yo_object.group == "equating":
         for child in yo_object.args:
-            commands += [get_vir_commands(child)]
+            commands += get_vir_commands(child)
         commands += [Command("Pop", Argument("lnk", "^b")),
                      Command("Pop", Argument("lnk", "^a")),
                      Command("Eqt", Argument("lnk", "*a"),
                              Argument("lnk", "*b"))]
     elif yo_object.group == "structure_word":
         if yo_object.sub_group in ["if", "else if"]:
-            commands += [get_vir_commands(yo_object.args[0]),
+            commands += [*get_vir_commands(yo_object.args[0]),
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
                                  Argument("lnk", "^next")),
-                         get_vir_commands(yo_object.args[1]),
+                         *get_vir_commands(yo_object.args[1]),
                          Command("Jmp", Argument("lnk", "^end"))]
         elif yo_object.sub_group == "else":
-            commands += [get_vir_commands(yo_object.args[0])]
+            commands += [*get_vir_commands(yo_object.args[0])]
         elif yo_object.sub_group == "while":
-            commands += [get_vir_commands(yo_object.args[0]),
+            commands += [*get_vir_commands(yo_object.args[0]),
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
                                  Argument("lnk", "^end")),
-                         get_vir_commands(yo_object.args[1]),
+                         *get_vir_commands(yo_object.args[1]),
                          Command("Jmp", Argument("lnk", "^begin"))]
+        commands += [Command("Psh", Argument("lnk", "^rubbish"))]
     elif yo_object.group == "program":
-        pass
+        for child in yo_object.args:
+            commands += [*get_vir_commands(child),
+                         Command("Pop", Argument("lnk", "^rubbish"))]
     return commands
 
 
@@ -923,3 +932,5 @@ if __name__ == '__main__':
     with open(f"{input()}.yotext", "r", encoding="utf-8") as infile:
         result = translate(infile.read())
     print(result[0])
+    vir_commands = get_vir_commands(result[0])
+    print(*vir_commands, sep="\n")
