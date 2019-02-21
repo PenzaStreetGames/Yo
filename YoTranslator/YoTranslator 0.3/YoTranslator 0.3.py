@@ -1,5 +1,5 @@
-key_words = ["while", "if", "else", "break", "continue", "none", "true",
-             "false", "not", "and", "or", "xor"]
+key_words = ["while", "if", "else", "elseif", "break", "continue", "none",
+             "true", "false", "not", "and", "or", "xor"]
 functions = ["print", "input", "len"]
 signs = ["=", "[", "]", "(", ")", "{", "}", ",", ";", ":", "+", "-", "*", "/",
          "%", "|", ">", "<", "?"]
@@ -8,7 +8,8 @@ quotes = ["'", '"']
 comment = "#"
 space, empty = " ", ""
 stores = []
-argument_words = ["while", "if", "else if"]
+argument_words = ["while", "if", "elseif"]
+branching_words = ["if", "elseif", "else"]
 
 groups = {
     "punctuation": [",", ";", "\n", "}", ":", ")", "]"],
@@ -16,7 +17,7 @@ groups = {
     "comparison": [">", "=?", "<"],
     "logic": ["not", "and", "or", "xor"],
     "equating": ["="],
-    "structure_words": ["if", "else", "while", "break", "continue"],
+    "structure_words": ["if", "else", "elseif", "while", "break", "continue"],
     "logic_values": ["true", "false"]
 }
 
@@ -49,7 +50,8 @@ priority = {
         {
             "(": 1,
             "call_expression": 1,
-            "index_expression": 1
+            "index_expression": 1,
+            "branching": 1
         },
     "sub_object":
         {
@@ -100,7 +102,8 @@ priority = {
         {
             "while": 1,
             "if": 1,
-            "else": 1
+            "else": 1,
+            "elseif": 1
         },
     "indent":
         {
@@ -128,7 +131,8 @@ args_number = {
         {
             "(": "many",
             "index_expression": "many",
-            "call_expression": "many"
+            "call_expression": "many",
+            "branching": "many"
         },
     "sub_object":
         {
@@ -178,7 +182,8 @@ args_number = {
         {
             "while": "many",
             "if": "many",
-            "else": "many"
+            "else": "many",
+            "elseif": "many"
         },
     "indent":
         {
@@ -632,9 +637,13 @@ def syntax_analise(yo_object, result, stores):
             result[-1].close = True
         elif result[-1].group == "call":
             result[-1].close = True
-        elif result[-1].group == "structure_word" and yo_object.name == "}":
-            result = result[-1].set_close(result)
-            stores = stores[:-1]
+        elif result[-1].group == "structure_word":
+            if last_store.sub_group == "scopes_program":
+                result = result[-1].set_close(result)
+                stores = stores[:-1]
+            elif last_store.sub_group == "oneline_program":
+                result = result[-1].set_close(result)
+                stores = stores[:-1]
     elif yo_object.name in groups["punctuation"]:
         raise YoSyntaxError(f"Недопустимый в данном месте знак пунктуации "
                             f"{yo_object}")
