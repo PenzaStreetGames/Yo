@@ -590,6 +590,9 @@ def syntax_analise(yo_object, result, stores):
         result = pre_object.set_close(result)
         result = result[-1].set_close(result)
         stores = stores[:-1]
+    # обработка ветвления
+    elif yo_object.group == "structure_word" and yo_object.name == "if":
+        pass
     # обработка структурных слов
     elif (last_store.group == "structure_word" and
           yo_object.group == "program"):
