@@ -913,7 +913,7 @@ def get_vir_commands(yo_object):
                      Command("Eqt", Argument("lnk", "*a"),
                              Argument("lnk", "*b"))]
     elif yo_object.group == "structure_word":
-        if yo_object.sub_group in ["if", "else if"]:
+        if yo_object.sub_group in ["if", "elseif"]:
             commands += [*get_vir_commands(yo_object.args[0]),
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
