@@ -10,6 +10,7 @@ space, empty = " ", ""
 stores = []
 argument_words = ["while", "if", "elseif"]
 branching_words = ["if", "elseif", "else"]
+branching_continue_words = ["elseif", "else"]
 
 groups = {
     "punctuation": [",", ";", "\n", "}", ":", ")", "]"],
@@ -252,7 +253,10 @@ class YoObject:
                 raise YoSyntaxError(f"Неправильное число аргументов {self}")
         elif self.args_number == "many":
             if not self.close:
-                raise YoSyntaxError("Незакрытое перечисление")
+                if self.sub_group == "branching":
+                    result = self.set_close(result)
+                else:
+                    raise YoSyntaxError(f"Незакрытое перечисление {self}")
         for arg in self.args:
             result = arg.check_close(result)
             result = arg.set_close(result).copy()
@@ -517,6 +521,8 @@ def get_punctuation(yo_object):
         return [","], [")"]
     elif yo_object.sub_group == "index_expression":
         return [], ["]"]
+    elif yo_object.sub_group == "branching":
+        return ["\n"], []
     elif yo_object.group == "expression":
         return [], [")"]
     else:
@@ -590,10 +596,27 @@ def syntax_analise(yo_object, result, stores):
         result = pre_object.set_close(result)
         result = result[-1].set_close(result)
         stores = stores[:-1]
-    # обработка ветвления
-    elif yo_object.group == "structure_word" and yo_object.name == "if":
-        pass
-    # обработка структурных слов
+    # обработка if
+    elif (yo_object.group == "structure_word" and yo_object.name == "if" and
+          last_store.group == "program"):
+        new_object = YoObject(None, {"group": "expression",
+                                     "sub_group": "branching",
+                                     "name": "branching"})
+        new_object.add_arg(yo_object)
+        last_store.add_arg(new_object)
+        result += [new_object, yo_object]
+        stores += [new_object, yo_object]
+    # обработка elseif и else
+    elif (yo_object.group == "structure_word" and
+          yo_object.name in branching_continue_words):
+        if (last_store.sub_group == "branching" and
+                last_store.args[-1].name != "else"):
+            last_store.add_arg(yo_object)
+            result += [yo_object]
+            stores += [yo_object]
+        else:
+            raise YoSyntaxError("Неправильное использование else и elseif")
+    # обработка содержимого структур
     elif (last_store.group == "structure_word" and
           yo_object.group == "program"):
         if last_store.name in argument_words:
@@ -840,6 +863,10 @@ def get_vir_commands(yo_object):
                 commands += get_vir_commands(child)
         elif yo_object.sub_group == "index_expression":
             commands += get_vir_commands(yo_object.args[0])
+        elif yo_object.sub_group == "branching":
+            for branch in yo_object.args:
+                commands += [*get_vir_commands(branch),
+                             Command("Jmp", Argument("lnk", "^end"))]
     elif yo_object.group == "sub_object":
         commands += [*get_vir_commands(yo_object.args[0]),
                      *get_vir_commands(yo_object.args[1])]
@@ -921,8 +948,7 @@ def get_vir_commands(yo_object):
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
                                  Argument("lnk", "^next")),
-                         *get_vir_commands(yo_object.args[1]),
-                         Command("Jmp", Argument("lnk", "^end"))]
+                         *get_vir_commands(yo_object.args[1])]
         elif yo_object.sub_group == "else":
             commands += [*get_vir_commands(yo_object.args[0])]
         elif yo_object.sub_group == "while":
