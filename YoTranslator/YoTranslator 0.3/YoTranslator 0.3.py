@@ -532,6 +532,17 @@ def get_punctuation(yo_object):
 def syntax_analise(yo_object, result, stores):
     pre_object = result[-1]
     last_store = stores[-1]
+    # обработка закрытия ветвления
+    if (last_store.sub_group == "branching" and
+            last_store.args[-1].is_close() and
+            yo_object.name not in branching_continue_words and
+            yo_object.name != "\n"):
+        print(yo_object)
+        result = last_store.check_close(result)
+        result = last_store.set_close(result)
+        stores = stores[:-1]
+        last_store = stores[-1]
+        pre_object = result[-1]
     # обработка вызова индекса
     if yo_object.group == "sub_object":
         if pre_object.args_number == "no":
@@ -697,21 +708,21 @@ def syntax_analise(yo_object, result, stores):
             result[-1] = yo_object
         else:
             raise YoSyntaxError(f"Неразделённые объекты "
-                                f"{pre_object} {yo_object}")
+                                f"{pre_object}\n{yo_object}")
     elif pre_object.args_number == "unary":
         if yo_object.args_number == "no":
             if len(pre_object.args) == 0:
                 pre_object.add_arg(yo_object)
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
         elif yo_object.args_number == "unary":
             if len(pre_object.args) == 0:
                 pre_object.add_arg(yo_object)
                 result += [yo_object]
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
         elif yo_object.args_number == "binary":
             if len(pre_object.args) == 1:
                 pre_object = pre_object.parent.remove_arg()
@@ -720,7 +731,7 @@ def syntax_analise(yo_object, result, stores):
                 result[-1] = yo_object
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
         elif yo_object.args_number == "many":
             if len(pre_object.args) == 0:
                 pre_object.add_arg(yo_object)
@@ -728,21 +739,21 @@ def syntax_analise(yo_object, result, stores):
                 stores += [yo_object]
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
     elif pre_object.args_number == "binary":
         if yo_object.args_number == "no":
             if len(pre_object.args) == 1:
                 pre_object.add_arg(yo_object)
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
         elif yo_object.args_number == "unary":
             if len(pre_object.args) == 1:
                 pre_object.add_arg(yo_object)
                 result += [yo_object]
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
         elif yo_object.args_number == "binary":
             if len(pre_object.args) == 2:
                 priority = ""
@@ -772,7 +783,7 @@ def syntax_analise(yo_object, result, stores):
                 stores += [yo_object]
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
     elif pre_object.args_number == "many":
         if pre_object.close:
             if yo_object.args_number == "binary":
@@ -782,7 +793,7 @@ def syntax_analise(yo_object, result, stores):
                 result[-1] = yo_object
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
         else:
             if not last_store.close:
                 if yo_object.args_number in ["no", "unary"]:
@@ -794,10 +805,10 @@ def syntax_analise(yo_object, result, stores):
                     stores += [yo_object]
                 elif yo_object.args_number == "many":
                     raise YoSyntaxError(f"Неразделённые объекты "
-                                        f"{pre_object} {yo_object}")
+                                        f"{pre_object}\n{yo_object}")
             else:
                 raise YoSyntaxError(f"Неразделённые объекты "
-                                    f"{pre_object} {yo_object}")
+                                    f"{pre_object}\n{yo_object}")
     else:
         raise YoSyntaxError(f"Неизвестный объект {yo_object}")
     return result, stores
