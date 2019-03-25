@@ -33,7 +33,8 @@ group_priority = {
     "logic": 7,
     "equating": 8,
     "punctuation": 9,
-    "structure_word": 10,
+    "interrupt": 10,
+    "structure_word": 11,
     "indent": 15,
     "program": 20
 }
@@ -99,6 +100,11 @@ priority = {
             "{": 1,
             "}": 1,
             "\n": 1
+        },
+    "interrupt":
+        {
+            "break": 1,
+            "continue": 1
         },
     "structure_word":
         {
@@ -179,6 +185,11 @@ args_number = {
             "]": "no",
             "}": "no",
             "\n": "no"
+        },
+    "interrupt":
+        {
+            "break": "no",
+            "continue": "no"
         },
     "structure_word":
         {
@@ -365,6 +376,17 @@ class Argument:
         return f"{self.arg_type} {str(self.value)}"
 
 
+class Mark:
+    """метка байтового кода"""
+
+    def __init__(self, name):
+        """инициализация метки"""
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+
 def translate(program):
     """обработка символов и превращение их в слова"""
     # token_split
@@ -482,6 +504,8 @@ def token_analise(token, result):
         group = "logic"
     elif token in groups["structure_words"]:
         group = "structure_word"
+    elif token in groups["interrupt_words"]:
+        group = "interrupt"
     elif token == "=":
         group = "equating"
     elif token == "[":
@@ -541,6 +565,8 @@ def get_punctuation(yo_object):
         return [], [";", "\n"]
     elif yo_object.group == "structure_word":
         return [":", "{"], ["}"]
+    elif yo_object.group == "interrupt":
+        return [], []
     elif yo_object.sub_group == "list":
         return [","], ["]"]
     elif yo_object.sub_group == "call_expression":
@@ -612,7 +638,7 @@ def syntax_analise(yo_object, result, stores):
                 pre_object.add_arg(yo_object)
                 yo_object.add_arg(child)
             else:
-                raise YoSyntaxError(f"Неправильный запрос индекса {pre_object} "
+                raise YoSyntaxError(f"Неправильный вызов функции {pre_object} "
                                     f"{yo_object}")
         elif pre_object.args_number == "many":
             if is_object(pre_object):
@@ -905,8 +931,10 @@ def get_vir_commands(yo_object):
             commands += get_vir_commands(yo_object.args[0])
         elif yo_object.sub_group == "branching":
             for branch in yo_object.args:
-                commands += [*get_vir_commands(branch),
+                commands += [Mark("#branch_begin"),
+                             *get_vir_commands(branch),
                              Command("Jmp", Argument("lnk", "^end"))]
+            commands += [Mark("#branching_end")]
     elif yo_object.group == "sub_object":
         commands += [*get_vir_commands(yo_object.args[0]),
                      *get_vir_commands(yo_object.args[1])]
@@ -982,6 +1010,11 @@ def get_vir_commands(yo_object):
                      Command("Pop", Argument("lnk", "^a")),
                      Command("Eqt", Argument("lnk", "*a"),
                              Argument("lnk", "*b"))]
+    elif yo_object.group == "interrupt":
+        if yo_object.name == "break":
+            commands += [Command("Jmp", Argument("lnk", "^cycle_end"))]
+        elif yo_object.name == "continue":
+            commands += [Command("Jmp", Argument("lnk", "^cycle_begin"))]
     elif yo_object.group == "structure_word":
         if yo_object.sub_group in ["if", "elseif"]:
             commands += [*get_vir_commands(yo_object.args[0]),
@@ -992,12 +1025,14 @@ def get_vir_commands(yo_object):
         elif yo_object.sub_group == "else":
             commands += [*get_vir_commands(yo_object.args[0])]
         elif yo_object.sub_group == "while":
-            commands += [*get_vir_commands(yo_object.args[0]),
+            commands += [Mark("#cycle_begin"),
+                         *get_vir_commands(yo_object.args[0]),
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
                                  Argument("lnk", "^end")),
                          *get_vir_commands(yo_object.args[1]),
-                         Command("Jmp", Argument("lnk", "^begin"))]
+                         Command("Jmp", Argument("lnk", "^cycle_begin")),
+                         Mark("#cycle_end")]
         commands += [Command("Psh", Argument("lnk", "^rubbish"))]
     elif yo_object.group == "program":
         for child in yo_object.args:
