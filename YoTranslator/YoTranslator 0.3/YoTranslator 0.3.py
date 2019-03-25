@@ -11,17 +11,18 @@ stores = []
 argument_words = ["while", "if", "elseif"]
 branching_words = ["if", "elseif", "else"]
 branching_continue_words = ["elseif", "else"]
-
+# группы ключевых слов
 groups = {
     "punctuation": [",", ";", "\n", "}", ":", ")", "]"],
     "math": ["+", "-", "*", "/", "%"],
     "comparison": [">", "=?", "<"],
     "logic": ["not", "and", "or", "xor"],
     "equating": ["="],
-    "structure_words": ["if", "else", "elseif", "while", "break", "continue"],
-    "logic_values": ["true", "false"]
+    "structure_words": ["if", "else", "elseif", "while"],
+    "logic_values": ["true", "false"],
+    "interrupt_words": ["break", "continue"],
 }
-
+# приоритет групп токенов
 group_priority = {
     "object": 1,
     "expression": 2,
@@ -36,7 +37,7 @@ group_priority = {
     "indent": 15,
     "program": 20
 }
-
+# приоритет конкретных токенов в группе
 priority = {
     "object":
         {
@@ -117,7 +118,7 @@ priority = {
             "oneline_program": 1
         }
 }
-
+# число аргументов у токена
 args_number = {
     "object":
         {
@@ -197,7 +198,7 @@ args_number = {
             "oneline_program": "many"
         }
 }
-
+# соответствие токенов и виртуальных команд
 virtual_commands = {
     "[": "Rar",
     "(": "Cal",
@@ -218,16 +219,20 @@ virtual_commands = {
 
 
 class TokenError(Exception):
+    """Ошибка считывания токена"""
     pass
 
 
 class YoSyntaxError(Exception):
+    """Синтаксическая ошибка языка"""
     pass
 
 
 class YoObject:
+    """объект кода"""
 
     def __init__(self, parent, func):
+        """инициализация объекта"""
         self.parent = parent
         self.func = func
         self.args = []
@@ -243,6 +248,7 @@ class YoObject:
         self.inside_indent = 0
 
     def check_close(self, result):
+        """проверка на возможность закрытия"""
         if self.args_number == "no":
             pass
         elif self.args_number == "unary":
@@ -263,6 +269,7 @@ class YoObject:
         return result
 
     def is_close(self):
+        """закрыт ли объект для новых аргументов"""
         if self.args_number == "no":
             return len(self.args) == 0
         elif self.args_number == "unary":
@@ -273,20 +280,24 @@ class YoObject:
             return self.close
 
     def set_close(self, result):
+        """закрытие объекта для новых аргументов"""
         self.close = True
         if result[-1] == self:
             result = result[:-1]
         return result
 
     def add_arg(self, yo_object):
+        """добавление аргумента"""
         self.args += [yo_object]
         yo_object.parent = self
 
     def remove_arg(self):
+        """удаление аргумента"""
         yo_object = self.args.pop()
         return yo_object
 
     def __str__(self):
+        """строковое представление объекта"""
         if self.sub_group == self.name:
             result = self.group
         else:
@@ -297,6 +308,7 @@ class YoObject:
         return result
 
     def __repr__(self):
+        """тоже представление объекта"""
         if self.sub_group == self.name:
             result = self.group
         else:
@@ -307,26 +319,33 @@ class YoObject:
         return result
 
     def get_nesting(self, number):
+        """получить уровень вложенности объекта"""
         if self.parent is not None:
             number = self.parent.get_nesting(number + 1)
         return number
 
 
 class Program:
+    """программа байтовых команд"""
 
     def __init__(self, commands):
+        """инициализация с загрузкой команд"""
         self.commands = commands
 
     def insert(self, command, place):
+        """вставить команду в нужное место"""
         self.commands.insert(command, place)
 
     def add(self, command):
+        """добавить команду"""
         self.commands += [command]
 
 
 class Command:
+    """байтовая команда"""
 
     def __init__(self, name, *arguments):
+        """инициализация команды"""
         self.name = name
         self.args = arguments
 
@@ -335,8 +354,10 @@ class Command:
 
 
 class Argument:
+    """аргумент байтовой команды"""
 
     def __init__(self, arg_type, value):
+        """инициализация аргумента"""
         self.arg_type = arg_type
         self.value = value
 
@@ -345,6 +366,7 @@ class Argument:
 
 
 def translate(program):
+    """обработка символов и превращение их в слова"""
     # token_split
     global stores
     program += "\n\n"
@@ -424,6 +446,7 @@ def translate(program):
 
 
 def add_word(word, result):
+    """добавление токена к программе"""
     global stores
     if word != empty:
         obj = token_analise(word, result)
@@ -432,6 +455,7 @@ def add_word(word, result):
 
 
 def add_indent(result):
+    """добавление отступа"""
     global stores
     obj = token_analise("", result)
     result, stores = syntax_analise(obj, result, stores)
@@ -439,6 +463,7 @@ def add_indent(result):
 
 
 def token_analise(token, result):
+    """смысловой анализ токена"""
     group, sub_group = "", ""
     pre_token = result[-1]
     if token.startswith(space) or token == empty:
@@ -507,6 +532,7 @@ def token_analise(token, result):
 
 
 def get_punctuation(yo_object):
+    """получение знаков препинания для токена"""
     if yo_object.sub_group == "indent_program":
         return [";", "\n"], []
     elif yo_object.sub_group == "scopes_program":
@@ -530,6 +556,7 @@ def get_punctuation(yo_object):
 
 
 def syntax_analise(yo_object, result, stores):
+    """смысловой анализ токена в синтаксическом дереве программы"""
     pre_object = result[-1]
     last_store = stores[-1]
     # обработка закрытия ветвления
@@ -815,6 +842,7 @@ def syntax_analise(yo_object, result, stores):
 
 
 def is_object(token):
+    """является ли токен объектом"""
     objects = ["sub_object", "call", "object", "expression"]
     if token.args_number == "no":
         if token.group in objects:
@@ -842,6 +870,7 @@ def is_object(token):
 
 
 def get_vir_commands(yo_object):
+    """выдать набор байтовых команд для токена"""
     global virtual_commands
     commands = []
     if yo_object.group == "object":
@@ -978,7 +1007,8 @@ def get_vir_commands(yo_object):
 
 
 if __name__ == '__main__':
-    with open(f"{input()}.yotext", "r", encoding="utf-8") as infile:
+    file = input()
+    with open(f"{file}.yotext", "r", encoding="utf-8") as infile:
         result = translate(infile.read())
     print(result[0])
     vir_commands = get_vir_commands(result[0])
