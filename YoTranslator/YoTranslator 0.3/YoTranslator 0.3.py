@@ -666,6 +666,8 @@ def syntax_analise(yo_object, result, stores):
         new_object = YoObject(None, {"group": "expression",
                                      "sub_group": "branching",
                                      "name": "branching"})
+        new_object.indent = pre_object.inside_indent
+        new_object.inside_indent = new_object.indent
         new_object.add_arg(yo_object)
         last_store.add_arg(new_object)
         result += [new_object, yo_object]
