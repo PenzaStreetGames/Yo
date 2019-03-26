@@ -227,6 +227,15 @@ virtual_commands = {
     "or": "Or",
     "xor": "Xor"
 }
+# байтовая длина системных типов
+vir_args_size = {
+    "non": 1,
+    "lnk": 1,
+    "log": 1,
+    "num": 1,
+    "str": "many",
+    "lst": 1
+}
 
 
 class TokenError(Exception):
@@ -353,13 +362,13 @@ class YoObject:
             self.inside_indent = indent
 
 
-
 class Program:
     """программа байтовых команд"""
 
     def __init__(self, commands):
         """инициализация с загрузкой команд"""
         self.commands = commands
+        self.next_cell = 0
 
     def insert(self, command, place):
         """вставить команду в нужное место"""
@@ -367,7 +376,12 @@ class Program:
 
     def add(self, command):
         """добавить команду"""
+        command.cell = self.next_cell
         self.commands += [command]
+        self.next_cell += command.get_size()
+
+    def __str__(self):
+        return "\n".join(map(str, self.commands))
 
 
 class Command:
@@ -377,9 +391,27 @@ class Command:
         """инициализация команды"""
         self.name = name
         self.args = arguments
+        self.cell = 0
+        self.size = self.get_size()
+
+    def set_cell(self, cell):
+        self.cell = cell
+        arg_cell = cell + 2
+        for arg in self.args:
+            arg.set_cell(arg_cell)
+            arg_cell += arg.get_size()
+
+
+    def get_size(self):
+        """длина команды в ячейках"""
+        length = 2
+        for arg in self.args:
+            length += arg.get_size() + 1
+        return length
 
     def __str__(self):
-        return f"{self.name} {' '.join(map(lambda arg: str(arg), self.args))}"
+        return f"{self.cell} {self.name} " \
+               f"{' '.join(map(lambda arg: str(arg), self.args))}"
 
 
 class Argument:
@@ -389,6 +421,18 @@ class Argument:
         """инициализация аргумента"""
         self.arg_type = arg_type
         self.value = value
+        self.cell = 0
+
+    def set_cell(self, cell):
+        self.cell = cell
+
+    def get_size(self):
+        if type(vir_args_size[self.arg_type]) == int:
+            return vir_args_size[self.arg_type]
+        elif vir_args_size[self.arg_type] == "many":
+            if self.arg_type == "str":
+                # один закрывающий байт, второй для симметрии
+                return len(self.value) + 2
 
     def __str__(self):
         return f"{self.arg_type} {str(self.value)}"
@@ -400,6 +444,13 @@ class Mark:
     def __init__(self, name):
         """инициализация метки"""
         self.name = name
+        self.cell = 0
+
+    def set_cell(self, cell):
+        self.cell = cell
+
+    def get_size(self):
+        return 0
 
     def __str__(self):
         return self.name
@@ -943,7 +994,8 @@ def get_vir_commands(yo_object):
                 commands += get_vir_commands(argument)
                 commands += [Command("Pop", Argument("lnk", f"^{i}"))]
                 end_command_args += [Argument("lnk", f"*{i}")]
-            commands += [Command("Crt", *end_command_args)]
+            end_command_args += [Argument("non", 0)]
+            commands += [Command("Crt", Argument("lst", 0), *end_command_args)]
     elif yo_object.group == "expression":
         if yo_object.sub_group == "(":
             commands += get_vir_commands(yo_object.args[0])
@@ -1064,10 +1116,17 @@ def get_vir_commands(yo_object):
     return commands
 
 
+def get_abs_addresses(Program):
+    pass
+
+
 if __name__ == '__main__':
     file = input()
     with open(f"{file}.yotext", "r", encoding="utf-8") as infile:
         result = translate(infile.read())
     print(result[0])
-    vir_commands = get_vir_commands(result[0])
-    print(*vir_commands, sep="\n")
+    program = Program([])
+    commands = get_vir_commands(result[0])
+    for command in commands:
+        program.add(command)
+    print(program)
