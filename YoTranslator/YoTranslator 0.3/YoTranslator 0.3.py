@@ -335,6 +335,24 @@ class YoObject:
             number = self.parent.get_nesting(number + 1)
         return number
 
+    def set_indent(self, indent, inside=False):
+        if not inside:
+            if self.group == "structure_word":
+                self.parent.set_indent(indent, inside=True)
+            self.indent = indent
+        else:
+            self.inside_indent = indent
+            if self.sub_group == "branching":
+                self.indent = indent
+            elif self.sub_group == "indent_program":
+                self.indent = indent
+        if self.sub_group == "indent_program":
+            if self.parent and self.parent.group == "structure_word":
+                self.parent.set_indent(indent, inside=True)
+            self.indent = indent
+            self.inside_indent = indent
+
+
 
 class Program:
     """программа байтовых команд"""
@@ -549,9 +567,9 @@ def token_analise(token, result):
     func = {"group": group, "sub_group": sub_group, "name": token}
     obj = YoObject(pre_token, func)
     if obj.group != "indent":
-        obj.indent = result[-1].indent
+        obj.set_indent(result[-1].indent)
     else:
-        obj.indent = len(obj.name)
+        obj.set_indent(len(obj.name))
     return obj
 
 
@@ -666,8 +684,8 @@ def syntax_analise(yo_object, result, stores):
         new_object = YoObject(None, {"group": "expression",
                                      "sub_group": "branching",
                                      "name": "branching"})
-        new_object.indent = pre_object.inside_indent
-        new_object.inside_indent = new_object.indent
+        new_object.set_indent(pre_object.inside_indent, inside=True)
+        yo_object.set_indent(new_object.indent)
         new_object.add_arg(yo_object)
         last_store.add_arg(new_object)
         result += [new_object, yo_object]
@@ -701,6 +719,8 @@ def syntax_analise(yo_object, result, stores):
                                      "name": ":"})
         last_store.parent.remove_arg()
         parent.add_arg(new_object)
+        new_object.set_indent(parent.inside_indent)
+        # new_object.indent = parent.inside_indent
         result[-1] = new_object
         stores[-1] = new_object
     # если после else идёт if, то это одна конструкция else if
@@ -742,7 +762,8 @@ def syntax_analise(yo_object, result, stores):
     elif yo_object.group == "indent":
         if last_store.sub_group == "indent_program":
             if len(last_store.args) == 0:
-                last_store.inside_indent = yo_object.indent
+                last_store.set_indent(yo_object.indent, inside=True)
+                # last_store.inside_indent = yo_object.indent
             else:
                 while yo_object.indent != last_store.inside_indent:
                     if yo_object.indent < last_store.inside_indent:

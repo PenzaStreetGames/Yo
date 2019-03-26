@@ -1,9 +1,6 @@
-if a =? 5:
-    a = a + 3
-    if b > 3:
-        b = 3 + 7
-if a =? 5:
-    a = a + 3
-    b = 3 + 7
-elseif a =? 3:
-    a = a + 5
+if a:
+    a = a
+    if b:
+        b = 5
+if a:
+    a = 2
