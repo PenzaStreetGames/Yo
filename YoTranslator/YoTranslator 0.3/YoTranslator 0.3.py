@@ -236,6 +236,9 @@ vir_args_size = {
     "str": "many",
     "lst": 1
 }
+# специальные ссылки
+special_links = ["next_branch", "branch_begin", "branching_end",
+                 "cycle_begin", "cycle_end", "rubbish"]
 
 
 class TokenError(Exception):
@@ -376,12 +379,15 @@ class Program:
 
     def add(self, command):
         """добавить команду"""
-        command.cell = self.next_cell
+        command.set_cell(self.next_cell)
         self.commands += [command]
         self.next_cell += command.get_size()
 
     def __str__(self):
         return "\n".join(map(str, self.commands))
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Command:
@@ -410,8 +416,11 @@ class Command:
         return length
 
     def __str__(self):
-        return f"{self.cell} {self.name} " \
+        return f"{self.cell}  {self.name}  " \
                f"{' '.join(map(lambda arg: str(arg), self.args))}"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Argument:
@@ -435,7 +444,10 @@ class Argument:
                 return len(self.value) + 2
 
     def __str__(self):
-        return f"{self.arg_type} {str(self.value)}"
+        return f"{self.cell} {self.arg_type} {str(self.value)}"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Mark:
@@ -453,7 +465,10 @@ class Mark:
         return 0
 
     def __str__(self):
-        return self.name
+        return f"{self.cell} {self.name}"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 def translate(program):
@@ -1008,7 +1023,7 @@ def get_vir_commands(yo_object):
             for branch in yo_object.args:
                 commands += [Mark("#branch_begin"),
                              *get_vir_commands(branch),
-                             Command("Jmp", Argument("lnk", "^end"))]
+                             Command("Jmp", Argument("lnk", "^branching_end"))]
             commands += [Mark("#branching_end")]
     elif yo_object.group == "sub_object":
         commands += [*get_vir_commands(yo_object.args[0]),
@@ -1095,7 +1110,7 @@ def get_vir_commands(yo_object):
             commands += [*get_vir_commands(yo_object.args[0]),
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
-                                 Argument("lnk", "^next")),
+                                 Argument("lnk", "^next_branch")),
                          *get_vir_commands(yo_object.args[1])]
         elif yo_object.sub_group == "else":
             commands += [*get_vir_commands(yo_object.args[0])]
@@ -1104,7 +1119,7 @@ def get_vir_commands(yo_object):
                          *get_vir_commands(yo_object.args[0]),
                          Command("Pop", Argument("lnk", "^a")),
                          Command("Jif", Argument("lnk", "*a"),
-                                 Argument("lnk", "^end")),
+                                 Argument("lnk", "^cycle_end")),
                          *get_vir_commands(yo_object.args[1]),
                          Command("Jmp", Argument("lnk", "^cycle_begin")),
                          Mark("#cycle_end")]
@@ -1116,8 +1131,23 @@ def get_vir_commands(yo_object):
     return commands
 
 
-def get_abs_addresses(Program):
-    pass
+def get_abs_addresses(program):
+    links = []
+    for command in program.commands:
+        if isinstance(command, Command):
+            args = list(filter(lambda arg: arg.arg_type == "lnk",
+                               command.args))
+            links += args
+        elif isinstance(command, Mark):
+            links += [command]
+    print(*links, sep="\n")
+    for i in range(len(links)):
+        link = links[i]
+        if isinstance(link, Mark):
+            continue
+        if link.value.startswith("^"):
+            mark_name = link.value[1:]
+
 
 
 if __name__ == '__main__':
@@ -1130,3 +1160,4 @@ if __name__ == '__main__':
     for command in commands:
         program.add(command)
     print(program)
+    get_abs_addresses(program)
