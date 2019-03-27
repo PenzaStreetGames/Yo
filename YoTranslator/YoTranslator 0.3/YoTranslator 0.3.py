@@ -455,7 +455,7 @@ class Mark:
 
     def __init__(self, name):
         """инициализация метки"""
-        self.name = name
+        self.value = name
         self.cell = 0
 
     def set_cell(self, cell):
@@ -1142,14 +1142,22 @@ def get_abs_addresses(program):
             links += [command]
     print(*links, sep="\n")
     for i in range(len(links)):
-        link = links[i]
-        if isinstance(link, Mark):
-            continue
-        if link.value.startswith("^"):
-            link_name = link.value[1:]
-            if link_name not in special_links:
-                for j in range(i + 1, len(links)):
-                    cell = links[j]
+        link_analize(links, i)
+
+
+def link_analize(links, link_number):
+    link = links[link_number]
+    link_sign = link.value[:1]
+    link_name = link.value[1:]
+    if link_sign == "#":
+        return
+    if link_name in special_links:
+        pass
+    else:
+        if link_sign == "^":
+            pass
+        elif link_sign == "*":
+            pass
 
 
 if __name__ == '__main__':
