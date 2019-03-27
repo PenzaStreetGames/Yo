@@ -1146,8 +1146,10 @@ def get_abs_addresses(program):
         if isinstance(link, Mark):
             continue
         if link.value.startswith("^"):
-            mark_name = link.value[1:]
-
+            link_name = link.value[1:]
+            if link_name not in special_links:
+                for j in range(i + 1, len(links)):
+                    cell = links[j]
 
 
 if __name__ == '__main__':
