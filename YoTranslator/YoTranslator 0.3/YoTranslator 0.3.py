@@ -405,7 +405,7 @@ class Command:
         arg_cell = cell + 2
         for arg in self.args:
             arg.set_cell(arg_cell)
-            arg_cell += arg.get_size()
+            arg_cell += arg.get_size() + 1
 
 
     def get_size(self):
@@ -453,9 +453,9 @@ class Argument:
 class Mark:
     """метка байтового кода"""
 
-    def __init__(self, name):
+    def __init__(self, value):
         """инициализация метки"""
-        self.value = name
+        self.value = value
         self.cell = 0
 
     def set_cell(self, cell):
@@ -465,7 +465,7 @@ class Mark:
         return 0
 
     def __str__(self):
-        return f"{self.cell} {self.name}"
+        return f"{self.cell} {self.value}"
 
     def __repr__(self):
         return self.__str__()
@@ -1140,24 +1140,54 @@ def get_abs_addresses(program):
             links += args
         elif isinstance(command, Mark):
             links += [command]
-    print(*links, sep="\n")
     for i in range(len(links)):
-        link_analize(links, i)
-
-
-def link_analize(links, link_number):
-    link = links[link_number]
-    link_sign = link.value[:1]
-    link_name = link.value[1:]
-    if link_sign == "#":
-        return
-    if link_name in special_links:
-        pass
-    else:
-        if link_sign == "^":
-            pass
-        elif link_sign == "*":
-            pass
+        link = links[i]
+        link_sign = link.value[:1]
+        link_name = link.value[1:]
+        if link_sign == "#" or link_sign == "*":
+            continue
+        elif link_sign == "^":
+            if link_name == "rubbish":
+                link.arg_type = "non"
+                link.value = 0
+                continue
+            need_mark = "#" if link_name in special_links else "*"
+            step = -1 if link_name == "cycle_begin" else 1
+            begin_link = i - 1 if step == -1 else i + 1
+            end_link = len(links) if step == 1 else 0
+            j = 0
+            for j in range(begin_link, end_link, step):
+                other_link = links[j]
+                if type(other_link.value) != str:
+                    continue
+                other_sign = other_link.value[:1]
+                other_name = other_link.value[1:]
+                if other_sign == need_mark and link_name == other_name:
+                    link.value = other_link.cell
+                    break
+                elif other_sign == need_mark and (link_name == "next_branch" and
+                      other_name in ["branch_begin", "branching_end"]):
+                    link.value = other_link.cell
+                    break
+            if j == end_link:
+                if end_link == 0:
+                    raise YoSyntaxError("Неправильное использование continue")
+                elif end_link == len(links):
+                    raise YoSyntaxError("Неправильное использование break")
+    program.commands = list(filter(lambda command: isinstance(command, Command),
+                                   program.commands))
+    for i in range(len(links)):
+        link = links[i]
+        if type(link.value) != str:
+            continue
+        link_sign = link.value[:1]
+        link_name = link.value[1:]
+        if link_sign == "*":
+            link.value = 0
+        elif link_sign == "^":
+            if link_name == "rubbish":
+                link.arg_type = "non"
+                link.value = 0
 
 
 if __name__ == '__main__':
@@ -1171,3 +1201,4 @@ if __name__ == '__main__':
         program.add(command)
     print(program)
     get_abs_addresses(program)
+    print(program)
