@@ -230,6 +230,7 @@ virtual_commands = {
 # байтовая длина системных типов
 vir_args_size = {
     "non": 1,
+    "cmd": 1,
     "lnk": 1,
     "log": 1,
     "num": 1,
@@ -239,6 +240,34 @@ vir_args_size = {
 # специальные ссылки
 special_links = ["next_branch", "branch_begin", "branching_end",
                  "cycle_begin", "cycle_end", "rubbish"]
+# нумерация бинарных объектов
+binary_values = {
+    "types":
+        {
+            "non": 0,
+            "cmd": 1,
+            "lnk": 2,
+            "log": 3,
+            "num": 4,
+            "str": 5,
+            "lst": 6
+        },
+    "commands":
+        {
+            "End": 0, "Jmp": 1, "Jif": 2, "Crt": 3, "Fnd": 4,
+            "Eqt": 5, "Inp": 6, "Out": 7, "Psh": 8, "Pop": 9,
+            "Cal": 10, "Ret": 11, "Rar": 12, "Raw": 13, "Not": 14,
+            "And": 15, "Or": 16, "Xor": 17, "Neg": 18, "Add": 19,
+            "Inc": 20, "Dcr": 21, "Sub": 22, "Mul": 23, "Div": 24,
+            "Mod": 25, "Eql": 26, "Grt": 27, "Les": 28, "Nop": 29
+        }
+}
+# представление типа в памяти
+type_memory_view = {
+    "number": ["non", "cmd", "lnk", "log", "num", "lst"],
+    # тип списка является флагом
+    "symbol_list": ["str"]
+}
 
 
 class TokenError(Exception):
@@ -248,6 +277,11 @@ class TokenError(Exception):
 
 class YoSyntaxError(Exception):
     """Синтаксическая ошибка языка"""
+    pass
+
+
+class YoMachineError(Exception):
+    """Ошибка машинного перевода"""
     pass
 
 
@@ -463,6 +497,74 @@ class Mark:
 
     def get_size(self):
         return 0
+
+    def __str__(self):
+        return f"{self.cell} {self.value}"
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class BinaryProgram:
+
+    def __init__(self):
+        self.binary = []
+        self.next_cell = 0
+        self.tape = ""
+
+    def add_cell(self, cell):
+        self.binary += [cell]
+        cell.cell = self.next_cell
+        self.next_cell += 1
+
+    def add_cells(self, *cells):
+        for cell in cells:
+            self.binary += [cell]
+            cell.set_cell(self.next_cell)
+            self.next_cell += 1
+
+    def rjust(self, num):
+        return num.rjust(32, "0")
+
+    @staticmethod
+    def bin(num):
+        res = ""
+        while num > 1:
+            sign = num % 2
+            res = str(sign) + res
+            num //= 2
+        res = str(num) + res
+        return res
+
+    @staticmethod
+    def dec(cell):
+        number, factor = 0, 1
+        for i in range(7, -1, -1):
+            if cell[i]:
+                number += factor
+            factor *= 2
+        return number
+
+    def set_tape(self):
+        result = ""
+        for cell in self.binary:
+            result += self.rjust(self.bin(cell.value))
+        self.tape = result
+
+    def __str__(self):
+        return "\n".join(map(str, self.binary))
+
+
+class BinaryCell:
+
+    def __init__(self, value):
+        self.cell = 0
+        self.value = value
+        if type(value) != int:
+            raise YoMachineError(f"В ячейку передалось нечисло {value}")
+
+    def set_cell(self, cell):
+        self.cell = cell
 
     def __str__(self):
         return f"{self.cell} {self.value}"
@@ -1190,15 +1292,60 @@ def get_abs_addresses(program):
                 link.value = 0
 
 
+def get_binary_code(program, binary_program):
+    for command in program.commands:
+        command_type = binary_values["types"]["cmd"]
+        command_code = binary_values["commands"][command.name]
+        binary_program.add_cells(BinaryCell(command_type),
+                                 BinaryCell(command_code))
+        for arg in command.args:
+            arg_type = binary_values["types"][arg.arg_type]
+            binary_program.add_cell(BinaryCell(arg_type))
+            if arg.arg_type in type_memory_view["number"]:
+                binary_program.add_cell(BinaryCell(arg.value))
+            elif arg.arg_type in type_memory_view["symbol_list"]:
+                for symbol in arg.value:
+                    binary_program.add_cell(BinaryCell(ord(symbol)))
+                binary_program.add_cells(BinaryCell(0), BinaryCell(0))
+
+
+def write_file(filename, tape):
+    byte_array = []
+    while tape:
+        segment = tape[:8]
+        tape = tape[8:]
+        byte = list(map(lambda x: x == "1", segment))
+        byte_array += [BinaryProgram.dec(byte)]
+    byte_array = bytes(byte_array)
+    with open(f"{filename}.yovc", "wb") as file:
+        file.write(byte_array)
+    return byte_array
+
+
 if __name__ == '__main__':
     file = input()
     with open(f"{file}.yotext", "r", encoding="utf-8") as infile:
         result = translate(infile.read())
+    print("\nСинтаксическое дерево программы:\n")
     print(result[0])
+
     program = Program([])
     commands = get_vir_commands(result[0])
     for command in commands:
         program.add(command)
+    print("\nНабор байтовых команд:\n")
     print(program)
+
     get_abs_addresses(program)
+    print("\nС абсолютными адресами:\n")
     print(program)
+
+    binary_program = BinaryProgram()
+    get_binary_code(program, binary_program)
+    print("\nБинарный код:\n")
+    print(binary_program)
+
+    binary_program.set_tape()
+    content = write_file(file, binary_program.tape)
+    print(f"\nСодержимое файла {file}.yovc:\n")
+    print(*content)
