@@ -1,5 +1,5 @@
 key_words = ["while", "if", "else", "elseif", "break", "continue", "none",
-             "true", "false", "not", "and", "or", "xor"]
+             "true", "false", "not", "and", "or", "xor", "pass"]
 functions = ["print", "input", "len"]
 signs = ["=", "[", "]", "(", ")", "{", "}", ",", ";", ":", "+", "-", "*", "/",
          "%", "|", ">", "<", "?"]
@@ -20,7 +20,7 @@ groups = {
     "equating": ["="],
     "structure_words": ["if", "else", "elseif", "while"],
     "logic_values": ["true", "false"],
-    "interrupt_words": ["break", "continue"],
+    "interrupt_words": ["break", "continue", "pass"],
 }
 # приоритет групп токенов
 group_priority = {
@@ -104,7 +104,8 @@ priority = {
     "interrupt":
         {
             "break": 1,
-            "continue": 1
+            "continue": 1,
+            "pass": 1
         },
     "structure_word":
         {
@@ -189,7 +190,8 @@ args_number = {
     "interrupt":
         {
             "break": "no",
-            "continue": "no"
+            "continue": "no",
+            "pass": "no"
         },
     "structure_word":
         {
@@ -506,28 +508,35 @@ class Mark:
 
 
 class BinaryProgram:
+    """байтовая программа"""
 
     def __init__(self):
+        """инициализация программы"""
         self.binary = []
         self.next_cell = 0
         self.tape = ""
 
     def add_cell(self, cell):
+        """добавление ячейки"""
         self.binary += [cell]
         cell.cell = self.next_cell
         self.next_cell += 1
 
     def add_cells(self, *cells):
+        """добавление ячеек"""
         for cell in cells:
             self.binary += [cell]
             cell.set_cell(self.next_cell)
             self.next_cell += 1
 
+    @staticmethod
     def rjust(self, num):
+        """дополнение нулями в записи до 32 знаков"""
         return num.rjust(32, "0")
 
     @staticmethod
     def bin(num):
+        """преобразование в двоичное число"""
         res = ""
         while num > 1:
             sign = num % 2
@@ -538,6 +547,7 @@ class BinaryProgram:
 
     @staticmethod
     def dec(cell):
+        """преобразование в десятичное число"""
         number, factor = 0, 1
         for i in range(7, -1, -1):
             if cell[i]:
@@ -546,6 +556,7 @@ class BinaryProgram:
         return number
 
     def set_tape(self):
+        """получение ленты памяти из всех ячеек программы"""
         result = ""
         for cell in self.binary:
             result += self.rjust(self.bin(cell.value))
@@ -556,14 +567,17 @@ class BinaryProgram:
 
 
 class BinaryCell:
+    """байтовая ячейка"""
 
     def __init__(self, value):
+        """инициализация ячейки"""
         self.cell = 0
         self.value = value
         if type(value) != int:
             raise YoMachineError(f"В ячейку передалось нечисло {value}")
 
     def set_cell(self, cell):
+        """задание номера ячейки"""
         self.cell = cell
 
     def __str__(self):
@@ -1207,6 +1221,8 @@ def get_vir_commands(yo_object):
             commands += [Command("Jmp", Argument("lnk", "^cycle_end"))]
         elif yo_object.name == "continue":
             commands += [Command("Jmp", Argument("lnk", "^cycle_begin"))]
+        elif yo_object.name == "pass":
+            commands += [Command("Nop")]
     elif yo_object.group == "structure_word":
         if yo_object.sub_group in ["if", "elseif"]:
             commands += [*get_vir_commands(yo_object.args[0]),
@@ -1233,7 +1249,8 @@ def get_vir_commands(yo_object):
     return commands
 
 
-def get_abs_addresses(program):
+def get_relative_addresses(program):
+    """замена ссылок на относительные адреса"""
     links = []
     for command in program.commands:
         if isinstance(command, Command):
@@ -1293,6 +1310,7 @@ def get_abs_addresses(program):
 
 
 def get_binary_code(program, binary_program):
+    """превращение байтовых команд и аргументов в числа"""
     for command in program.commands:
         command_type = binary_values["types"]["cmd"]
         command_code = binary_values["commands"][command.name]
@@ -1310,6 +1328,7 @@ def get_binary_code(program, binary_program):
 
 
 def write_file(filename, tape):
+    """запись результата в файл .yovc"""
     byte_array = []
     while tape:
         segment = tape[:8]
@@ -1336,7 +1355,7 @@ if __name__ == '__main__':
     print("\nНабор байтовых команд:\n")
     print(program)
 
-    get_abs_addresses(program)
+    get_relative_addresses(program)
     print("\nС абсолютными адресами:\n")
     print(program)
 
