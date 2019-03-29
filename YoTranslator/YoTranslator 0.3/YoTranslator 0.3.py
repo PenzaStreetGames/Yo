@@ -530,7 +530,7 @@ class BinaryProgram:
             self.next_cell += 1
 
     @staticmethod
-    def rjust(self, num):
+    def rjust(num):
         """дополнение нулями в записи до 32 знаков"""
         return num.rjust(32, "0")
 
