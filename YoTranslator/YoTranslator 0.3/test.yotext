@@ -1,6 +1,1 @@
-if a:
-    a = a
-    if b:
-        b = 5
-if a:
-    a = 2
+

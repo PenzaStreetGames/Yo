@@ -597,6 +597,7 @@ def translate(program):
     result += [YoObject(None, {"group": "program",
                                "sub_group": "indent_program",
                                "name": "program"})]
+    result[0].set_indent(0)
     stores = [result[0]]
 
     for symbol in program:
@@ -953,8 +954,9 @@ def syntax_analise(yo_object, result, stores):
                         result = last_store.args[-1].set_close(result)
                         result = last_store.set_close(result)
                         stores = stores[:-1]
-                        result = result[-1].set_close(result)
-                        stores = stores[:-1]
+                        if len(result) != 1:
+                            result = result[-1].set_close(result)
+                            stores = stores[:-1]
                     elif yo_object.indent > last_store.inside_indent:
                         raise YoSyntaxError(f"Неуместный отступ {pre_object}")
                     last_store = stores[-1]
@@ -1273,7 +1275,7 @@ def get_relative_addresses(program):
             need_mark = "#" if link_name in special_links else "*"
             step = -1 if link_name == "cycle_begin" else 1
             begin_link = i - 1 if step == -1 else i + 1
-            end_link = len(links) if step == 1 else 0
+            end_link = len(links) if step == 1 else -1
             j = 0
             for j in range(begin_link, end_link, step):
                 other_link = links[j]
