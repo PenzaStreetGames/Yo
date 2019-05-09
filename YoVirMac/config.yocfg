@@ -1,0 +1,21 @@
+{
+  "types":
+  [
+    "non",
+    "lnk",
+    "cmd",
+    "log",
+    "num",
+    "str",
+    "lst",
+    "seg"
+  ],
+  "seg_types":
+  [
+    "sys",
+    "cal",
+    "mem",
+    "prg",
+    "dat"
+  ]
+}
