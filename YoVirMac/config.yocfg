@@ -8,6 +8,8 @@
     "num",
     "str",
     "lst",
+    "dic",
+    "dit",
     "seg"
   ],
   "seg_types":
