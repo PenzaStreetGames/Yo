@@ -12,12 +12,128 @@
     "dit",
     "seg"
   ],
+  "types_length":
+  {
+    "non": 2,
+    "lnk": 2,
+    "cmd": 2,
+    "log": 2,
+    "num": 2,
+    "str": "many",
+    "lst": "many",
+    "dic": "many",
+    "dit": 6,
+    "seg": "many"
+  },
   "seg_types":
   [
     "sys",
     "cal",
     "mem",
     "prg",
-    "dat"
-  ]
+    "dat",
+    "lsg",
+    "dsg",
+    "nsp"
+  ],
+  "seg_header": 
+  {
+    "bas": 
+    [
+      "type",
+      "data_begin",
+      "length",
+      "segment_end",
+      "last_full_cell",
+      "first_empty_cell",
+      "previous_segment",
+      "next_segment",
+      "interrupt",
+      "free_cells"
+    ],
+    "sys": 
+    [
+      "main_program",
+      "target_cell",
+      "target_namespace",
+      "call_stack",
+      "memory_stack",
+      "first_data_segment",
+      "last_data_segment",
+      "tape_length"
+    ],
+    "cal": [],
+    "mem": [],
+    "prg": 
+    [
+      "namespace",
+      "parent"
+    ],
+    "dat": [],
+    "lsg": [],
+    "dsg": [],
+    "nsp": 
+    [
+      "program"
+    ]
+  },
+  "seg_header_types": 
+  {
+    "bas": 
+    {
+      "type": "num",
+      "data_begin": "lnk",
+      "length": "num",
+      "segment_end": "lnk",
+      "last_full_cell": "lnk",
+      "first_empty_cell": "lnk",
+      "previous_segment": "lnk",
+      "next_segment": "lnk",
+      "interrupt": "log",
+      "free_cells": "num"
+    },
+    "sys": 
+    {
+      "main_program": "lnk",
+      "target_cell": "lnk",
+      "target_namespace": "lnk",
+      "call_stack": "lnk",
+      "memory_stack": "lnk",
+      "first_data_segment": "lnk",
+      "last_data_segment": "lnk",
+      "tape_length": "num"
+    },
+    "cal": {},
+    "mem": {},
+    "prg": 
+    {
+      "namespace": "lnk",
+      "parent": "lnk"
+    },
+    "dat": {},
+    "lsg": {},
+    "dsg": {},
+    "nsp": 
+    {
+      "program": "lnk"
+    }
+  },
+  "segment_properties":
+  {
+    "minimal_data_length":
+    {
+      "sys": 32,
+      "cal": 512,
+      "mem": 512,
+      "prg": 32,
+      "dat": 2048,
+      "lsg": 2048,
+      "dsg": 2048,
+      "nsp": 256
+    },
+    "header_length": 32,
+    "header_basic_length": 16,
+    "header_special_length": 16,
+    "expansion_coefficient": 2
+  }
 }
