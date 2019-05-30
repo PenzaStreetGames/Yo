@@ -1,37 +1,3 @@
-memory = []
-capacity = 32
-
-
-# процедуры для настройки ленты памяти
-def init_system_area():
-    pass
-
-
-def init_call_stack():
-    pass
-
-
-def init_memory_stack():
-    pass
-
-
-def init_memory_segment():
-    pass
-
-
-def load_program():
-    pass
-
-
-# низшие машинные команды
-def rdc():  # read cell
-    pass
-
-
-def wrc():  # write cell
-    pass
-
-
 # высшие машинные команды
 # переходы
 def end():  # end
