@@ -67,4 +67,16 @@ def write_number(cell, number):
     memory[cell] = number
 
 
+def read_number(cell):
+    return memory[cell]
 
+
+def write_type(cell, value):
+    if type(value) == int:
+        write_cell(cell, value)
+    elif type(value) == str:
+        write_cell(cell, types.index(value))
+
+
+def read_type(cell):
+    return types[memory[cell]]

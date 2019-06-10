@@ -19,7 +19,6 @@ def cell_overflow_write():
 
 def cell_overflow_shift():
     """Проверка на переполнение путём битового сдига влево"""
-    add_cells(1)
     write_cell(0, 1)
     for i in range(capacity + 4):
         print_cell(0)
@@ -27,9 +26,8 @@ def cell_overflow_shift():
         write_bit(0, 0, 1)
 
 
-def bit_write():
+def bit_writing():
     """Проверка на запись бита в ячейку"""
-    add_cells(1)
     clean_cell(0)
     for i in range(capacity + 4):
         write_bit(0, i, 1)
@@ -37,12 +35,19 @@ def bit_write():
         write_bit(0, i, 0)
 
 
-def number_write():
+def number_writing():
     """Проверка на запись числа в ячейку"""
-    add_cells(1)
     clean_cell(0)
     for i in range(20):
         number = random.randint(0, 2 ** 32 - 1)
         print(number)
         write_number(0, number)
+        print_cell(0)
+
+
+def type_writing():
+    """Проверка на запись типа в ячеку"""
+    for type in types:
+        write_type(0, type)
+        print(read_type(0))
         print_cell(0)
