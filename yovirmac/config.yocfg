@@ -1,16 +1,16 @@
 {
   "types":
   [
-    "non",
-    "lnk",
-    "cmd",
-    "log",
-    "num",
-    "str",
-    "lst",
-    "dic",
-    "dit",
-    "seg"
+    "none",
+    "link",
+    "command",
+    "logical",
+    "number",
+    "string",
+    "list",
+    "dictionary",
+    "dictionary_item",
+    "segment"
   ],
   "types_length":
   {
@@ -27,18 +27,18 @@
   },
   "seg_types":
   [
-    "sys",
-    "cal",
-    "mem",
-    "prg",
-    "dat",
-    "lsg",
-    "dsg",
-    "nsp"
+    "system",
+    "call_stack",
+    "memory_stack",
+    "program",
+    "data_segment",
+    "list_segment",
+    "dictionary_segment",
+    "namespace"
   ],
   "seg_header": 
   {
-    "bas": 
+    "basic":
     [
       "type",
       "data_begin",
@@ -51,7 +51,7 @@
       "interrupt",
       "free_cells"
     ],
-    "sys": 
+    "system":
     [
       "main_program",
       "target_cell",
@@ -62,24 +62,24 @@
       "last_data_segment",
       "tape_length"
     ],
-    "cal": [],
-    "mem": [],
-    "prg": 
+    "call_stack": [],
+    "memory_stack": [],
+    "program":
     [
       "namespace",
       "parent"
     ],
-    "dat": [],
-    "lsg": [],
-    "dsg": [],
-    "nsp": 
+    "data_segment": [],
+    "list_segment": [],
+    "dictionary_segment": [],
+    "namespace":
     [
       "program"
     ]
   },
   "seg_header_types": 
   {
-    "bas": 
+    "basic":
     {
       "type": "num",
       "data_begin": "lnk",
@@ -92,7 +92,7 @@
       "interrupt": "log",
       "free_cells": "num"
     },
-    "sys": 
+    "system":
     {
       "main_program": "lnk",
       "target_cell": "lnk",
@@ -103,17 +103,17 @@
       "last_data_segment": "lnk",
       "tape_length": "num"
     },
-    "cal": {},
-    "mem": {},
-    "prg": 
+    "call_stack": {},
+    "memory_stack": {},
+    "program":
     {
       "namespace": "lnk",
       "parent": "lnk"
     },
-    "dat": {},
-    "lsg": {},
-    "dsg": {},
-    "nsp": 
+    "data_segment": {},
+    "list_segment": {},
+    "dictionary_segment": {},
+    "namespace":
     {
       "program": "lnk"
     }
@@ -122,14 +122,14 @@
   {
     "minimal_data_length":
     {
-      "sys": 32,
-      "cal": 512,
-      "mem": 512,
-      "prg": 32,
-      "dat": 2048,
-      "lsg": 2048,
-      "dsg": 2048,
-      "nsp": 256
+      "system": 32,
+      "call_stack": 512,
+      "memory_stack": 512,
+      "program": 32,
+      "data_segment": 2048,
+      "list_segment": 2048,
+      "dictionary_segment": 2048,
+      "namespace": 256
     },
     "header_length": 32,
     "header_basic_length": 16,
