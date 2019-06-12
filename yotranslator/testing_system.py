@@ -16,6 +16,6 @@ for group in test_list.keys():
         try:
             shell.compile_program(filename, main=False)
         except BaseYoError as error:
-            print(test, error)
+            print("\t", test, error)
         else:
-            print(test, "ok")
+            print("\t", test, "ok")
