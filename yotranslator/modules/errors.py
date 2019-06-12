@@ -1,13 +1,14 @@
-class TokenError(Exception):
+class BaseYoError(Exception):
+    """Класс базовой ошибки Ё"""
+
+
+class TokenError(BaseYoError):
     """Ошибка считывания токена"""
-    pass
 
 
-class YoSyntaxError(Exception):
+class YoSyntaxError(BaseYoError):
     """Синтаксическая ошибка языка"""
-    pass
 
 
-class YoMachineError(Exception):
+class YoMachineError(BaseYoError):
     """Ошибка машинного перевода"""
-    pass
