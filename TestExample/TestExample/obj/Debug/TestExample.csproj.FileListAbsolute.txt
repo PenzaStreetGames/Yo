@@ -1,0 +1,10 @@
+D:\Projects\VS\TestExample\TestExample\TestExample\bin\Debug\TestExample.exe.config
+D:\Projects\VS\TestExample\TestExample\TestExample\bin\Debug\TestExample.exe
+D:\Projects\VS\TestExample\TestExample\TestExample\bin\Debug\TestExample.pdb
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.csprojAssemblyReference.cache
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.Properties.Resources.resources
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.csproj.GenerateResource.cache
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.csproj.CoreCompileInputs.cache
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.exe
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.pdb
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.YoIDE.resources
