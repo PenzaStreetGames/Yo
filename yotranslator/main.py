@@ -8,31 +8,41 @@ from yotranslator.stages.assembly.get_binary_code import get_binary_code
 from yotranslator.stages.assembly.write_file import write_file
 
 
-if __name__ == '__main__':
-    file = input()
+def compile_program(filename, main=False):
     stores = []
-    with open(f"{file}.yotext", "r", encoding="utf-8") as infile:
+    with open(f"{filename}", "r", encoding="utf-8") as infile:
         result = translate(infile.read())
-    print("\nСинтаксическое дерево программы:\n")
-    print(result[0])
+    if main:
+        print("\nСинтаксическое дерево программы:\n")
+        print(result[0])
 
     program = Program([])
     commands = get_vir_commands(result[0])
     for command in commands:
         program.add(command)
-    print("\nНабор байтовых команд:\n")
-    print(program)
+    if main:
+        print("\nНабор байтовых команд:\n")
+        print(program)
 
     get_relative_addresses(program)
-    print("\nС абсолютными адресами:\n")
-    print(program)
+    if main:
+        print("\nС абсолютными адресами:\n")
+        print(program)
 
     binary_program = BinaryProgram()
     get_binary_code(program, binary_program)
-    print("\nБинарный код:\n")
-    print(binary_program)
+    if main:
+        print("\nБинарный код:\n")
+        print(binary_program)
 
     binary_program.set_tape()
-    content = write_file(file, binary_program.tape)
-    print(f"\nСодержимое файла {file}.yovc:\n")
-    print(*content)
+    content = write_file(filename, binary_program.tape)
+    if main:
+        print(f"\nСодержимое файла {filename}.yovc:\n")
+        print(*content)
+    return f"{filename}.yovc"
+
+
+if __name__ == '__main__':
+    file = input()
+    compile_program(file, main=True)
