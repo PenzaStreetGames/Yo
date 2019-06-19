@@ -269,3 +269,28 @@ type_memory_view = {
     # тип списка является флагом
     "symbol_list": ["str"]
 }
+
+highlight_groups = [
+    "non colored",
+    "comment",
+    "sign",
+    "logic_value",
+    "logic_operation",
+    "number",
+    "string",
+    "object",
+    "built_in_function",
+    "structure"
+]
+highlight_tokens = {
+    "non colored": [],
+    "comment": [],
+    "sign": [],
+    "logic_value": [],
+    "logic_operation": [],
+    "number": [],
+    "string": [],
+    "object": [],
+    "built_in_function": [],
+    "structure": []
+}

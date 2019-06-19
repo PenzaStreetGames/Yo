@@ -5,7 +5,7 @@ from yotranslator.modules.constants import *
 class YoObject:
     """объект кода"""
 
-    def __init__(self, parent, func):
+    def __init__(self, parent, func, coords=(0, 0)):
         """инициализация объекта"""
         self.parent = parent
         self.func = func
@@ -20,6 +20,10 @@ class YoObject:
         self.close = False
         self.indent = 0
         self.inside_indent = 0
+        self.color_group = func.get("color_group", "non colored")
+        self.row = coords[0]
+        self.text_begin = coords[1] - len(self.name)
+        self.text_end = coords[1] - 1
 
     def check_close(self, result):
         """проверка на возможность закрытия"""

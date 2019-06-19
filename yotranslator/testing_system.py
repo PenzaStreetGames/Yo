@@ -12,9 +12,9 @@ test_list = {
 for group in test_list.keys():
     print(group)
     for test in test_list[group].keys():
-        filename = f"tests/{group}/{test}.yotext"
+        filename = f"tests/{group}/{test}"
         try:
-            shell.compile_program(filename, main=False)
+            shell.compile_program(filename, mode="test")
         except BaseYoError as error:
             print("\t", test, error)
         else:
