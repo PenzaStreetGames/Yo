@@ -17,7 +17,7 @@ def compile_program(filename, mode="main"):
         print(result[0])
     elif mode == "edit":
         highlight.make_hint(filename)
-        return
+        return f"{filename}.yohl"
 
     program = Program([])
     commands = get_vir_commands(result[0])
@@ -43,7 +43,7 @@ def compile_program(filename, mode="main"):
     if mode == "main":
         print(f"\nСодержимое файла {filename}.yovc:\n")
         print(*content)
-    return f"{filename.rstrip('.yotext')}.yovc"
+    return f"{filename}.yovc"
 
 
 if __name__ == '__main__':
