@@ -51,3 +51,20 @@ def type_writing():
         write_type(0, type)
         print(read_type(0))
         print_cell(0)
+
+
+def logic_writing():
+    """Проверка на запись логических величин"""
+    values = [0, 1, 2]
+    for value in values:
+        write_logic(0, value)
+        print(value, read_logic(0))
+
+
+def string_writing():
+    """Проверка на запись введённой строки"""
+    value = input()
+    write_string(0, value)
+    for i in range(len(value) + 1):
+        print(read_cell(i), read_char(i))
+    print(read_string(0))

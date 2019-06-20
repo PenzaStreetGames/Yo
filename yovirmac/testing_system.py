@@ -6,6 +6,8 @@ tests = {
     3: bit_writing,
     4: number_writing,
     5: type_writing,
+    6: logic_writing,
+    7: string_writing,
 }
 
 add_cells(64)
