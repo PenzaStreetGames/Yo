@@ -173,3 +173,19 @@ def read_string(cell, output="str"):
 
 def print_string(cell):
     print(read_string(cell))
+
+
+def write_segment(cell, type):
+    pass
+
+
+def write_segment_header(cell):
+    pass
+
+
+def write_segment_base_header(cell):
+    pass
+
+
+def write_segment_special_header(cell):
+    pass
