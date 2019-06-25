@@ -16,10 +16,10 @@ namespace YoCSharpJson
             string baseDirectory = "E:/PenzaStreetCompany/Python/-Yo-/yotranslator";
             Console.WriteLine(baseDirectory);
             string json = File.ReadAllText(baseDirectory + "/program.yohl");
-            Dictionary<string, Array> result = (Dictionary<string, Array>)serializer.DeserializeObject(json);
-            foreach(KeyValuePair<string, Array> keyValue in result)
+            Dictionary<string, object> result = (Dictionary<string, object>)serializer.DeserializeObject(json);
+            foreach(KeyValuePair<string, object> keyValue in result)
             {
-                Array group = keyValue.Value;
+                Array group = (Array)keyValue.Value;
                 Console.WriteLine($"{keyValue.Key} {group}");
                 foreach(object subGroup in group)
                 {
