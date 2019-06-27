@@ -194,13 +194,10 @@ def write_value(cell, value_type, value):
         write_number(value_cell, value)
     elif str_type == "string":
         write_string(value_cell, value)
-    elif str_type == "dictionary_item":
-        pass  # надо: написать функции write/read/print_dictionary_value
     elif str_type == "segment":
         pass  # надо: написать функции write/read/print_segment
     else:
         pass  # надо: выдать в этом месте ошибку
-
 
 
 def write_segment(cell, type):
