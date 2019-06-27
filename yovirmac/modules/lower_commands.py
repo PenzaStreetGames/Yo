@@ -175,6 +175,10 @@ def print_string(cell):
     print(read_string(cell))
 
 
+def write_command(cell, value):
+    pass
+
+
 def write_value(cell, value_type, value):
     if type(value_type) == int:
         str_type = types[value_type]
