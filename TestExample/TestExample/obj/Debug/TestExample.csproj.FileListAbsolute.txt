@@ -8,3 +8,6 @@ D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.csproj.
 D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.exe
 D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.pdb
 D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.YoIDE.resources
+D:\Projects\VS\TestExample\TestExample\TestExample\bin\Debug\Newtonsoft.Json.dll
+D:\Projects\VS\TestExample\TestExample\TestExample\bin\Debug\Newtonsoft.Json.xml
+D:\Projects\VS\TestExample\TestExample\TestExample\obj\Debug\TestExample.csproj.CopyComplete
