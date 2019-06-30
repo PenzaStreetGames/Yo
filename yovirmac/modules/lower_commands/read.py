@@ -1,16 +1,12 @@
 from yovirmac.modules.constants import *
 
 
+def bit(num, digit):
+    return (memory[num] >> digit) & 1
+
+
 def cell(num):
     return memory[num] & full_cell
-
-
-def bit(num, bit):
-    return (memory[num] >> bit) & 1
-
-
-def number(num):
-    return memory[num]
 
 
 def kind(num):
@@ -25,7 +21,15 @@ def link(num):
     return memory[num]
 
 
+def command(num):
+    return memory[num]
+
+
 def logic(num):
+    return memory[num]
+
+
+def number(num):
     return memory[num]
 
 
@@ -50,7 +54,3 @@ def string(num, output="str"):
             index += 1
             symbol = number(index)
         return result
-
-
-def write_command(num, value):
-    pass

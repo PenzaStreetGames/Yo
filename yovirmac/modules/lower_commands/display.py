@@ -2,6 +2,10 @@ from yovirmac.modules.constants import *
 import yovirmac.modules.lower_commands.read as read
 
 
+def bit(num, digit):
+    pass
+
+
 def cell(num):
     value = memory[num]
     bits = []
@@ -9,10 +13,6 @@ def cell(num):
         bits.insert(0, str(value % 2))
         value >>= 1
     print("".join(bits), memory[num])
-
-
-def number(num):
-    print(memory[num])
 
 
 def kind(num):
@@ -30,10 +30,27 @@ def link(num):
     print(f"link {value}")
 
 
+def command(num):
+    result = read.command(num)
+    print(f"{result} {commands[result]}")
+
+
 def logic(num):
     value = read.logic(num)
     print("false" if not value else "true")
 
 
+def number(num):
+    print(memory[num])
+
+
+def char(num):
+    print(f"char \"{read.char(num)}\"")
+
+
 def string(num):
     print(read.string(num))
+
+
+def system_area():
+    pass

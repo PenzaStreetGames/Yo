@@ -1,4 +1,5 @@
 from yovirmac.modules.tests import *
+from yovirmac.modules.lower_commands import memory_control
 
 tests = {
     1: cell_overflow_write,
@@ -8,9 +9,10 @@ tests = {
     5: type_writing,
     6: logic_writing,
     7: string_writing,
+    8: command_writing,
 }
 
-add_cells(64)
+memory_control.add_cells(64)
 while True:
     number = int(input())
     print(tests[number].__doc__)

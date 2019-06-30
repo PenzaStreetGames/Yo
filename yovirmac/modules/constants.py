@@ -178,5 +178,38 @@ commands = [
     "No_operation"
   ]
 
+commands_abbreviation = [
+    "End",
+    "Jmp",
+    "Jif",
+    "Crt",
+    "Fnd",
+    "Eqt",
+    "Inp",
+    "Out",
+    "Psh",
+    "Pop",
+    "Cal",
+    "Ret",
+    "Rar",
+    "Raw",
+    "Not",
+    "And",
+    "Or",
+    "Xor",
+    "Neg",
+    "Add",
+    "Inc",
+    "Dec",
+    "Sub",
+    "Mul",
+    "Div",
+    "Mod",
+    "Eql",
+    "Grt",
+    "Les",
+    "Nop"
+]
+
 with open("config.yocfg", "r") as infile:
     config = loads(infile.read())
