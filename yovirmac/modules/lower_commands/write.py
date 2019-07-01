@@ -86,7 +86,7 @@ def entity(num, obj_type, value):
     elif type(obj_type) == str:
         if value is None:
             value = default_values[obj_type]
-        write_dictionary[obj_type](num, value)
+        write_dictionary[obj_type](num + 1, value)
 
 
 def base_header():

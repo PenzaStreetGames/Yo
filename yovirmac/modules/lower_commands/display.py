@@ -52,5 +52,20 @@ def string(num):
     print(read.string(num))
 
 
+def entity(num):
+    obj_type = read.kind(num)
+    display_dictionary[obj_type](num + 1)
+
+
 def system_area():
     pass
+
+
+display_dictionary = {
+    "none": none,
+    "link": link,
+    "command": command,
+    "logic": logic,
+    "number": number,
+    "string": string
+}

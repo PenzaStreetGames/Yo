@@ -54,3 +54,28 @@ def string(num, output="str"):
             index += 1
             symbol = number(index)
         return result
+
+
+def entity(num):
+    obj_type = kind(num)
+    value = read_dictionary[obj_type](num + 1)
+    return obj_type, value
+
+
+read_list = [
+    none,
+    link,
+    command,
+    logic,
+    number,
+    string
+]
+
+read_dictionary = {
+    "none": none,
+    "link": link,
+    "command": command,
+    "logic": logic,
+    "number": number,
+    "string": string
+}
