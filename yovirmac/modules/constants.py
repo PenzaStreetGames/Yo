@@ -25,19 +25,31 @@ types = [
     "dictionary",
     "dictionary_item",
     "segment"
-  ]
+]
 types_length = {
-    "non": 2,
-    "lnk": 2,
-    "cmd": 2,
-    "log": 2,
-    "num": 2,
-    "str": "many",
-    "lst": "many",
-    "dic": "many",
-    "dit": 6,
-    "seg": "many"
-  }
+    "none": 2,
+    "link": 2,
+    "command": 2,
+    "logical": 2,
+    "number": 2,
+    "string": "many",
+    "list": "many",
+    "dictionary": "many",
+    "dictionary_item": 6,
+    "segment": "many"
+}
+default_values = {
+    "non": 0,
+    "link": 0,
+    "command": 0,
+    "logical": 0,
+    "number": 0,
+    "string": "",
+    "list": None,
+    "dictionary": None,
+    "dictionary_item": None,
+    "segment": None
+}
 seg_types = [
     "system",
     "call_stack",
@@ -47,104 +59,104 @@ seg_types = [
     "list_segment",
     "dictionary_segment",
     "namespace"
-  ]
+]
 seg_header = {
     "basic":
-    [
-      "type",
-      "data_begin",
-      "length",
-      "segment_end",
-      "last_full_cell",
-      "first_empty_cell",
-      "previous_segment",
-      "next_segment",
-      "interrupt",
-      "free_cells"
-    ],
+        [
+            "type",
+            "data_begin",
+            "length",
+            "segment_end",
+            "last_full_cell",
+            "first_empty_cell",
+            "previous_segment",
+            "next_segment",
+            "interrupt",
+            "free_cells"
+        ],
     "system":
-    [
-      "main_program",
-      "target_cell",
-      "target_namespace",
-      "call_stack",
-      "memory_stack",
-      "first_data_segment",
-      "last_data_segment",
-      "tape_length"
-    ],
+        [
+            "main_program",
+            "target_cell",
+            "target_namespace",
+            "call_stack",
+            "memory_stack",
+            "first_data_segment",
+            "last_data_segment",
+            "tape_length"
+        ],
     "call_stack": [],
     "memory_stack": [],
     "program":
-    [
-      "namespace",
-      "parent"
-    ],
+        [
+            "namespace",
+            "parent"
+        ],
     "data_segment": [],
     "list_segment": [],
     "dictionary_segment": [],
     "namespace":
-    [
-      "program"
-    ]
-  },
+        [
+            "program"
+        ]
+}
 seg_header_types = {
     "basic":
-    {
-      "type": "num",
-      "data_begin": "lnk",
-      "length": "num",
-      "segment_end": "lnk",
-      "last_full_cell": "lnk",
-      "first_empty_cell": "lnk",
-      "previous_segment": "lnk",
-      "next_segment": "lnk",
-      "interrupt": "log",
-      "free_cells": "num"
-    },
+        {
+            "type": "num",
+            "data_begin": "lnk",
+            "length": "num",
+            "segment_end": "lnk",
+            "last_full_cell": "lnk",
+            "first_empty_cell": "lnk",
+            "previous_segment": "lnk",
+            "next_segment": "lnk",
+            "interrupt": "log",
+            "free_cells": "num"
+        },
     "system":
-    {
-      "main_program": "lnk",
-      "target_cell": "lnk",
-      "target_namespace": "lnk",
-      "call_stack": "lnk",
-      "memory_stack": "lnk",
-      "first_data_segment": "lnk",
-      "last_data_segment": "lnk",
-      "tape_length": "num"
-    },
+        {
+            "main_program": "lnk",
+            "target_cell": "lnk",
+            "target_namespace": "lnk",
+            "call_stack": "lnk",
+            "memory_stack": "lnk",
+            "first_data_segment": "lnk",
+            "last_data_segment": "lnk",
+            "tape_length": "num"
+        },
     "call_stack": {},
     "memory_stack": {},
     "program":
-    {
-      "namespace": "lnk",
-      "parent": "lnk"
-    },
+        {
+            "namespace": "lnk",
+            "parent": "lnk"
+        },
     "data_segment": {},
     "list_segment": {},
     "dictionary_segment": {},
     "namespace":
-    {
-      "program": "lnk"
-    }
-  },
+        {
+            "program": "lnk"
+        }
+}
 segment_properties = {
     "minimal_data_length":
-    {
-      "system": 32,
-      "call_stack": 512,
-      "memory_stack": 512,
-      "program": 32,
-      "data_segment": 2048,
-      "list_segment": 2048,
-      "dictionary_segment": 2048,
-      "namespace": 256
-    },
+        {
+            "system": 32,
+            "call_stack": 512,
+            "memory_stack": 512,
+            "program": 32,
+            "data_segment": 2048,
+            "list_segment": 2048,
+            "dictionary_segment": 2048,
+            "namespace": 256
+        },
     "header_length": 32,
     "header_basic_length": 16,
     "header_special_length": 16,
     "expansion_coefficient": 2
-  },
+}
 commands = [
     "End",
     "Jump",
@@ -176,7 +188,7 @@ commands = [
     "Great",
     "Less",
     "No_operation"
-  ]
+]
 
 commands_abbreviation = [
     "End",

@@ -78,7 +78,15 @@ def string(num, value):
 
 
 def entity(num, obj_type, value):
-    pass
+    kind(num, obj_type)
+    if type(obj_type) == int:
+        if value is None:
+            value = default_values[types[obj_type]]
+        write_list[obj_type](num, value)
+    elif type(obj_type) == str:
+        if value is None:
+            value = default_values[obj_type]
+        write_dictionary[obj_type](num, value)
 
 
 def base_header():
@@ -92,3 +100,22 @@ def system_area():
         "segment_end": 64
     }
     base_header()
+
+
+write_list = [
+    none,
+    link,
+    command,
+    logic,
+    number,
+    string
+]
+
+write_dictionary = {
+    "none": none,
+    "link": link,
+    "command": command,
+    "logic": logic,
+    "number": number,
+    "string": string
+}
