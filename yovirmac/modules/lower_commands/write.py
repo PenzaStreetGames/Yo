@@ -32,7 +32,7 @@ def kind(num, value):
         cell(num, types.index(value))
 
 
-def none(num):
+def none(num, value):
     memory[num] = 0
 
 
@@ -69,12 +69,12 @@ def string(num, value):
         for symbol in value:
             char(index, symbol)
             index += 1
-        none(index)
+        none(index, None)
     elif type(value) == list:
         for item in value:
             number(index, item)
             index += 1
-        none(index)
+        none(index, None)
 
 
 def entity(num, obj_type, value):
@@ -89,17 +89,23 @@ def entity(num, obj_type, value):
         write_dictionary[obj_type](num + 1, value)
 
 
-def base_header():
-    pass
+def header_part(num, header_type, args):
+    for i in range(len(seg_header[header_type])):
+        attribute = seg_header[header_type][i]
+        attribute_type = seg_header_types[header_type][attribute]
+        if not args.get(attribute, False):
+            entity(num + i * 2, attribute_type, None)
+        else:
+            entity(num + i * 2, attribute_type, args[attribute])
 
 
 def system_area():
-    base_args = {
+    args = {
         "type": seg_types.index("system"),
         "length": 64,
         "segment_end": 64
     }
-    base_header()
+    header_part(0, "basic", args)
 
 
 write_list = [

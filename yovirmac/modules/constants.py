@@ -18,7 +18,7 @@ types = [
     "none",
     "link",
     "command",
-    "logical",
+    "logic",
     "number",
     "string",
     "list",
@@ -39,10 +39,10 @@ types_length = {
     "segment": "many"
 }
 default_values = {
-    "non": 0,
+    "none": 0,
     "link": 0,
     "command": 0,
-    "logical": 0,
+    "logic": 0,
     "number": 0,
     "string": "",
     "list": None,
@@ -103,43 +103,45 @@ seg_header = {
 seg_header_types = {
     "basic":
         {
-            "type": "num",
-            "data_begin": "lnk",
-            "length": "num",
-            "segment_end": "lnk",
-            "last_full_cell": "lnk",
-            "first_empty_cell": "lnk",
-            "previous_segment": "lnk",
-            "next_segment": "lnk",
-            "interrupt": "log",
-            "free_cells": "num"
+            "type": "number",
+            "data_begin": "link",
+            "length": "number",
+            "segment_end": "link",
+            "last_full_cell": "link",
+            "first_empty_cell": "link",
+            "previous_segment": "link",
+            "next_segment": "link",
+            "interrupt": "logic",
+            "full": "logic",
+            "free_cells": "number"
         },
     "system":
         {
-            "main_program": "lnk",
-            "target_cell": "lnk",
-            "target_namespace": "lnk",
-            "call_stack": "lnk",
-            "memory_stack": "lnk",
-            "first_data_segment": "lnk",
-            "last_data_segment": "lnk",
-            "tape_length": "num"
+            "main_program": "link",
+            "target_cell": "link",
+            "target_namespace": "link",
+            "call_stack": "link",
+            "memory_stack": "link",
+            "first_data_segment": "link",
+            "last_data_segment": "link",
+            "tape_length": "number"
         },
     "call_stack": {},
     "memory_stack": {},
     "program":
         {
-            "namespace": "lnk",
-            "parent": "lnk"
+            "namespace": "link",
+            "parent": "link"
         },
     "data_segment": {},
     "list_segment": {},
     "dictionary_segment": {},
     "namespace":
         {
-            "program": "lnk"
+            "program": "link"
         }
 }
+header_part_length = 32
 segment_properties = {
     "minimal_data_length":
         {

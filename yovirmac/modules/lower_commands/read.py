@@ -62,6 +62,15 @@ def entity(num):
     return obj_type, value
 
 
+def header_part(num, header_type):
+    args = {}
+    for i in range(len(seg_header[header_type])):
+        attribute_name = seg_header[header_type][i]
+        attribute = entity(num + i * 2)[1]
+        args[attribute_name] = attribute
+    return args
+
+
 read_list = [
     none,
     link,

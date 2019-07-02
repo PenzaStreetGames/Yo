@@ -57,6 +57,12 @@ def entity(num):
     display_dictionary[obj_type](num + 1)
 
 
+def header_part(num, header_type):
+    args = read.header_part(num, header_type)
+    for arg_name in seg_header[header_type]:
+        print(f"{arg_name}: {args[arg_name]}")
+
+
 def system_area():
     pass
 

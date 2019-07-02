@@ -91,3 +91,31 @@ def command_writing():
         display.command(0)
     except LowerCommandError as error:
         print(error)
+
+
+def entity_writing():
+    """Проверка на запись объектов"""
+    entities = [
+        [0, "none", None],
+        [0, "link", 1000],
+        [0, "command", 15],
+        [0, "logic", 1],
+        [0, "number", 255],
+        [0, "string", "something"]
+    ]
+    for entity in entities:
+        write.entity(*entity)
+        display.cell(0)
+        display.cell(1)
+        display.entity(0)
+
+
+def header_part_writing():
+    """Проверка на запись части заголовка"""
+    for header_type in seg_header.keys():
+        write.header_part(0, header_type, {})
+        display.header_part(0, header_type)
+        for i in range(header_part_length):
+            display.cell(i)
+            write.clean(i)
+        print()

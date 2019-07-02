@@ -10,6 +10,8 @@ tests = {
     6: logic_writing,
     7: string_writing,
     8: command_writing,
+    9: entity_writing,
+    10: header_part_writing
 }
 
 memory_control.add_cells(64)
