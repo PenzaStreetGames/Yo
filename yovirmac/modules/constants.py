@@ -142,6 +142,8 @@ seg_header_types = {
         }
 }
 header_part_length = 32
+header_base_part_length = 32
+header_special_part = 30
 segment_properties = {
     "minimal_data_length":
         {

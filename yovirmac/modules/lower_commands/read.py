@@ -71,6 +71,13 @@ def header_part(num, header_type):
     return args
 
 
+def header(num):
+    base_args = header_part(num, "basic")
+    args = header_part(num + header_base_part_length,
+                       seg_types[base_args["type"]])
+    return base_args, args
+
+
 read_list = [
     none,
     link,

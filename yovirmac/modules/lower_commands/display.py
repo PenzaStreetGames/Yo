@@ -63,6 +63,16 @@ def header_part(num, header_type):
         print(f"{arg_name}: {args[arg_name]}")
 
 
+def header(num):
+    base_args, args = read.header(num)
+    header_type = base_args["type"]
+    for arg_name in seg_header["basic"]:
+        print(f"{arg_name}: {base_args[arg_name]}")
+    print()
+    for arg_name in seg_header[seg_types[header_type]]:
+        print(f"{arg_name}: {args[arg_name]}")
+
+
 def system_area():
     pass
 

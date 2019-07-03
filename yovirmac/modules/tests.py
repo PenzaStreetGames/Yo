@@ -119,3 +119,13 @@ def header_part_writing():
             display.cell(i)
             write.clean(i)
         print()
+
+
+def header_writing():
+    """Проверка на запись заголовка"""
+    for header_type in seg_header.keys():
+        if header_type == "basic":
+            continue
+        write.header(0, header_type, {}, {})
+        display.header(0)
+        print()

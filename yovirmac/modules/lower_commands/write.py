@@ -99,6 +99,12 @@ def header_part(num, header_type, args):
             entity(num + i * 2, attribute_type, args[attribute])
 
 
+def header(num, segment_type, base_args, special_args):
+    base_args["type"] = base_args.get("type", seg_types.index(segment_type))
+    header_part(num, "basic", base_args)
+    header_part(num + header_base_part_length, segment_type, special_args)
+
+
 def system_area():
     args = {
         "type": seg_types.index("system"),
