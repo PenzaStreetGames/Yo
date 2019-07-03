@@ -1,5 +1,6 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.lower_commands import read
+from yovirmac.modules.lower_commands import memory_control
 from yovirmac.modules.errors import *
 
 
@@ -99,10 +100,17 @@ def header_part(num, header_type, args):
             entity(num + i * 2, attribute_type, args[attribute])
 
 
-def header(num, segment_type, base_args, special_args):
-    base_args["type"] = base_args.get("type", seg_types.index(segment_type))
+def header(num, base_args, special_args):
+    segment_type = base_args["type"]
     header_part(num, "basic", base_args)
     header_part(num + header_base_part_length, segment_type, special_args)
+
+
+def segment(num, base_args, special_args):
+    length = base_args["length"]
+    memory_control.add_cells(length)
+    kind(num, types["segment"])
+    header(num + 2, base_args, special_args)
 
 
 def system_area():

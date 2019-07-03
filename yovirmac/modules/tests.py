@@ -126,6 +126,6 @@ def header_writing():
     for header_type in seg_header.keys():
         if header_type == "basic":
             continue
-        write.header(0, header_type, {}, {})
+        write.header(0, {"type": seg_types.index(header_type)}, {})
         display.header(0)
         print()

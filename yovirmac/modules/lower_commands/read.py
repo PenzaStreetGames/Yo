@@ -78,6 +78,11 @@ def header(num):
     return base_args, args
 
 
+def segment(num):
+    args, base_args = header(num + 2)
+    return args, base_args
+
+
 read_list = [
     none,
     link,
