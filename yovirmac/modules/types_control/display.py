@@ -1,5 +1,5 @@
 from yovirmac.modules.constants import *
-import yovirmac.modules.lower_commands.read as read
+import yovirmac.modules.types_control.read as read
 
 
 def bit(num, digit):

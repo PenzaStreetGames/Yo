@@ -1,5 +1,5 @@
 from yovirmac.modules.tests import *
-from yovirmac.modules.lower_commands import memory_control
+from yovirmac.modules.types_control import memory_control
 
 tests = {
     1: cell_overflow_write,

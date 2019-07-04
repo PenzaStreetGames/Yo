@@ -1,13 +1,7 @@
-from yovirmac.main import *
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
-from yovirmac.modules.lower_commands import *
-from yovirmac.modules.lower_commands import read as read
-from yovirmac.modules.lower_commands import write as write
-from yovirmac.modules.lower_commands import display as display
-from yovirmac.modules.lower_commands import shift as shift
-from yovirmac.modules.top_commands import *
-from yovirmac.modules.tape_init import *
+from yovirmac.modules.types_control import write as write, display as display, \
+    shift as shift, read as read
 import random
 
 

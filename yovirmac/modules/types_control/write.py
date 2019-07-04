@@ -1,6 +1,5 @@
 from yovirmac.modules.constants import *
-from yovirmac.modules.lower_commands import read
-from yovirmac.modules.lower_commands import memory_control
+from yovirmac.modules.types_control import memory_control
 from yovirmac.modules.errors import *
 
 
