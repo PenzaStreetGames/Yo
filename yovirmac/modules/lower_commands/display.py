@@ -73,6 +73,10 @@ def header(num):
         print(f"{arg_name}: {args[arg_name]}")
 
 
+def segment(num):
+    header(num + 2)
+
+
 def system_area():
     pass
 
