@@ -14,7 +14,8 @@ def attribute(num, name, type_and_value):
         real_type = seg_header_types[segment_type]
         if kind != seg_header_types[segment_type][name]:
             raise LowerCommandError(
-                f"Атрибут \"{name}\" имеет тип \"{kind}\" вместо \"{}\"")
+                f"Атрибут \"{name}\" имеет тип \"{kind}\" вместо "
+                f"\"{real_type}\"")
         index = num + header_base_part_length + seg_header[
             segment_type].index(name) * 2
         write.entity()
