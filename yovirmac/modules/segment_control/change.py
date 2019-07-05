@@ -3,11 +3,12 @@ from yovirmac.modules.types_control import write, read
 from yovirmac.modules.errors import *
 
 
-def attribute(num, name, kind, value):
+def attribute(num, name, value):
     base_args, args = read.segment(num + 2)
     segment_type = base_args["type"]
     header_part = find_header_part(name, segment_type)
-    check_attribute_type(name, header_part, kind)
+    kind = seg_header_types[header_part][
+        name]
     index = calculate_index(num, name, header_part)
     write.entity(index, kind, value)
 
@@ -17,17 +18,9 @@ def find_header_part(name, seg_type):
         if name not in seg_header[seg_types[seg_type]]:
             raise LowerCommandError(
                 f"Атрибут \"{name}\" отсутствует в заголовке сегмента")
-        return seg_type
+        return seg_types[seg_type]
     else:
         return "basic"
-
-
-def check_attribute_type(name, header_part, kind):
-    real_type = seg_header_types[header_part][name]
-    if kind != seg_header_types[header_part][name]:
-        raise LowerCommandError(
-            f"Атрибут \"{name}\" имеет тип \"{kind}\" вместо "
-            f"\"{real_type}\"")
 
 
 def calculate_index(num, name, header_part):

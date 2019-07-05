@@ -102,15 +102,15 @@ def header_part(num, header_type, args):
 def header(num, base_args, special_args):
     segment_type = base_args["type"]
     header_part(num, "basic", base_args)
-    header_part(num + header_base_part_length, segment_type, special_args)
+    header_part(num + header_base_part_length, seg_types[segment_type],
+                special_args)
 
 
 def segment(num, base_args, special_args):
     seg_type = base_args["type"]
     length = base_args.get("length", False)
-    length = length if length else segment_properties["minimal"]
     memory_control.add_cells(length)
-    kind(num, types["segment"])
+    kind(num, types.index("segment"))
     header(num + 2, base_args, special_args)
 
 

@@ -1,7 +1,7 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
-from yovirmac.modules.types_control import write as write, display as display, \
-    shift as shift, read as read
+from yovirmac.modules.types_control import write, display, shift, read
+from yovirmac.modules.segment_control import init, change
 import random
 
 
@@ -127,5 +127,12 @@ def header_writing():
 
 def attribute_writing():
     """Проверка на изменение атрибута"""
-    base_args = {"type": "system"}
-    write.segment(0, {})
+    init.system_area()
+    display.segment(0)
+    print()
+    change.attribute(0, "segment_end", 32)
+    display.segment(0)
+    print()
+    change.attribute(0, "memory_stack", 32)
+    display.segment(0)
+    print()

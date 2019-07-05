@@ -145,10 +145,8 @@ header_part_length = 32
 header_base_part_length = 32
 header_special_part = 30
 header_length = 64
-segment_properties = {
-    "minimal_data_length":
-        {
-            "system": 64,
+minimal_data_length = {
+            "system": 0,
             "call_stack": 512,
             "memory_stack": 512,
             "program": 32,
@@ -156,12 +154,9 @@ segment_properties = {
             "list_segment": 2048,
             "dictionary_segment": 2048,
             "namespace": 256
-        },
-    "header_length": 32,
-    "header_basic_length": 16,
-    "header_special_length": 16,
-    "expansion_coefficient": 2
-}
+        }
+expansion_coefficient = 2
+
 commands = [
     "End",
     "Jump",
