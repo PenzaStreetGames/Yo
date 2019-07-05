@@ -123,3 +123,9 @@ def header_writing():
         write.header(0, {"type": seg_types.index(header_type)}, {})
         display.header(0)
         print()
+
+
+def attribute_writing():
+    """Проверка на изменение атрибута"""
+    base_args = {"type": "system"}
+    write.segment(0, {})

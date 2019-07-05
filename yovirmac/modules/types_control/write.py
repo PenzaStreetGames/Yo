@@ -106,7 +106,9 @@ def header(num, base_args, special_args):
 
 
 def segment(num, base_args, special_args):
-    length = base_args["length"]
+    seg_type = base_args["type"]
+    length = base_args.get("length", False)
+    length = length if length else segment_properties["minimal"]
     memory_control.add_cells(length)
     kind(num, types["segment"])
     header(num + 2, base_args, special_args)

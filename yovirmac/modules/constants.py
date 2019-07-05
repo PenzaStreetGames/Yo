@@ -148,7 +148,7 @@ header_length = 64
 segment_properties = {
     "minimal_data_length":
         {
-            "system": 32,
+            "system": 64,
             "call_stack": 512,
             "memory_stack": 512,
             "program": 32,
