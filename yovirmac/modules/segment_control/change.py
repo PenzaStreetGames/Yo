@@ -11,11 +11,14 @@ def attribute(num, name, type_and_value):
         if name not in seg_header[seg_types[segment_type]]:
             raise LowerCommandError(
                 f"Атрибут \"{name}\" отсутствует в заголовке сегмента")
-        real_type = seg_header_types[segment_type]
-        if kind != seg_header_types[segment_type][name]:
-            raise LowerCommandError(
-                f"Атрибут \"{name}\" имеет тип \"{kind}\" вместо "
-                f"\"{real_type}\"")
-        index = num + header_base_part_length + seg_header[
-            segment_type].index(name) * 2
-        write.entity()
+        seg_part = segment_type
+    else:
+        seg_part = "basic"
+    real_type = seg_header_types[seg_part][name]
+    if kind != seg_header_types[segment_type][name]:
+        raise LowerCommandError(
+            f"Атрибут \"{name}\" имеет тип \"{kind}\" вместо "
+            f"\"{real_type}\"")
+    index = num + header_base_part_length + seg_header[
+        segment_type].index(name) * 2
+    write.entity()
