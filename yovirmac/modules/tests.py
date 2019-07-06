@@ -1,7 +1,8 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import write, display, shift, read
-from yovirmac.modules.segment_control import init, change
+from yovirmac.modules.segment_control import init, change, find, show
+from yovirmac.modules.tape_control import add, view
 import random
 
 
@@ -127,12 +128,24 @@ def header_writing():
 
 def attribute_writing():
     """Проверка на изменение атрибута"""
-    init.system_area()
+    add.system_area()
     display.segment(0)
+    show.attribute(0, "segment_end")
+    show.attribute(0, "memory_stack")
     print()
-    change.attribute(0, "segment_end", 32)
+    change.attribute(0, "segment_end", 64)
     display.segment(0)
+    show.attribute(0, "segment_end")
     print()
     change.attribute(0, "memory_stack", 32)
     display.segment(0)
+    show.attribute(0, "memory_stack")
     print()
+
+
+def stack_writing():
+    """Проверка на запись стеков"""
+    add.system_area()
+    add.memory_stack()
+    add.call_stack()
+    view.tape()

@@ -156,7 +156,6 @@ minimal_data_length = {
             "namespace": 256
         }
 expansion_coefficient = 2
-
 commands = [
     "End",
     "Jump",
@@ -189,7 +188,6 @@ commands = [
     "Less",
     "No_operation"
 ]
-
 commands_abbreviation = [
     "End",
     "Jmp",
@@ -222,6 +220,10 @@ commands_abbreviation = [
     "Les",
     "Nop"
 ]
+seg_links = {
+    "system": 0,
+    "memory_stack": header_length,
+}
 
 with open("config.yocfg", "r") as infile:
     config = loads(infile.read())

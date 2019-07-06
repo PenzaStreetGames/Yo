@@ -1,5 +1,6 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.types_control import memory_control
+from yovirmac.modules.segment_control import change
 from yovirmac.modules.errors import *
 
 
@@ -107,7 +108,6 @@ def header(num, base_args, special_args):
 
 
 def segment(num, base_args, special_args):
-    seg_type = base_args["type"]
     length = base_args.get("length", False)
     memory_control.add_cells(length)
     kind(num, types.index("segment"))

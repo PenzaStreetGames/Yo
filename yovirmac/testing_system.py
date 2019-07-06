@@ -13,7 +13,8 @@ tests = {
     9: entity_writing,
     10: header_part_writing,
     11: header_writing,
-    12: attribute_writing
+    12: attribute_writing,
+    13: stack_writing
 }
 
 memory_control.add_cells(64)
