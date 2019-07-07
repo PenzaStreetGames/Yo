@@ -35,7 +35,7 @@ types_length = {
     "string": "many",
     "list": "many",
     "dictionary": "many",
-    "dictionary_item": 6,
+    "dictionary_item": 8,
     "segment": "many"
 }
 default_values = {
@@ -220,6 +220,38 @@ commands_abbreviation = [
     "Les",
     "Nop"
 ]
+commands_args_number = {
+    "End": 0,
+    "Jmp": 1,
+    "Jif": 2,
+    "Crt": 1,
+    "Fnd": 1,
+    "Eqt": 2,
+    "Inp": 0,
+    "Out": 1,
+    "Psh": 1,
+    "Pop": 1,
+    "Cal": 1,
+    "Ret": 0,
+    "Rar": 2,
+    "Raw": 3,
+    "Not": 1,
+    "And": 2,
+    "Or":  2,
+    "Xor": 2,
+    "Neg": 1,
+    "Add": 2,
+    "Inc": 1,
+    "Dec": 1,
+    "Sub": 2,
+    "Mul": 2,
+    "Div": 2,
+    "Mod": 2,
+    "Eql": 2,
+    "Grt": 2,
+    "Les": 2,
+    "Nop": 0
+}
 seg_links = {
     "system": 0,
     "memory_stack": header_length,

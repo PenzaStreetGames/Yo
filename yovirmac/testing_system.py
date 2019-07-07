@@ -14,7 +14,10 @@ tests = {
     10: header_part_writing,
     11: header_writing,
     12: attribute_writing,
-    13: stack_writing
+    13: stack_writing,
+    14: dictionary_item_writing,
+    15: data_segment_writing,
+    16: program_writing
 }
 
 memory_control.add_cells(64)

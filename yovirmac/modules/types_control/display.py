@@ -52,6 +52,10 @@ def string(num):
     print(read.string(num))
 
 
+def dictionary_item(num):
+    print(read.dictionary_item(num))
+
+
 def entity(num):
     obj_type = read.kind(num)
     display_dictionary[obj_type](num + 1)
@@ -87,5 +91,6 @@ display_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
-    "string": string
+    "string": string,
+    "dictionary_item": dictionary_item
 }

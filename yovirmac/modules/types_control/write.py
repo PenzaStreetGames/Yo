@@ -78,6 +78,12 @@ def string(num, value):
         none(index, None)
 
 
+def dictionary_item(num, args):
+    entity(num + 1, "link", args["dictionary"])
+    entity(num + 3, "link", args["key"])
+    entity(num + 5, "link", args["value"])
+
+
 def entity(num, obj_type, value):
     kind(num, obj_type)
     if type(obj_type) == int:
@@ -129,7 +135,8 @@ write_list = [
     command,
     logic,
     number,
-    string
+    string,
+    dictionary_item
 ]
 
 write_dictionary = {
@@ -138,5 +145,6 @@ write_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
-    "string": string
+    "string": string,
+    "dictionary_item": dictionary_item
 }

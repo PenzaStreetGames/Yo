@@ -56,6 +56,14 @@ def string(num, output="str"):
         return result
 
 
+def dictionary_item(num):
+    obj_type, dictionary = entity(num + 1)
+    obj_type, key = entity(num + 3)
+    obj_type, value = entity(num + 5)
+    result = {"dictionary": dictionary, "key": key, "value": value}
+    return result
+
+
 def entity(num):
     obj_type = kind(num)
     value = read_dictionary[obj_type](num + 1)
@@ -89,7 +97,8 @@ read_list = [
     command,
     logic,
     number,
-    string
+    string,
+    dictionary_item
 ]
 
 read_dictionary = {
@@ -98,5 +107,6 @@ read_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
-    "string": string
+    "string": string,
+    "dictionary_item": dictionary_item
 }

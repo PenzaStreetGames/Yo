@@ -149,3 +149,26 @@ def stack_writing():
     add.memory_stack()
     add.call_stack()
     view.tape()
+
+
+def dictionary_item_writing():
+    """Проверка на запись элемента списка"""
+    args = {"dictionary": 128, "key": 64, "value": 256}
+    write.entity(0, "dictionary_item", args)
+    display.entity(0)
+    change.dictionary_item_part(0, "key", 48)
+    display.entity(0)
+
+
+def data_segment_writing():
+    """Проверка на запись сегмента данных"""
+    add.system_area()
+    add.memory_stack()
+    add.call_stack()
+    add.data_segment()
+    view.tape()
+
+
+def program_writing():
+    """Проверка на запись программы"""
+    print(add.program("program.yovc"))
