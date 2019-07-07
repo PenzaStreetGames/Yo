@@ -18,6 +18,12 @@ def cell(num, value):
     memory[num] = value & full_cell
 
 
+def cells_stream(num, cells):
+    for i in range(len(cells)):
+        value = cells[i]
+        cell(num + i, value)
+
+
 def clean(num):
     memory[num] = 0
 
@@ -118,15 +124,6 @@ def segment(num, base_args, special_args):
     memory_control.add_cells(length)
     kind(num, types.index("segment"))
     header(num + 2, base_args, special_args)
-
-
-def system_area():
-    args = {
-        "type": seg_types.index("system"),
-        "length": 64,
-        "segment_end": 64
-    }
-    header_part(0, "basic", args)
 
 
 write_list = [

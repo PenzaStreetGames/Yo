@@ -171,4 +171,9 @@ def data_segment_writing():
 
 def program_writing():
     """Проверка на запись программы"""
-    print(add.program("program.yovc"))
+    add.system_area()
+    add.memory_stack()
+    add.call_stack()
+    add.data_segment()
+    add.program("program.yovc")
+    view.tape()

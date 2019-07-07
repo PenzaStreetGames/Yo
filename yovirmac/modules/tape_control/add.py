@@ -1,4 +1,5 @@
 from yovirmac.modules.constants import *
+from yovirmac.modules.types_control import write, memory_control
 from yovirmac.modules.segment_control import init, find, change
 from yovirmac.modules.segment_control.init import get_min_size
 
@@ -9,7 +10,7 @@ def create_segment(seg_type, self_length=0):
     else:
         num = seg_links["system"]
     if self_length != 0:
-        length = self_length
+        length = self_length + header_length
     else:
         length = get_min_size(seg_type)
     init.segment(num, seg_type, length=length)
@@ -41,22 +42,12 @@ def data_segment():
 
 
 def program(path):
-    with open(path, mode="rb") as assembly:
-        res = []
-        target_cell = 0
-        size = capacity // 8
-        i = 0
-        cell = assembly.read(1)
-        while cell:
-            i += 1
-            target_cell <<= 8
-            target_cell += int(cell)
-            if i == size:
-                res += [target_cell]
-                target_cell = 0
-                i = 0
-            cell = assembly.read(1)
-    return res
+    cells = read_assembly(path)
+    length = memory_control.determine_segment_size(len(cells))
+    num = create_segment("program", self_length=length)
+    # потом: сделать механизм проверки главности программы
+    change.attribute(seg_links["system"], "main_program", num)
+    stream_data(num, cells)
 
 
 def get_last_cell():
@@ -72,3 +63,28 @@ def empty_data(num):
     first = num + header_length
     change.attribute(num, "data_begin", first)
     change.attribute(num, "first_empty_cell", first)
+
+
+def stream_data(num, stream):
+    first = num + header_length
+    change.attribute(num, "data_begin", first)
+    write.cells_stream(first, stream)
+    change.attribute(num, "first_empty_cell", first + len(stream))
+
+
+def read_assembly(path):
+    with open(path, mode="rb") as assembly:
+        cells = []
+        target_cell = 0
+        size = capacity // 8
+        i = 0
+        for cell in assembly.read():
+            i += 1
+            target_cell <<= 8
+            target_cell += cell
+            if i == size:
+                cells += [target_cell]
+                target_cell = 0
+                i = 0
+            cell = assembly.read(1)
+    return cells
