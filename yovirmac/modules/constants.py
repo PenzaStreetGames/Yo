@@ -21,9 +21,10 @@ types = [
     "logic",
     "number",
     "string",
-    "list",
-    "dictionary",
+    "array",
     "dictionary_item",
+    "list"
+    "dictionary",
     "segment"
 ]
 types_length = {
@@ -33,10 +34,12 @@ types_length = {
     "logical": 2,
     "number": 2,
     "string": "many",
+    "array": "many",
+    "dictionary_item": 8,
     "list": "many",
     "dictionary": "many",
-    "dictionary_item": 8,
-    "segment": "many"
+    "segment": "many",
+    "command_with_args": "many"
 }
 default_values = {
     "none": 0,
@@ -147,10 +150,10 @@ header_special_part = 30
 header_length = 64
 minimal_data_length = {
             "system": 0,
-            "call_stack": 512,
-            "memory_stack": 512,
+            "call_stack": 16,  # 512
+            "memory_stack": 16,  # 512
             "program": 32,
-            "data_segment": 2048,
+            "data_segment": 16,  # 2048
             "list_segment": 2048,
             "dictionary_segment": 2048,
             "namespace": 256

@@ -1,5 +1,5 @@
 from yovirmac.modules.constants import *
-import yovirmac.modules.types_control.read as read
+from yovirmac.modules.types_control import read, memory_control
 
 
 def bit(num, digit):
@@ -49,7 +49,11 @@ def char(num):
 
 
 def string(num):
-    print(read.string(num))
+    print(f"\"{read.string(num)}\"")
+
+
+def array(num):
+    print("array:", *read.array(num))
 
 
 def dictionary_item(num):
@@ -81,8 +85,17 @@ def segment(num):
     header(num + 2)
 
 
-def system_area():
-    pass
+def command_with_args(num):
+    print(num, end=" ")
+    entity(num)
+    args = []
+    obj_type, command_name = read.entity(num)
+    index = num + 2
+    for i in range(commands_args_number[commands_abbreviation[command_name]]):
+        obj_type, value = read.entity(index)
+        print("\t", end="")
+        entity(index)
+        index += memory_control.determine_object_size(obj_type, value)
 
 
 display_dictionary = {
@@ -92,5 +105,6 @@ display_dictionary = {
     "logic": logic,
     "number": number,
     "string": string,
+    "array": array,
     "dictionary_item": dictionary_item
 }

@@ -177,3 +177,22 @@ def program_writing():
     add.data_segment()
     add.program("program.yovc")
     view.tape()
+    program = find.attribute(seg_links["system"], "main_program")
+    show.program_code(program)
+
+
+def array_writing():
+    """Проверка на запись массива"""
+    write.entity(0, "array", [5, 10, 15, 20, 25])
+    display.entity(0)
+
+
+def command_with_args_writing():
+    """Проверка на запись команды с аргументами"""
+    write.command_with_args(0, "Crt", [{"type": "array", "value": [5, 10, 20]}])
+    display.command_with_args(0)
+    write.command_with_args(0, "Fnd", [{"type": "string", "value": "line"}])
+    display.command_with_args(0)
+    write.command_with_args(0, "Add", [{"type": "link", "value": 16},
+                                       {"type": "link", "value": 22}])
+    display.command_with_args(0)

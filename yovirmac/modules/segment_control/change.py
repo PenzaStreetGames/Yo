@@ -1,7 +1,8 @@
 from yovirmac.modules.constants import *
-from yovirmac.modules.types_control import write, read
+from yovirmac.modules.types_control import write, read, memory_control
 from yovirmac.modules.errors import *
 from yovirmac.modules.segment_control.functions import *
+from yovirmac.modules.segment_control import find
 
 
 def attribute(num, name, value):
@@ -19,3 +20,18 @@ def dictionary_item_part(num, part, value):
     else:
         raise LowerCommandError(f"Несуществующий атрибут элемента словаря "
                                 f"{part}")
+
+
+def relative_links(num):
+    data_begin = find.attribute(num, "data_begin")
+    data_end = find.attribute(num, "segment_end")
+    index = data_begin
+    while index < data_end:
+        obj_type, obj_value = read.entity(index)
+        if obj_type == "link":
+            write.entity(index, "link", data_begin + obj_value)
+            index += memory_control.determine_object_size(obj_type, obj_value)
+        elif obj_type == "string":
+            index += memory_control.determine_object_size(obj_type, obj_value)
+        else:
+            index += 2

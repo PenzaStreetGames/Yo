@@ -48,6 +48,7 @@ def program(path):
     # потом: сделать механизм проверки главности программы
     change.attribute(seg_links["system"], "main_program", num)
     stream_data(num, cells)
+    change.relative_links(num)
 
 
 def get_last_cell():

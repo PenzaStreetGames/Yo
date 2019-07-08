@@ -84,6 +84,14 @@ def string(num, value):
         none(index, None)
 
 
+def array(num, args):
+    i = -1
+    for i in range(len(args)):
+        value = args[i]
+        entity(num + i * 2 + 1, "link", value)
+    none(num + (i + 1) * 2 + 1, None)
+
+
 def dictionary_item(num, args):
     entity(num + 1, "link", args["dictionary"])
     entity(num + 3, "link", args["key"])
@@ -126,6 +134,20 @@ def segment(num, base_args, special_args):
     header(num + 2, base_args, special_args)
 
 
+def command_with_args(num, command_name, args):
+    if len(args) != commands_args_number[command_name]:
+        raise LowerCommandError(f"Неправильное число аргументов команды "
+                                f"{command_name}: {len(args)} вместо "
+                                f"{commands_args_number[command_name]}")
+    entity(num, "command", command_name)
+    index = num + 2
+    for arg in args:
+        obj_type = arg["type"]
+        obj_value = arg["value"]
+        entity(index, obj_type, obj_value)
+        index += memory_control.determine_object_size(obj_type, obj_value)
+
+
 write_list = [
     none,
     link,
@@ -133,6 +155,7 @@ write_list = [
     logic,
     number,
     string,
+    array,
     dictionary_item
 ]
 
@@ -143,5 +166,6 @@ write_dictionary = {
     "logic": logic,
     "number": number,
     "string": string,
+    "array": array,
     "dictionary_item": dictionary_item
 }

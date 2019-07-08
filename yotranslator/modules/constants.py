@@ -246,8 +246,8 @@ binary_values = {
     "types":
         {
             "non": 0,
-            "cmd": 1,
-            "lnk": 2,
+            "lnk": 1,
+            "cmd": 2,
             "log": 3,
             "num": 4,
             "str": 5,

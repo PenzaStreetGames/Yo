@@ -48,4 +48,4 @@ def compile_program(filename, mode="main"):
 
 if __name__ == '__main__':
     file = input()
-    compile_program(file, mode="edit")
+    compile_program(file, mode="main")

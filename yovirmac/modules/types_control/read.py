@@ -1,4 +1,5 @@
 from yovirmac.modules.constants import *
+from yovirmac.modules.types_control import memory_control
 
 
 def bit(num, digit):
@@ -56,6 +57,17 @@ def string(num, output="str"):
         return result
 
 
+def array(num):
+    args = []
+    index = num + 1
+    obj_type, value = entity(index)
+    while obj_type != "none":
+        args += [value]
+        index += 2
+        obj_type, value = entity(index)
+    return args
+
+
 def dictionary_item(num):
     obj_type, dictionary = entity(num + 1)
     obj_type, key = entity(num + 3)
@@ -91,6 +103,17 @@ def segment(num):
     return args, base_args
 
 
+def command_with_args(num):
+    args = []
+    obj_type, command_name = entity(num)
+    index = num + 2
+    for i in range(commands_args_number[commands_abbreviation[command_name]]):
+        obj_type, value = entity(index)
+        args += [{"type": obj_type, "value": value}]
+        index += memory_control.determine_object_size(obj_type, value)
+    return command_name, args
+
+
 read_list = [
     none,
     link,
@@ -98,6 +121,7 @@ read_list = [
     logic,
     number,
     string,
+    array,
     dictionary_item
 ]
 
@@ -108,5 +132,6 @@ read_dictionary = {
     "logic": logic,
     "number": number,
     "string": string,
+    "array": array,
     "dictionary_item": dictionary_item
 }
