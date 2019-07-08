@@ -178,6 +178,7 @@ def program_writing():
     add.program("program.yovc")
     view.tape()
     program = find.attribute(seg_links["system"], "main_program")
+    show.attribute(seg_links["system"], "target_cell")
     show.program_code(program)
 
 

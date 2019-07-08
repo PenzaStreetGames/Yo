@@ -47,7 +47,8 @@ def program(path):
     num = create_segment("program", self_length=length)
     # потом: сделать механизм проверки главности программы
     change.attribute(seg_links["system"], "main_program", num)
-    stream_data(num, cells)
+    data_begin = stream_data(num, cells)
+    change.attribute(seg_links["system"], "target_cell", data_begin)
     change.relative_links(num)
 
 
@@ -71,6 +72,7 @@ def stream_data(num, stream):
     change.attribute(num, "data_begin", first)
     write.cells_stream(first, stream)
     change.attribute(num, "first_empty_cell", first + len(stream))
+    return first
 
 
 def read_assembly(path):
