@@ -19,7 +19,10 @@ tests = {
     15: data_segment_writing,
     16: program_writing,
     17: array_writing,
-    18: command_with_args_writing
+    18: command_with_args_writing,
+    19: list_segment_writing,
+    20: segment_extending,
+    21: stack_taking_putting
 }
 
 memory_control.add_cells(64)

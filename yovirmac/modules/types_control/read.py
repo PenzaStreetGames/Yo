@@ -1,4 +1,5 @@
 from yovirmac.modules.constants import *
+from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import memory_control
 
 
@@ -78,6 +79,8 @@ def dictionary_item(num):
 
 def entity(num):
     obj_type = kind(num)
+    if obj_type not in read_dictionary:
+        raise LowerCommandError(f"Неподдерживаемый тип для чтения {obj_type}")
     value = read_dictionary[obj_type](num + 1)
     return obj_type, value
 

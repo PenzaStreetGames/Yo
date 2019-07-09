@@ -1,8 +1,9 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import write, display, shift, read
-from yovirmac.modules.segment_control import init, change, find, show
-from yovirmac.modules.tape_control import add, view
+from yovirmac.modules.segment_control import init, change, find, show, put, take
+from yovirmac.modules.tape_control import add, view, setting, extend
+from yovirmac.modules.segment_control.functions import *
 import random
 
 
@@ -197,3 +198,48 @@ def command_with_args_writing():
     write.command_with_args(0, "Add", [{"type": "link", "value": 16},
                                        {"type": "link", "value": 22}])
     display.command_with_args(0)
+
+
+def list_segment_writing():
+    """Проверка на запись сегмента списка"""
+    setting.initialisation("program.yovc")
+    add.list_segment()
+    view.tape()
+
+
+def segment_extending():
+    """Проверка на расширение сегментов"""
+    segment_nums = setting.initialisation("program.yovc")
+    list_num = add.list_segment()
+    namespace_num = find.attribute(seg_links["system"], "target_namespace")
+    data_num = find.attribute(seg_links["system"], "first_data_segment")
+    extend.data_segment(data_num)
+    extend.namespace(namespace_num)
+    extend.list_segment(list_num)
+    view.tape()
+
+
+def stack_taking_putting():
+    """Проверка на заполнение и опустошение стека"""
+    real_memory_stack_size = minimal_data_length["memory_stack"]
+    minimal_data_length["memory_stack"] = 8
+    setting.initialisation("program.yovc")
+    num = find.attribute(seg_links["system"], "memory_stack")
+    data = [5, 10, 15, 20, 25]
+    print("Заполнение:")
+    for i in range(len(data)):
+        try:
+            put.stack(num, "link", data[i])
+            show.segment_body(num)
+        except LowerCommandError as error:
+            print(error)
+    print("Извлечение:")
+    for i in range(len(data)):
+        try:
+            obj_type, obj_value = take.stack(num)
+            show.segment_body(num)
+        except LowerCommandError as error:
+            print(error)
+    show.segment_body(num)
+    minimal_data_length["memory_stack"] = real_memory_stack_size
+

@@ -1,6 +1,7 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
-from yovirmac.modules.types_control import read
+from yovirmac.modules.types_control import read, memory_control
+from yovirmac.modules.segment_control import change
 
 
 def find_attribute(num, name):
@@ -28,3 +29,10 @@ def calculate_index(num, name, header_part):
     else:
         return num + 2 + header_base_part_length + \
                seg_header[header_part].index(name) * 2
+
+
+def change_stack(num, first_empty_cell_value, last_full_cell_value,
+                 free_cells_value):
+    change.attribute(num, "first_empty_cell", first_empty_cell_value)
+    change.attribute(num, "last_full_cell", last_full_cell_value)
+    change.attribute(num, "free_cells", free_cells_value)

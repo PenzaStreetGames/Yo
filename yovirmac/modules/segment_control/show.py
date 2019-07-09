@@ -25,3 +25,18 @@ def cells_stream(num):
     for i in range(data_begin, data_end, 2):
         cells = [read.cell(i), read.cell(i + 1)]
         print(i, *cells)
+
+
+def segment_body(num):
+    data_begin = find.attribute(num, "data_begin")
+    data_end = find.attribute(num, "segment_end")
+    index = data_begin
+    obj_type, obj_value = read.entity(index)
+    while index < data_end and obj_type != "none":
+        print(index, end=" ")
+        display.entity(index)
+        index += memory_control.determine_object_size(obj_type, obj_value)
+        if index < data_end:
+            obj_type, obj_value = read.entity(index)
+    print()
+

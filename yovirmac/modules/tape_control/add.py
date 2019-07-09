@@ -20,18 +20,21 @@ def create_segment(seg_type, self_length=0):
 
 def system_area():
     create_segment("system")
+    return seg_links["system"]
 
 
 def memory_stack():
     num = create_segment("memory_stack")
     change.attribute(seg_links["system"], "memory_stack", num)
     empty_data(num)
+    return num
 
 
 def call_stack():
     num = create_segment("call_stack")
     change.attribute(seg_links["system"], "call_stack", num)
     empty_data(num)
+    return num
 
 
 def data_segment():
@@ -39,6 +42,7 @@ def data_segment():
     change.attribute(seg_links["system"], "first_data_segment", num)
     change.attribute(seg_links["system"], "last_data_segment", num)
     empty_data(num)
+    return num
 
 
 def program(path):
@@ -50,6 +54,24 @@ def program(path):
     data_begin = stream_data(num, cells)
     change.attribute(seg_links["system"], "target_cell", data_begin)
     change.relative_links(num)
+    namespace(num)
+    return num
+
+
+def namespace(program_num):
+    num = create_segment("namespace")
+    change.attribute(num, "program", program_num)
+    change.attribute(program_num, "namespace", num)
+    # потом: сделать механизм проверки главности пространства имён
+    change.attribute(seg_links["system"], "target_namespace", num)
+    empty_data(num)
+    return num
+
+
+def list_segment():
+    num = create_segment("list_segment")
+    empty_data(num)
+    return num
 
 
 def get_last_cell():
@@ -65,6 +87,8 @@ def empty_data(num):
     first = num + header_length
     change.attribute(num, "data_begin", first)
     change.attribute(num, "first_empty_cell", first)
+    seg_end = find.attribute(num, "segment_end")
+    change.attribute(num, "free_cells", seg_end - first)
 
 
 def stream_data(num, stream):
