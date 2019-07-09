@@ -4,6 +4,7 @@ answer = []
 
 def get_info(folder, nesting):
     global answer
+    print(answer)
     structure = {"folders": 0, "files": 0, "strings": 0}
     for obj in os.scandir(folder):
         if obj.is_dir():
@@ -27,7 +28,7 @@ def get_info(folder, nesting):
                 continue
             if obj.name.endswith(".py"):
                 structure["files"] += 1
-                with open(obj.path, "r") as file:
+                with open(obj.path, "r", encoding="utf-8") as file:
                     strings = len(file.readlines())
                     structure["strings"] += strings
                 answer += ["\t" * (nesting + 1) + f"file {obj.name} {strings} "
