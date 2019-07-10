@@ -4,17 +4,13 @@ answer = []
 
 def get_info(folder, nesting):
     global answer
-    print(answer)
     structure = {"folders": 0, "files": 0, "strings": 0}
     for obj in os.scandir(folder):
         if obj.is_dir():
+            blacklist = ["__pycache__", "force_of_sharps", "TestExample"]
             if obj.name.startswith("."):
                 continue
-            if obj.name == "__pycache__":
-                continue
-            if obj.name == "force_of_sharps":
-                continue
-            if obj.name == "TestExample":
+            if obj.name in blacklist:
                 continue
             children_structure = get_info(obj.path, nesting + 1)
             structure["folders"] += 1
@@ -22,9 +18,10 @@ def get_info(folder, nesting):
             structure["files"] += children_structure["files"]
             structure["strings"] += children_structure["strings"]
         elif obj.is_file():
+            blacklist = ["__init__.py"]
             if obj.name.startswith("."):
                 continue
-            if obj.name == "__init__.py":
+            if obj.name in blacklist:
                 continue
             if obj.name.endswith(".py"):
                 structure["files"] += 1

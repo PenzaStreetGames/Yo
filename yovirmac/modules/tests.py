@@ -154,7 +154,7 @@ def stack_writing():
 
 def dictionary_item_writing():
     """Проверка на запись элемента списка"""
-    args = {"dictionary": 128, "key": 64, "value": 256}
+    args = [128, 64, 256]
     write.entity(0, "dictionary_item", args)
     display.entity(0)
     change.dictionary_item_part(0, "key", 48)
@@ -243,3 +243,11 @@ def stack_taking_putting():
     show.segment_body(num)
     minimal_data_length["memory_stack"] = real_memory_stack_size
 
+
+def data_segment_putting():
+    """Проверка на заполнение сегмента данных"""
+    real_data_segment_size = minimal_data_length["data_segment"]
+    minimal_data_length["data_segment"] = 4
+
+
+    minimal_data_length["data_segment"] = real_data_segment_size

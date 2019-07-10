@@ -12,3 +12,11 @@ def tape():
         print(f"{segment} - {seg_end - 1}\t{seg_end - segment}\t\t"
               f"{seg_end - segment - header_length}\t\t{seg_types[seg_type]}")
         segment = seg_end
+
+
+def data_segments():
+    pass
+
+
+def data_segment():
+    pass

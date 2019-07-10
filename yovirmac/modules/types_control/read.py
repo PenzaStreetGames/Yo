@@ -58,6 +58,22 @@ def string(num, output="str"):
         return result
 
 
+def string_part(num, stop, past_data=None, begin=True):
+    index = num
+    symbol = number(index)
+    result = ""
+    while symbol != 0 and index < stop:
+        result += chr(symbol)
+        index += 1
+        symbol = number(index)
+    end = True
+    if index == stop:
+        end = False
+    elif symbol == 0:
+        end = True
+    return result, end
+
+
 def array(num):
     args = []
     index = num + 1
@@ -70,11 +86,44 @@ def array(num):
 
 
 def dictionary_item(num):
-    obj_type, dictionary = entity(num + 1)
-    obj_type, key = entity(num + 3)
-    obj_type, value = entity(num + 5)
-    result = {"dictionary": dictionary, "key": key, "value": value}
+    result = []
+    for i in range(3):
+        arg_type, arg = entity(num + i * 2 + 1)
+        if arg_type != "link":
+            LowerCommandError(f"Аргумент элемента словаря имеет тип {arg_type},"
+                              f" а не link")
+        result += [arg]
     return result
+
+
+def dictionary_item_part(num, stop, past_data=None, begin=True):
+    result = []
+    place = stop - num + 1
+    if begin:
+        for i in range(3):
+            if place >= 3 + i * 2:
+                arg_type, arg = entity(num + i * 2 + 1)
+                if arg_type != "link":
+                    LowerCommandError(f"Аргумент элемента словаря имеет тип "
+                                      f"{arg_type}, а не link")
+                result += [arg]
+        if len(result) != 3:
+            end = False
+        else:
+            end = True
+    else:
+        for i in range(3 - len(past_data)):
+            if place >= 2 + i * 2:
+                arg_type, arg = entity(num + i * 2)
+                if arg_type != "link":
+                    LowerCommandError(f"Аргумент элемента словаря имеет тип "
+                                      f"{arg_type}, а не link")
+                result += [arg]
+        if len(past_data) + len(result) != 3:
+            end = False
+        else:
+            end = True
+    return result, end
 
 
 def entity(num):
@@ -83,6 +132,24 @@ def entity(num):
         raise LowerCommandError(f"Неподдерживаемый тип для чтения {obj_type}")
     value = read_dictionary[obj_type](num + 1)
     return obj_type, value
+
+
+def entity_part(num, obj_type=None, past_data=None, stop=None, begin=True):
+    if begin:
+        obj_type = kind(num)
+        if obj_type in read_part_dictionary:
+            value, end = read_part_dictionary[obj_type](
+                num + 1, stop, past_data=past_data, begin=begin)
+        else:
+            value, end = read_dictionary[obj_type](num + 1), True
+    else:
+        if obj_type in read_part_dictionary:
+            value, end = read_part_dictionary[obj_type](
+                num, stop, past_data=past_data, begin=begin)
+        else:
+            raise LowerCommandError(f"Тип {obj_type} не поддерживает "
+                                    f"межсегментное чтение")
+    return obj_type, value, end
 
 
 def header_part(num, header_type):
@@ -137,4 +204,9 @@ read_dictionary = {
     "string": string,
     "array": array,
     "dictionary_item": dictionary_item
+}
+
+read_part_dictionary = {
+    "string": string_part,
+    "dictionary_item": dictionary_item_part
 }

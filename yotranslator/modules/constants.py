@@ -256,11 +256,12 @@ binary_values = {
     "commands":
         {
             "End": 0, "Jmp": 1, "Jif": 2, "Crt": 3, "Fnd": 4,
-            "Eqt": 5, "Inp": 6, "Out": 7, "Psh": 8, "Pop": 9,
-            "Cal": 10, "Ret": 11, "Rar": 12, "Raw": 13, "Not": 14,
-            "And": 15, "Or": 16, "Xor": 17, "Neg": 18, "Add": 19,
-            "Inc": 20, "Dcr": 21, "Sub": 22, "Mul": 23, "Div": 24,
-            "Mod": 25, "Eql": 26, "Grt": 27, "Les": 28, "Nop": 29
+            "Eqt": 5, "Len": 6, "Inp": 7, "Out": 8, "Psh": 9,
+            "Pop": 10, "Cal": 11, "Ret": 12, "Rar": 13, "Raw": 14,
+            "Not": 15, "And": 16, "Or": 17, "Xor": 18, "Neg": 19,
+            "Add": 20, "Inc": 21, "Dcr": 22, "Sub": 23, "Mul": 24,
+            "Div": 25, "Mod": 26, "Eql": 27, "Grt": 28, "Les": 29,
+            "Nop": 30
         }
 }
 # представление типа в памяти

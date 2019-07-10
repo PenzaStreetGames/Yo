@@ -36,3 +36,8 @@ def change_stack(num, first_empty_cell_value, last_full_cell_value,
     change.attribute(num, "first_empty_cell", first_empty_cell_value)
     change.attribute(num, "last_full_cell", last_full_cell_value)
     change.attribute(num, "free_cells", free_cells_value)
+
+
+def change_data(num, first_empty_cell_value, free_cells_value):
+    change.attribute(num, "first_empty_cell", first_empty_cell_value)
+    change.attribute(num, "free_cells", free_cells_value)

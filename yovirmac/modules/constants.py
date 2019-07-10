@@ -166,6 +166,7 @@ commands = [
     "Create",
     "Find",
     "Equate",
+    "Length",
     "Input",
     "Output",
     "Push",
@@ -198,6 +199,7 @@ commands_abbreviation = [
     "Crt",
     "Fnd",
     "Eqt",
+    "Len",
     "Inp",
     "Out",
     "Psh",
@@ -259,6 +261,11 @@ seg_links = {
     "system": 0,
     "memory_stack": header_length,
 }
+dictionary_item_structure = [
+    "dictionary",
+    "key",
+    "value"
+]
 
 with open("config.yocfg", "r") as infile:
     config = loads(infile.read())
