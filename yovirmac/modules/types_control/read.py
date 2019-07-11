@@ -23,6 +23,13 @@ def link(num):
     return memory[num]
 
 
+def link_list(num, end):
+    result = []
+    for i in range(num, end):
+        result += [link(i)]
+    return result
+
+
 def command(num):
     return memory[num]
 
@@ -39,7 +46,7 @@ def char(num):
     return chr(memory[num])
 
 
-def string(num, output="str"):
+def chars(num, output="str"):
     index = num
     symbol = number(num)
     if output == "str":
@@ -58,20 +65,17 @@ def string(num, output="str"):
         return result
 
 
-def string_part(num, stop, past_data=None, begin=True):
-    index = num
-    symbol = number(index)
-    result = ""
-    while symbol != 0 and index < stop:
-        result += chr(symbol)
-        index += 1
-        symbol = number(index)
-    end = True
-    if index == stop:
-        end = False
-    elif symbol == 0:
-        end = True
-    return result, end
+def char_list(num, end, output="str"):
+    if output == "str":
+        result = ""
+        for i in range(num, end):
+            result += char(i)
+        return result
+    elif output == "list":
+        result = []
+        for i in range(num, end):
+            result += number(i)
+        return result
 
 
 def array(num):
@@ -96,60 +100,12 @@ def dictionary_item(num):
     return result
 
 
-def dictionary_item_part(num, stop, past_data=None, begin=True):
-    result = []
-    place = stop - num + 1
-    if begin:
-        for i in range(3):
-            if place >= 3 + i * 2:
-                arg_type, arg = entity(num + i * 2 + 1)
-                if arg_type != "link":
-                    LowerCommandError(f"Аргумент элемента словаря имеет тип "
-                                      f"{arg_type}, а не link")
-                result += [arg]
-        if len(result) != 3:
-            end = False
-        else:
-            end = True
-    else:
-        for i in range(3 - len(past_data)):
-            if place >= 2 + i * 2:
-                arg_type, arg = entity(num + i * 2)
-                if arg_type != "link":
-                    LowerCommandError(f"Аргумент элемента словаря имеет тип "
-                                      f"{arg_type}, а не link")
-                result += [arg]
-        if len(past_data) + len(result) != 3:
-            end = False
-        else:
-            end = True
-    return result, end
-
-
 def entity(num):
     obj_type = kind(num)
     if obj_type not in read_dictionary:
         raise LowerCommandError(f"Неподдерживаемый тип для чтения {obj_type}")
     value = read_dictionary[obj_type](num + 1)
     return obj_type, value
-
-
-def entity_part(num, obj_type=None, past_data=None, stop=None, begin=True):
-    if begin:
-        obj_type = kind(num)
-        if obj_type in read_part_dictionary:
-            value, end = read_part_dictionary[obj_type](
-                num + 1, stop, past_data=past_data, begin=begin)
-        else:
-            value, end = read_dictionary[obj_type](num + 1), True
-    else:
-        if obj_type in read_part_dictionary:
-            value, end = read_part_dictionary[obj_type](
-                num, stop, past_data=past_data, begin=begin)
-        else:
-            raise LowerCommandError(f"Тип {obj_type} не поддерживает "
-                                    f"межсегментное чтение")
-    return obj_type, value, end
 
 
 def header_part(num, header_type):
@@ -190,7 +146,7 @@ read_list = [
     command,
     logic,
     number,
-    string,
+    chars,
     array,
     dictionary_item
 ]
@@ -201,12 +157,7 @@ read_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
-    "string": string,
+    "chars": chars,
     "array": array,
     "dictionary_item": dictionary_item
-}
-
-read_part_dictionary = {
-    "string": string_part,
-    "dictionary_item": dictionary_item_part
 }

@@ -22,7 +22,12 @@ tests = {
     18: command_with_args_writing,
     19: list_segment_writing,
     20: segment_extending,
-    21: stack_taking_putting
+    21: stack_taking_putting,
+    22: data_segment_putting,
+    23: string_segment_putting,
+    24: list_segment_putting,
+    25: namespace_putting,
+
 }
 
 memory_control.add_cells(64)

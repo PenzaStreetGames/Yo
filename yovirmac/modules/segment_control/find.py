@@ -21,21 +21,34 @@ def dictionary_item_part(num, part):
                                 f"{part}")
 
 
-def data_segment_entity(seg_num, num, begin=True, obj_type=None,
-                        past_data=None):
-    segment_end = find.attribute(seg_num, "segment_end")
-    if begin:
-        obj_type, value, end = read.entity_part(num, stop=segment_end - 1,
-                                                begin=True)
-    else:
-        obj_type, value, end = read.entity_part(num, stop=segment_end - 1,
-                                                begin=False, obj_type=obj_type,
-                                                past_data=past_data)
-    if not end:
-        next_segment = find.attribute(seg_num, "next_segment")
-        data_begin = find_attribute(next_segment, "data_begin")
-        obj_type, delta_value = data_segment_entity(
-            next_segment, data_begin, begin=False, obj_type=obj_type,
-            past_data=value)
-        value += delta_value
-    return obj_type, value
+def list_segment(num, last=False):
+    data_begin, data_end = data_range(num)
+    if last:
+        top = attribute(num, "first_empty_cell")
+        data_end = top
+    links = read.link_list(data_begin, data_end)
+    return links
+
+
+def string_segment(num, last=False):
+    data_begin, data_end = data_range(num)
+    if last:
+        top = attribute(num, "first_empty_cell")
+        data_end = top
+    chars = read.char_list(data_begin, data_end)
+    return chars
+
+
+def namespace(num, last=False):
+    data_begin, data_end = data_range(num)
+    if last:
+        top = attribute(num, "first_empty_cell")
+        data_end = top
+    links = read.link_list(data_begin, data_end)
+    return links
+
+
+def data_range(num):
+    data_begin = attribute(num, "data_begin")
+    data_end = attribute(num, "segment_end")
+    return data_begin, data_end

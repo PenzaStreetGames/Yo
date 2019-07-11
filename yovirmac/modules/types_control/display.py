@@ -48,8 +48,8 @@ def char(num):
     print(f"char \"{read.char(num)}\"")
 
 
-def string(num):
-    print(f"\"{read.string(num)}\"")
+def chars(num):
+    print(f"\"{read.chars(num)}\"")
 
 
 def array(num):
@@ -104,7 +104,7 @@ display_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
-    "string": string,
+    "chars": chars,
     "array": array,
     "dictionary_item": dictionary_item
 }

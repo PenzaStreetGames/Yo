@@ -20,7 +20,7 @@ types = [
     "command",
     "logic",
     "number",
-    "string",
+    "chars",
     "array",
     "dictionary_item",
     "list"
@@ -33,7 +33,9 @@ types_length = {
     "command": 2,
     "logical": 2,
     "number": 2,
-    "string": "many",
+    "chars": "many",
+    "char_list": "many",
+    "link_list": "many",
     "array": "many",
     "dictionary_item": 8,
     "list": "many",
@@ -47,7 +49,9 @@ default_values = {
     "command": 0,
     "logic": 0,
     "number": 0,
-    "string": "",
+    "chars": "",
+    "char_list": "",
+    "link_list": [],
     "list": None,
     "dictionary": None,
     "dictionary_item": None,
@@ -60,8 +64,9 @@ seg_types = [
     "program",
     "data_segment",
     "list_segment",
+    "string_segment",
+    "namespace",
     "dictionary_segment",
-    "namespace"
 ]
 seg_header = {
     "basic":
@@ -97,11 +102,12 @@ seg_header = {
         ],
     "data_segment": [],
     "list_segment": [],
-    "dictionary_segment": [],
+    "string_segment": [],
     "namespace":
         [
             "program"
-        ]
+        ],
+    "dictionary_segment": []
 }
 seg_header_types = {
     "basic":
@@ -138,11 +144,12 @@ seg_header_types = {
         },
     "data_segment": {},
     "list_segment": {},
-    "dictionary_segment": {},
+    "string_segment": {},
     "namespace":
         {
             "program": "link"
-        }
+        },
+    "dictionary_segment": {},
 }
 header_part_length = 32
 header_base_part_length = 32
@@ -155,8 +162,9 @@ minimal_data_length = {
             "program": 32,
             "data_segment": 16,  # 2048
             "list_segment": 2048,
+            "string_segment": 64,
+            "namespace": 256,
             "dictionary_segment": 2048,
-            "namespace": 256
         }
 expansion_coefficient = 2
 commands = [

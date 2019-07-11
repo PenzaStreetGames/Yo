@@ -9,18 +9,31 @@ def data_segment(num):
     attach_with_old_segment(num, new_num)
     change.attribute(seg_links["system"], "last_data_segment", new_num)
     add.empty_data(new_num)
+    return new_num
 
 
 def namespace(num):
     new_size = calculate_new_size(num)
     new_num = add.create_segment("namespace", self_length=new_size)
     attach_with_old_segment(num, new_num)
+    add.empty_data(new_num)
+    return new_num
 
 
 def list_segment(num):
     new_size = calculate_new_size(num)
     new_num = add.create_segment("list_segment", self_length=new_size)
     attach_with_old_segment(num, new_num)
+    add.empty_data(new_num)
+    return new_num
+
+
+def string_segment(num):
+    new_size = calculate_new_size(num)
+    new_num = add.create_segment("string_segment", self_length=new_size)
+    attach_with_old_segment(num, new_num)
+    add.empty_data(new_num)
+    return new_num
 
 
 def calculate_new_size(num):

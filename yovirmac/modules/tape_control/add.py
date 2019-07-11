@@ -74,6 +74,12 @@ def list_segment():
     return num
 
 
+def string_segment():
+    num = create_segment("string_segment")
+    empty_data(num)
+    return num
+
+
 def get_last_cell():
     return find.attribute(seg_links["system"], "tape_length")
 

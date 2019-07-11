@@ -2,7 +2,7 @@ from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import write, display, shift, read
 from yovirmac.modules.segment_control import init, change, find, show, put, take
-from yovirmac.modules.tape_control import add, view, setting, extend
+from yovirmac.modules.tape_control import add, view, setting, extend, get
 from yovirmac.modules.segment_control.functions import *
 import random
 
@@ -64,10 +64,10 @@ def logic_writing():
 def string_writing():
     """Проверка на запись введённой строки"""
     value = input()
-    write.string(0, value)
+    write.chars(0, value)
     for i in range(len(value) + 1):
         print(read.cell(i), read.char(i))
-    print(read.string(0))
+    print(read.chars(0))
 
 
 def command_writing():
@@ -97,7 +97,7 @@ def entity_writing():
         [0, "command", 15],
         [0, "logic", 1],
         [0, "number", 255],
-        [0, "string", "something"]
+        [0, "chars", "something"]
     ]
     for entity in entities:
         write.entity(*entity)
@@ -193,7 +193,7 @@ def command_with_args_writing():
     """Проверка на запись команды с аргументами"""
     write.command_with_args(0, "Crt", [{"type": "array", "value": [5, 10, 20]}])
     display.command_with_args(0)
-    write.command_with_args(0, "Fnd", [{"type": "string", "value": "line"}])
+    write.command_with_args(0, "Fnd", [{"type": "chars", "value": "line"}])
     display.command_with_args(0)
     write.command_with_args(0, "Add", [{"type": "link", "value": 16},
                                        {"type": "link", "value": 22}])
@@ -248,6 +248,52 @@ def data_segment_putting():
     """Проверка на заполнение сегмента данных"""
     real_data_segment_size = minimal_data_length["data_segment"]
     minimal_data_length["data_segment"] = 4
-
-
+    setting.initialisation("program.yovc")
+    num = find.attribute(seg_links["system"], "first_data_segment")
+    put.data_segment(num, "chars", "Эта строка не влезет в маленький сегмент")
+    put.data_segment(num, "dictionary_item", [15, 20, 25])
+    put.data_segment(num, "number", 255)
+    view.tape()
+    view.data_segment()
     minimal_data_length["data_segment"] = real_data_segment_size
+
+
+def string_segment_putting():
+    """Проверка на заполнение сегмента строки"""
+    real_string_segment_size = minimal_data_length["string_segment"]
+    minimal_data_length["string_segment"] = 4
+    setting.initialisation("program.yovc")
+    num = add.string_segment()
+    put.string_segment(num, "char_list",
+                       "Эта строка не влезет в маленький сегмент")
+    view.tape()
+    print(get.string_segment(num))
+    view.string_segment(num)
+    minimal_data_length["string_segment"] = real_string_segment_size
+
+
+def list_segment_putting():
+    """Проверка на заполнение сегмента списка"""
+    real_list_segment_size = minimal_data_length["list_segment"]
+    minimal_data_length["list_segment"] = 4
+    setting.initialisation("program.yovc")
+    num = add.list_segment()
+    put.list_segment(num, "link_list", [i for i in range(40)])
+    view.tape()
+    print(get.list_segment(num))
+    view.list_segment(num)
+    minimal_data_length["list_segment"] = real_list_segment_size
+
+
+def namespace_putting():
+    """Проверка на заполнение пространства имён"""
+    real_namespace_size = minimal_data_length["namespace"]
+    minimal_data_length["namespace"] = 4
+    setting.initialisation("program.yovc")
+    prog_num = find.attribute(seg_links["system"], "main_program")
+    num = add.namespace(prog_num)
+    put.namespace(num, "link_list", [i for i in range(40)])
+    view.tape()
+    print(get.namespace(num))
+    view.namespace(num)
+    minimal_data_length["namespace"] = real_namespace_size

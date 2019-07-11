@@ -28,8 +28,7 @@ def cells_stream(num):
 
 
 def segment_body(num):
-    data_begin = find.attribute(num, "data_begin")
-    data_end = find.attribute(num, "segment_end")
+    data_begin, data_end = data_range(num)
     index = data_begin
     obj_type, obj_value = read.entity(index)
     while index < data_end and obj_type != "none":
@@ -39,4 +38,22 @@ def segment_body(num):
         if index < data_end:
             obj_type, obj_value = read.entity(index)
     print()
+
+
+def list_segment(num, last=False):
+    print(find.list_segment(num, last=last))
+
+
+def string_segment(num, last=False):
+    print(find.string_segment(num, last=last))
+
+
+def namespace(num, last=False):
+    print(find.namespace(num, last=last))
+
+
+def data_range(num):
+    data_begin = find.attribute(num, "data_begin")
+    data_end = find.attribute(num, "segment_end")
+    return data_begin, data_end
 

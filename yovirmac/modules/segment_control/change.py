@@ -31,7 +31,7 @@ def relative_links(num):
         if obj_type == "link":
             write.entity(index, "link", data_begin + obj_value)
             index += memory_control.determine_object_size(obj_type, obj_value)
-        elif obj_type == "string":
+        elif obj_type == "chars":
             index += memory_control.determine_object_size(obj_type, obj_value)
         else:
             index += 2

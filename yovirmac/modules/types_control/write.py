@@ -47,6 +47,13 @@ def link(num, value):
     memory[num] = value
 
 
+def link_list(num, value):
+    index = num
+    for item in value:
+        link(index, item)
+        index += 1
+
+
 def command(num, value):
     if type(value) == int:
         if not(0 <= value < len(commands)):
@@ -70,7 +77,7 @@ def char(num, value):
     memory[num] = ord(value)
 
 
-def string(num, value):
+def chars(num, value):
     index = num
     if type(value) == str:
         for symbol in value:
@@ -84,20 +91,16 @@ def string(num, value):
         none(index, None)
 
 
-def string_part(num, value, begin=True, end=True):
+def char_list(num, value):
     index = num
     if type(value) == str:
         for symbol in value:
             char(index, symbol)
             index += 1
-        if end:
-            none(index, None)
     elif type(value) == list:
         for item in value:
             number(index, item)
             index += 1
-        if end:
-            none(index, None)
 
 
 def array(num, args):
@@ -118,11 +121,6 @@ def dictionary_item(num, args):
         entity(num + i * 2 + 1, "link", args[i])
 
 
-def dictionary_item_part(num, args, begin=True, end=True):
-    for i in range(len(args)):
-        entity(num + i * 2 + 1, "link", args[i])
-
-
 def entity(num, obj_type, value):
     kind(num, obj_type)
     if type(obj_type) == int:
@@ -133,26 +131,6 @@ def entity(num, obj_type, value):
         if value is None:
             value = default_values[obj_type]
         write_dictionary[obj_type](num + 1, value)
-
-
-def entity_part(num, obj_type, value, begin=True, end=True):
-    if begin:
-        kind(num, obj_type)
-        if end:
-            write_dictionary[obj_type](num + 1, value)
-        else:
-            if obj_type in write_part_dictionary:
-                write_part_dictionary[obj_type](num + 1, begin=begin, end=end)
-            else:
-                write_dictionary[obj_type](num + 1)
-    else:
-        if end:
-            write_dictionary[obj_type](num, value)
-        else:
-            if obj_type in write_part_dictionary:
-                write_part_dictionary[obj_type](num)
-            else:
-                write_dictionary[obj_type](num)
 
 
 def header_part(num, header_type, args):
@@ -199,7 +177,7 @@ write_list = [
     command,
     logic,
     number,
-    string,
+    chars,
     array,
     dictionary_item
 ]
@@ -210,12 +188,7 @@ write_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
-    "string": string,
+    "chars": chars,
     "array": array,
     "dictionary_item": dictionary_item
-}
-
-write_part_dictionary = {
-    "string": string_part,
-    "dictionary_item_part": dictionary_item_part
 }
