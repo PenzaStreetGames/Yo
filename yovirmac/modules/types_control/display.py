@@ -51,7 +51,7 @@ def logic(num):
 
 
 def number(num):
-    print(memory[num])
+    print(read.signed_cell(num))
 
 
 def char(num):

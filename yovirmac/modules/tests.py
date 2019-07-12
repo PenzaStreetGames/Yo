@@ -5,8 +5,8 @@ from yovirmac.modules.segment_control import init, change, find, show, put, take
 from yovirmac.modules.tape_control import (add, view, setting, extend, get,
                                            make, append, pull)
 from yovirmac.modules.segment_control.functions import *
-from yovirmac.modules.object_control import link
-from yovirmac.modules.upper_commands.math import negative
+from yovirmac.modules.object_control import link, draw
+from yovirmac.modules.upper_commands import math
 import random
 
 
@@ -334,7 +334,39 @@ def negative_command_working():
     number = -255
     print("number", number)
     num = append.data_segment("number", number)
-    negative.negative(num)
-    kind, stack_link = pull.memory_stack()
-    kind, number = link.get(stack_link)
+    math.Negative(num)
+    kind, number = link.memory_stack_get()
     print(kind, number)
+
+
+def math_operations_working():
+    """Проверка работы математических операций"""
+    setting.initialisation("program.yovc")
+    number_1 = 97
+    number_2 = -65
+    num_1 = append.data_segment("number", number_1)
+    num_2 = append.data_segment("number", number_2)
+    print(f"Negative: - {number_1}")
+    math.Negative(num_1)
+    draw.memory_stack_link()
+    print(f"Add: {number_1} + {number_2}")
+    math.Add(num_1, num_2)
+    draw.memory_stack_link()
+    print(f"Increment: {number_1}++")
+    math.Increment(num_1)
+    draw.memory_stack_link()
+    print(f"Decrement: {number_1}--")
+    math.Decrement(num_1)
+    draw.memory_stack_link()
+    print(f"Subtract: {number_1} - {number_2}")
+    math.Subtract(num_1, num_2)
+    draw.memory_stack_link()
+    print(f"Multiply: {number_1} * {number_2}")
+    math.Multiply(num_1, num_2)
+    draw.memory_stack_link()
+    print(f"Divide: {number_1} / {number_2}")
+    math.Divide(num_1, num_2)
+    draw.memory_stack_link()
+    print(f"Modulo: {number_1} % {number_2}")
+    math.Modulo(num_1, num_2)
+    draw.memory_stack_link()
