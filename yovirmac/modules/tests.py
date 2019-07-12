@@ -2,8 +2,11 @@ from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import write, display, shift, read
 from yovirmac.modules.segment_control import init, change, find, show, put, take
-from yovirmac.modules.tape_control import add, view, setting, extend, get
+from yovirmac.modules.tape_control import (add, view, setting, extend, get,
+                                           make, append, pull)
 from yovirmac.modules.segment_control.functions import *
+from yovirmac.modules.object_control import link
+from yovirmac.modules.upper_commands.math import negative
 import random
 
 
@@ -297,3 +300,41 @@ def namespace_putting():
     print(get.namespace(num))
     view.namespace(num)
     minimal_data_length["namespace"] = real_namespace_size
+
+
+def list_and_string_segments_making():
+    """Проверка на создание сегментов строки и списка с данными"""
+    setting.initialisation("program.yovc")
+    str_num = make.string_segment("Эта строка должна влезть")
+    list_num = make.list_segment([i for i in range(40)])
+    view.tape()
+    view.string_segment(str_num)
+    view.list_segment(list_num)
+
+
+def negative_number_writing():
+    """Проверка на запись отрицательного числа"""
+    value = -1
+    for i in range(capacity + 4):
+        write.signed_cell(0, value)
+        display.signed_cell(0)
+        value *= 2
+    print()
+    value = 1
+    for i in range(capacity + 4):
+        write.signed_cell(0, value)
+        display.signed_cell(0)
+        value <<= 1
+        value += 1
+
+
+def negative_command_working():
+    """Проверка работы команды Negative"""
+    setting.initialisation("program.yovc")
+    number = -255
+    print("number", number)
+    num = append.data_segment("number", number)
+    negative.negative(num)
+    kind, stack_link = pull.memory_stack()
+    kind, number = link.get(stack_link)
+    print(kind, number)

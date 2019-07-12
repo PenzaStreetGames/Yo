@@ -1,14 +1,26 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
-from yovirmac.modules.types_control import memory_control
+from yovirmac.modules.types_control import memory_control, bitwise_operations
 
 
 def bit(num, digit):
     return (memory[num] >> digit) & 1
 
 
+def sign(num):
+    return bit(num, 31)
+
+
 def cell(num):
     return memory[num] & full_cell
+
+
+def signed_cell(num):
+    cell_sign = sign(num)
+    value = cell(num)
+    if cell_sign == 1:
+        value -= full_cell + 1
+    return value
 
 
 def kind(num):
@@ -39,7 +51,7 @@ def logic(num):
 
 
 def number(num):
-    return memory[num]
+    return signed_cell(num)
 
 
 def char(num):

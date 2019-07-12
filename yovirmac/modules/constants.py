@@ -12,7 +12,16 @@ def get_full_cell():
     return raw_full_cell
 
 
+def get_full_signed_cell():
+    raw_full_cell = 1
+    for i in range(capacity - 1):
+        raw_full_cell <<= 1
+    raw_full_cell -= 1
+    return raw_full_cell
+
+
 full_cell = get_full_cell()
+full_signed_cell = get_full_signed_cell()
 
 types = [
     "none",

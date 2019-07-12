@@ -27,7 +27,9 @@ tests = {
     23: string_segment_putting,
     24: list_segment_putting,
     25: namespace_putting,
-
+    26: list_and_string_segments_making,
+    27: negative_number_writing,
+    28: negative_command_working,
 }
 
 memory_control.add_cells(64)

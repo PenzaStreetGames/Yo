@@ -18,6 +18,12 @@ def cell(num, value):
     memory[num] = value & full_cell
 
 
+def signed_cell(num, value):
+    memory[num] = value & full_signed_cell
+    if value < 0:
+        bit(num, capacity - 1, 1)
+
+
 def cells_stream(num, cells):
     for i in range(len(cells)):
         value = cells[i]
@@ -70,7 +76,7 @@ def logic(num, value):
 
 
 def number(num, value):
-    memory[num] = value
+    signed_cell(num, value)
 
 
 def char(num, value):

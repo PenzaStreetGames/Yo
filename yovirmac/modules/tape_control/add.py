@@ -68,14 +68,14 @@ def namespace(program_num):
     return num
 
 
-def list_segment():
-    num = create_segment("list_segment")
+def list_segment(self_length=0):
+    num = create_segment("list_segment", self_length=self_length)
     empty_data(num)
     return num
 
 
-def string_segment():
-    num = create_segment("string_segment")
+def string_segment(self_length=0):
+    num = create_segment("string_segment", self_length=self_length)
     empty_data(num)
     return num
 

@@ -15,6 +15,16 @@ def cell(num):
     print("".join(bits), memory[num])
 
 
+def signed_cell(num):
+    value = memory[num]
+    bits = []
+    for i in range(capacity):
+        bits.insert(0, str(value % 2))
+        value >>= 1
+    neg_value = read.signed_cell(num)
+    print("".join(bits), neg_value)
+
+
 def kind(num):
     print(types[memory[num]])
 
