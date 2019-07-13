@@ -48,7 +48,41 @@ def namespace(num, last=False):
     return links
 
 
+def list_segment_length(num):
+    begin = attribute(num, "data_begin")
+    end = attribute(num, "segment_end")
+    top = attribute(num, "first_empty_cell")
+    if top == end:
+        return end - begin
+    else:
+        return top - begin
+
+
+def string_segment_length(num):
+    begin = attribute(num, "data_begin")
+    end = attribute(num, "segment_end")
+    top = attribute(num, "first_empty_cell")
+    if top == end:
+        return end - begin
+    else:
+        return top - begin
+
+
+def list_element(num, index):
+    data_begin, data_end = data_range(num)
+    data_length = data_end - data_begin
+    # надо: дописать эту функцию
+
+
 def data_range(num):
     data_begin = attribute(num, "data_begin")
     data_end = attribute(num, "segment_end")
     return data_begin, data_end
+
+
+def is_full(num):
+    top = find.attribute(num, "first_empty_cell")
+    end = find.attribute(num, "segment_end")
+    if top == end:
+        return True
+    return False

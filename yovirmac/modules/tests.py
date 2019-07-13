@@ -7,7 +7,7 @@ from yovirmac.modules.tape_control import (add, view, setting, extend, get,
 from yovirmac.modules.segment_control.functions import *
 from yovirmac.modules.object_control import link, draw
 from yovirmac.modules.upper_commands import (math, logic, comparison, stack,
-                                             jumps, console)
+                                             jumps, console, objects)
 import random
 
 
@@ -458,3 +458,29 @@ def console_operations_working():
     link_type, link_value = pull.memory_stack()
     console.Output(["link", link_value])
     view.tape()
+
+
+def length_operation_working():
+    real_string_segment_size = minimal_data_length["string_segment"]
+    minimal_data_length["string_segment"] = 4
+    real_list_segment_size = minimal_data_length["list_segment"]
+    minimal_data_length["list_segment"] = 4
+    setting.initialisation("program.yovc")
+    str_num = add.string_segment()
+    put.string_segment(str_num, "char_list",
+                       "Эта строка не влезет в маленький сегмент")
+    list_num = add.list_segment()
+    put.list_segment(list_num, "link_list", [i for i in range(40)])
+    view.tape()
+    print(get.string_segment(str_num))
+    view.string_segment(str_num)
+    print(get.list_segment(list_num))
+    view.list_segment(list_num)
+    objects.Length(["link", str_num])
+    kind, length_link = pull.memory_stack()
+    draw.entity_link(length_link)
+    objects.Length(["link", list_num])
+    kind, length_link = pull.memory_stack()
+    draw.entity_link(length_link)
+    minimal_data_length["string_segment"] = real_string_segment_size
+    minimal_data_length["list_segment"] = real_list_segment_size

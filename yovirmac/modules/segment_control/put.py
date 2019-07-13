@@ -46,6 +46,7 @@ def list_segment(num, obj_type, value):
     else:
         part_1, part_2 = split_cells(obj_size, place, value)
         write.link_list(top, part_1)
+        fill_segment(last_num)
         new_num = extend.list_segment(last_num)
         list_segment(num, obj_type, part_2)
 
@@ -62,6 +63,7 @@ def namespace(num, obj_type, value):
     else:
         part_1, part_2 = split_cells(obj_size, place, value)
         write.link_list(top, part_1)
+        fill_segment(last_num)
         new_num = extend.namespace(last_num)
         namespace(num, obj_type, part_2)
 
@@ -78,6 +80,7 @@ def string_segment(num, obj_type, value):
     else:
         part_1, part_2 = split_cells(obj_size, place, value)
         write.char_list(top, part_1)
+        fill_segment(last_num)
         new_num = extend.string_segment(last_num)
         string_segment(num, obj_type, part_2)
 
@@ -107,6 +110,11 @@ def check_free_place(num, obj_size):
     free_cells = find.attribute(num, "free_cells")
     place = free_cells - obj_size
     return place
+
+
+def fill_segment(num):
+    data_end = find.attribute(num, "segment_end")
+    change_data(num, data_end, 0)
 
 
 def get_last(num):

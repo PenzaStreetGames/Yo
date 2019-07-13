@@ -36,6 +36,8 @@ tests = {
     32: memory_stack_operations_working,
     33: jumps_operations_working,
     34: console_operations_working,
+    35: length_operation_working,
+
 }
 
 memory_control.add_cells(64)

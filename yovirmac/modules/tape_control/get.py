@@ -29,3 +29,19 @@ def namespace(num):
         result += find.namespace(num, last=last)
         num = next_num
     return result
+
+
+def list_segment_length(num):
+    length = 0
+    while num != 0:
+        length += find.list_segment_length(num)
+        num = find.attribute(num, "next_segment")
+    return length
+
+
+def string_segment_length(num):
+    length = 0
+    while num != 0:
+        length += find.string_segment_length(num)
+        num = find.attribute(num, "next_segment")
+    return length
