@@ -30,7 +30,12 @@ tests = {
     26: list_and_string_segments_making,
     27: negative_number_writing,
     28: negative_command_working,
-    29: math_operations_working
+    29: math_operations_working,
+    30: logic_operations_working,
+    31: comparison_operations_working,
+    32: memory_stack_operations_working,
+    33: jumps_operations_working,
+    34: console_operations_working,
 }
 
 memory_control.add_cells(64)

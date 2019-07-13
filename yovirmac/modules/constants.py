@@ -40,7 +40,7 @@ types_length = {
     "none": 2,
     "link": 2,
     "command": 2,
-    "logical": 2,
+    "logic": 2,
     "number": 2,
     "chars": "many",
     "char_list": "many",

@@ -6,7 +6,8 @@ from yovirmac.modules.tape_control import (add, view, setting, extend, get,
                                            make, append, pull)
 from yovirmac.modules.segment_control.functions import *
 from yovirmac.modules.object_control import link, draw
-from yovirmac.modules.upper_commands import math
+from yovirmac.modules.upper_commands import (math, logic, comparison, stack,
+                                             jumps, console)
 import random
 
 
@@ -347,26 +348,113 @@ def math_operations_working():
     num_1 = append.data_segment("number", number_1)
     num_2 = append.data_segment("number", number_2)
     print(f"Negative: - {number_1}")
-    math.Negative(num_1)
+    math.Negative(["link", num_1])
     draw.memory_stack_link()
     print(f"Add: {number_1} + {number_2}")
-    math.Add(num_1, num_2)
+    math.Add(["link", num_1], ["link", num_2])
     draw.memory_stack_link()
     print(f"Increment: {number_1}++")
-    math.Increment(num_1)
+    math.Increment(["link", num_1])
     draw.memory_stack_link()
     print(f"Decrement: {number_1}--")
-    math.Decrement(num_1)
+    math.Decrement(["link", num_1])
     draw.memory_stack_link()
     print(f"Subtract: {number_1} - {number_2}")
-    math.Subtract(num_1, num_2)
+    math.Subtract(["link", num_1], ["link", num_2])
     draw.memory_stack_link()
     print(f"Multiply: {number_1} * {number_2}")
-    math.Multiply(num_1, num_2)
+    math.Multiply(["link", num_1], ["link", num_2])
     draw.memory_stack_link()
     print(f"Divide: {number_1} / {number_2}")
-    math.Divide(num_1, num_2)
+    math.Divide(["link", num_1], ["link", num_2])
     draw.memory_stack_link()
     print(f"Modulo: {number_1} % {number_2}")
-    math.Modulo(num_1, num_2)
+    math.Modulo(["link", num_1], ["link", num_2])
     draw.memory_stack_link()
+
+
+def logic_operations_working():
+    """Проверка работы логических операций"""
+    setting.initialisation("program.yovc")
+    value_1 = True
+    value_2 = False
+    num_1 = append.data_segment("logic", value_1)
+    num_2 = append.data_segment("logic", value_2)
+    print(f"Not: not {value_1}")
+    logic.Not(["link", num_1])
+    draw.memory_stack_link()
+    print(f"And: {value_1} and {value_2}")
+    logic.And(["link", num_1], ["link", num_2])
+    draw.memory_stack_link()
+    print(f"Or: {value_1} or {value_2}")
+    logic.Or(["link", num_1], ["link", num_2])
+    draw.memory_stack_link()
+    print(f"Xor: {value_1} xor {value_2}")
+    logic.Xor(["link", num_1], ["link", num_2])
+    draw.memory_stack_link()
+
+
+def comparison_operations_working():
+    """Проверка работы операций сравнения"""
+    setting.initialisation("program.yovc")
+    value_1 = 53
+    value_2 = 4
+    num_1 = append.data_segment("number", value_1)
+    num_2 = append.data_segment("number", value_2)
+    print(f"Equal: {value_1} == {value_2}")
+    comparison.Equal(["link", num_1], ["link", num_2])
+    draw.memory_stack_link()
+    print(f"Great: {value_1} > {value_2}")
+    comparison.Great(["link", num_1], ["link", num_2])
+    draw.memory_stack_link()
+    print(f"Less: {value_1} < {value_2}")
+    comparison.Less(["link", num_1], ["link", num_2])
+    draw.memory_stack_link()
+    
+    
+def memory_stack_operations_working():
+    """Проверка работы операций стека памяти"""
+    setting.initialisation("program.yovc")
+    value = 248
+    stack.Push(["number", value])
+    display.entity(438)
+    stack.Pop(["link", 438])
+    display.entity(438)
+    print()
+    number_1 = 97
+    number_2 = -65
+    num_1 = append.data_segment("number", number_1)
+    num_2 = append.data_segment("number", number_2)
+    math.Add(["link", num_1], ["link", num_2])
+    display.entity(440)
+    stack.Pop(["link", 440])
+    display.entity(440)
+
+
+def jumps_operations_working():
+    """Проверка работы операций переходов"""
+    setting.initialisation("program.yovc")
+    show.attribute(seg_links["system"], "target_cell")
+    jumps.Jump(["link", 12])
+    print("Jump:")
+    show.attribute(seg_links["system"], "target_cell")
+    true_num = append.data_segment("logic", True)
+    false_num = append.data_segment("logic", False)
+    print("Jump_if true:")
+    jumps.Jump_if(["link", 16], ["link", true_num])
+    show.attribute(seg_links["system"], "target_cell")
+    print("Jump_if false:")
+    jumps.Jump_if(["link", 25], ["link", false_num])
+    show.attribute(seg_links["system"], "target_cell")
+    print("End:")
+    jumps.End()
+    show.attribute(seg_links["system"], "target_cell")
+
+
+def console_operations_working():
+    """Проверка работы оперций ввода и вывода"""
+    setting.initialisation("program.yovc")
+    console.Input()
+    link_type, link_value = pull.memory_stack()
+    console.Output(["link", link_value])
+    view.tape()

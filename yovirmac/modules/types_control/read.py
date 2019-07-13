@@ -1,6 +1,6 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
-from yovirmac.modules.types_control import memory_control, bitwise_operations
+from yovirmac.modules.types_control import memory_control
 
 
 def bit(num, digit):
@@ -47,7 +47,7 @@ def command(num):
 
 
 def logic(num):
-    return memory[num]
+    return bool(memory[num])
 
 
 def number(num):
