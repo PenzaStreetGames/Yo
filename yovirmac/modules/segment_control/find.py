@@ -16,6 +16,10 @@ def dictionary_item_value(num):
     return dictionary_item_part(num, "value")
 
 
+def dictionary_item_dictionary(num):
+    return dictionary_item_part(num, "dictionary")
+
+
 def dictionary_item_part(num, part):
     if part == "dictionary":
         kind, result = read.entity(num + 2)

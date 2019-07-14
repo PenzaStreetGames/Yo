@@ -60,8 +60,11 @@ def Length(arg):
 def Find(arg):
     arg_type, arg_value = arg
     if arg_type == "link":
+        key = get.entity(arg_value)
+        # потом: сделать механизм восходящего поиска
         seg_num = find.attribute(seg_links["system"], "target_namespace")
-
+        res_type, res_num = get.namespace_element(seg_num, key)
+        append.memory_stack("link", res_num)
     else:
         raise UndefinedArgument(f"Поведение команды Fnd с аргументом типа "
                                 f"{arg_type} не определено")

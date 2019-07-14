@@ -56,3 +56,15 @@ def namespace(num):
         show.namespace(num, last=last)
         num = next_num
         number += 1
+
+
+def namespace_items(num):
+    number = 1
+    while num != 0:
+        print(f"Segment #{number}:", end=" ")
+        next_num = find.attribute(num, "next_segment")
+        last = True if next_num == 0 else False
+        show.namespace_items(num, last=last)
+        num = next_num
+        number += 1
+    print()

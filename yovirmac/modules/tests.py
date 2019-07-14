@@ -5,7 +5,7 @@ from yovirmac.modules.segment_control import init, change, find, show, put, take
 from yovirmac.modules.tape_control import (add, view, setting, extend, get,
                                            make, append, pull)
 from yovirmac.modules.segment_control.functions import *
-from yovirmac.modules.object_control import link, draw
+from yovirmac.modules.object_control import link, draw, item
 from yovirmac.modules.upper_commands import (math, logic, comparison, stack,
                                              jumps, console, objects)
 import random
@@ -513,3 +513,28 @@ def subobject_operation_working():
     display.entity(element_link)
     minimal_data_length["string_segment"] = real_string_segment_size
     minimal_data_length["list_segment"] = real_list_segment_size
+
+
+def find_operation_working():
+    """Проверка работы команды поиска"""
+    real_namespace_size = minimal_data_length["namespace"]
+    minimal_data_length["namespace"] = 2
+    setting.initialisation("program.yovc")
+    prog_num = find.attribute(seg_links["system"], "main_program")
+    name_num = find.attribute(prog_num, "namespace")
+    view.namespace_items(name_num)
+    str_num = make.string_segment("J")
+    objects.Find(["link", str_num])
+    value_link = pull.memory_stack()
+    draw.link_on_link(value_link)
+    view.namespace_items(name_num)
+    item.write_namespace_name(name_num, ["string_segment", "Yo"],
+                              value=["number", 1])
+    str_num = make.string_segment("Yo")
+    view.tape()
+    view.data_segment()
+    objects.Find(["link", str_num])
+    view.namespace_items(name_num)
+    value_link = pull.memory_stack()
+    draw.link_on_link(value_link)
+    minimal_data_length["namespace"] = real_namespace_size

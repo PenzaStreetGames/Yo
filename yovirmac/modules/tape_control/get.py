@@ -1,6 +1,8 @@
+from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.segment_control import find
 from yovirmac.modules.types_control import read
+from yovirmac.modules.object_control import item
 
 
 def list_segment(num):
@@ -70,33 +72,37 @@ def string_segment_element(num, index):
 
 
 def namespace_element(num, key):
-    while num != 0:
-        value_type, value = find.namespace_key(num, key)
+    number = num
+    while number != 0:
+        value_type, value = namespace_key(number, key)
         if value_type is not None:
             return value_type, value
+        number = find.attribute(number, "next_segment")
+    new_num = item.write_namespace_name(num, key)
+    return "link", new_num
 
 
 def namespace_key(num, key):
     data_begin, data_end = find.data_range(num)
-    top = find.attribute(num, "first_full_cell")
+    top = find.attribute(num, "first_empty_cell")
+    need_key_type, need_key = key
     for i in range(data_begin, top, 2):
         item_type, item_value = read.entity(i)
         key_type, key_link = find.dictionary_item_key(item_value)
         key_value_type, key_value = entity(key_link)
-        if key_value == key:
-            value_type, value = find.dictionary_item_value(num)
-            return value_type, value
+        if key_value_type == need_key_type and key_value == need_key:
+            return "link", item_value + 6
     return None, None
 
 
 def entity(num):
     kind = read.kind(num)
     if kind == "segment":
-        kind = find.attribute(num, "type")
+        kind = seg_types[find.attribute(num, "type")]
         if kind not in read_segment_dictionary:
             raise LowerCommandError(f"Неподдерживаемый тип сегмента для чтения"
                                     f" {kind}")
-        return read_segment_dictionary[kind](num)
+        return kind, read_segment_dictionary[kind](num)
     else:
         return read.entity(num)
 

@@ -22,9 +22,9 @@ def list_segment(data):
 
 
 def entity(obj_type, value):
-    if obj_type == "string":
+    if obj_type == "string_segment":
         num = string_segment(value)
-    elif obj_type == "list":
+    elif obj_type == "list_segment":
         num = list_segment(value)
     elif obj_type in types:
         num = append.data_segment(obj_type, value)

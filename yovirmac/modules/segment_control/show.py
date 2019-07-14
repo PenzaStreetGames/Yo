@@ -1,6 +1,7 @@
 from yovirmac.modules.types_control import display, read, memory_control
 from yovirmac.modules.segment_control.functions import *
 from yovirmac.modules.segment_control import find
+from yovirmac.modules.object_control import draw
 
 
 def attribute(num, name):
@@ -29,9 +30,10 @@ def cells_stream(num):
 
 def segment_body(num):
     data_begin, data_end = data_range(num)
+    top = find.attribute(num, "first_empty_cell")
     index = data_begin
     obj_type, obj_value = read.entity(index)
-    while index < data_end and obj_type != "none":
+    while index < top:
         print(index, end=" ")
         display.entity(index)
         index += memory_control.determine_object_size(obj_type, obj_value)
@@ -50,6 +52,16 @@ def string_segment(num, last=False):
 
 def namespace(num, last=False):
     print(find.namespace(num, last=last))
+
+
+def namespace_items(num, last=False):
+    data_begin, data_end = data_range(num)
+    if last:
+        top = find.attribute(num, "first_empty_cell")
+        data_end = top
+    for i in range(data_begin, data_end, 2):
+        link_type, link = read.entity(i)
+        draw.dictionary_item(link)
 
 
 def data_range(num):
