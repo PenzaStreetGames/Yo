@@ -24,7 +24,8 @@ def signed_cell(num):
 
 
 def kind(num):
-    return types[memory[num]]
+    value = memory[num]
+    return types[value]
 
 
 def none(num):
@@ -37,8 +38,8 @@ def link(num):
 
 def link_list(num, end):
     result = []
-    for i in range(num, end):
-        result += [link(i)]
+    for i in range(num, end, 2):
+        result += [link(i + 1)]
     return result
 
 
@@ -80,13 +81,13 @@ def chars(num, output="str"):
 def char_list(num, end, output="str"):
     if output == "str":
         result = ""
-        for i in range(num, end):
-            result += char(i)
+        for i in range(num, end, 2):
+            result += char(i + 1)
         return result
     elif output == "list":
         result = []
-        for i in range(num, end):
-            result += number(i)
+        for i in range(num, end, 2):
+            result += number(i + 1)
         return result
 
 
@@ -158,6 +159,7 @@ read_list = [
     command,
     logic,
     number,
+    char,
     chars,
     array,
     dictionary_item
@@ -169,6 +171,7 @@ read_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
+    "char": char,
     "chars": chars,
     "array": array,
     "dictionary_item": dictionary_item

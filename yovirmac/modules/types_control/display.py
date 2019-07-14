@@ -114,6 +114,7 @@ display_dictionary = {
     "command": command,
     "logic": logic,
     "number": number,
+    "char": char,
     "chars": chars,
     "array": array,
     "dictionary_item": dictionary_item

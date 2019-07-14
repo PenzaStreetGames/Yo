@@ -25,7 +25,7 @@ def data_segment(num, obj_type, value):
         change_data(num, top + obj_size, place)
         index = top
     else:
-        if not is_last(num):
+        if not find.is_last(num):
             next_num = find.attribute(num, "next_segment")
             index = data_segment(next_num, obj_type, value)
         else:
@@ -118,7 +118,7 @@ def fill_segment(num):
 
 
 def get_last(num):
-    if not is_last(num):
+    if not find.is_last(num):
         next_num = find.attribute(num, "next_segment")
         last_num = get_last(next_num)
     else:
@@ -126,15 +126,8 @@ def get_last(num):
     return last_num
 
 
-def is_last(num):
-    next_segment = find.attribute(num, "next_segment")
-    if next_segment == 0:
-        return True
-    return False
-
-
 def split_cells(obj_size, place, value):
-    point = obj_size - abs(place)
+    point = (obj_size - abs(place)) // 2
     part_1 = value[:point]
     part_2 = value[point:]
     return part_1, part_2

@@ -10,8 +10,8 @@ def Not(arg):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типа {obj_type} не определена операция "
-                                f"логического НЕ Not")
+        raise UndefinedBehaviour(f"Для типа {obj_type} не определена операция "
+                                 f"логического НЕ Not")
 
 
 def And(left, right):
@@ -22,8 +22,8 @@ def And(left, right):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"логического И And не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция логического И And не определена")
 
 
 def Or(left, right):
@@ -34,8 +34,8 @@ def Or(left, right):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"логического ИЛИ Or не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция логического ИЛИ Or не определена")
 
 
 def Xor(left, right):
@@ -46,5 +46,5 @@ def Xor(left, right):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"логического ЛИБО XOR не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция логического ЛИБО XOR не определена")

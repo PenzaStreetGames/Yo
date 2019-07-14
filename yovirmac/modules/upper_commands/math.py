@@ -10,8 +10,8 @@ def Negative(arg):
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типа {obj_type} не определена операция "
-                                f"инверсии Neg")
+        raise UndefinedBehaviour(f"Для типа {obj_type} не определена операция "
+                                 f"инверсии Neg")
 
 
 def Add(left, right):
@@ -22,8 +22,8 @@ def Add(left, right):
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"сложения Add не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция сложения Add не определена")
 
 
 def Increment(arg):
@@ -33,8 +33,8 @@ def Increment(arg):
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типа {obj_type} не определена операция "
-                                f"инкремента Inc")
+        raise UndefinedBehaviour(f"Для типа {obj_type} не определена операция "
+                                 f"инкремента Inc")
 
 
 def Decrement(arg):
@@ -44,8 +44,8 @@ def Decrement(arg):
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типа {obj_type} не определена операция "
-                                f"инверсии Dec")
+        raise UndefinedBehaviour(f"Для типа {obj_type} не определена операция "
+                                 f"инверсии Dec")
 
 
 def Subtract(left, right):
@@ -56,8 +56,8 @@ def Subtract(left, right):
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"вычитания Sub не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция вычитания Sub не определена")
 
 
 def Multiply(left, right):
@@ -68,8 +68,8 @@ def Multiply(left, right):
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"умножения Mul не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция умножения Mul не определена")
 
 
 def Divide(left, right):
@@ -77,13 +77,13 @@ def Divide(left, right):
     right_arg_type, right_type, right_value = link.unpack(right)
     if left_type == "number" and right_type == "number":
         if right_value == 0:
-            raise LowerCommandError("Результат деления на ноль не определён")
+            raise UndefinedBehaviour("Результат деления на ноль не определён")
         value = int(left_value / right_value)
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"деления Div не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция деления Div не определена")
 
 
 def Modulo(left, right):
@@ -91,11 +91,12 @@ def Modulo(left, right):
     right_arg_type, right_type, right_value = link.unpack(right)
     if left_type == "number" and right_type == "number":
         if right_value == 0:
-            raise LowerCommandError("Результат остатка деления на ноль не "
-                                    "определён")
+            raise UndefinedBehaviour("Результат остатка деления на ноль не "
+                                     "определён")
         value = left_value % right_value
         num = append.data_segment("number", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"остаток от деления Mod не определена")
+        raise UndefinedBehaviour(
+            f"Для типов {left_type} и {right_type} операция остаток от деления "
+            f"Mod не определена")

@@ -15,5 +15,5 @@ def Output(arg):
         value = get.string_segment(arg_value)
         print(value)
     else:
-        raise LowerCommandError(f"Поведение команды Out с аргументом типа"
-                                f"{arg_type} не определено")
+        raise UndefinedBehaviour(f"Поведение команды Out с аргументом типа"
+                                 f"{arg_type} не определено")

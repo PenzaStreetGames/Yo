@@ -56,8 +56,9 @@ def link(num, value):
 def link_list(num, value):
     index = num
     for item in value:
-        link(index, item)
-        index += 1
+        kind(index, "link")
+        link(index + 1, item)
+        index += 2
 
 
 def command(num, value):
@@ -101,12 +102,14 @@ def char_list(num, value):
     index = num
     if type(value) == str:
         for symbol in value:
-            char(index, symbol)
-            index += 1
+            kind(index, "char")
+            char(index + 1, symbol)
+            index += 2
     elif type(value) == list:
         for item in value:
-            number(index, item)
-            index += 1
+            kind(index, "char")
+            number(index + 1, item)
+            index += 2
 
 
 def array(num, args):

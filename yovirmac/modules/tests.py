@@ -461,6 +461,7 @@ def console_operations_working():
 
 
 def length_operation_working():
+    """Проверка работы операции нахождения длины объекта"""
     real_string_segment_size = minimal_data_length["string_segment"]
     minimal_data_length["string_segment"] = 4
     real_list_segment_size = minimal_data_length["list_segment"]
@@ -482,5 +483,33 @@ def length_operation_working():
     objects.Length(["link", list_num])
     kind, length_link = pull.memory_stack()
     draw.entity_link(length_link)
+    minimal_data_length["string_segment"] = real_string_segment_size
+    minimal_data_length["list_segment"] = real_list_segment_size
+
+
+def subobject_operation_working():
+    """Проверка работы операции нахождения элемента по индексу"""
+    real_string_segment_size = minimal_data_length["string_segment"]
+    minimal_data_length["string_segment"] = 4
+    real_list_segment_size = minimal_data_length["list_segment"]
+    minimal_data_length["list_segment"] = 4
+    setting.initialisation("program.yovc")
+    str_num = add.string_segment()
+    put.string_segment(str_num, "char_list",
+                       "Эта строка не влезет в маленький сегмент")
+    list_num = add.list_segment()
+    put.list_segment(list_num, "link_list", [i for i in range(40)])
+    view.tape()
+    print(get.string_segment(str_num))
+    view.string_segment(str_num)
+    print(get.list_segment(list_num))
+    view.list_segment(list_num)
+    index = append.data_segment("number", 25)
+    objects.Subobject(["link", str_num], ["link", index])
+    kind, element_link = pull.memory_stack()
+    display.entity(element_link)
+    objects.Subobject(["link", list_num], ["link", index])
+    kind, element_link = pull.memory_stack()
+    display.entity(element_link)
     minimal_data_length["string_segment"] = real_string_segment_size
     minimal_data_length["list_segment"] = real_list_segment_size

@@ -32,6 +32,7 @@ types = [
     "chars",
     "array",
     "dictionary_item",
+    "char",
     "list"
     "dictionary",
     "segment"
@@ -42,6 +43,7 @@ types_length = {
     "command": 2,
     "logic": 2,
     "number": 2,
+    "char": 2,
     "chars": "many",
     "char_list": "many",
     "link_list": "many",

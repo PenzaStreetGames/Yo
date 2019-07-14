@@ -14,7 +14,7 @@ def Push(arg):
         num = append.data_segment("number", arg_value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Поведение команды Psh с аргументом типа"
+        raise UndefinedArgument(f"Поведение команды Psh с аргументом типа "
                                 f"{arg_type} не определено")
 
 
@@ -26,7 +26,7 @@ def Pop(arg):
         link_type, link_value = pull.memory_stack()
         write.entity(arg_value, "link", link_value)
     else:
-        raise LowerCommandError(f"Поведение команды Pop с аргументом типа"
+        raise UndefinedArgument(f"Поведение команды Pop с аргументом типа"
                                 f"{arg_type} не определено")
 
 
@@ -36,7 +36,7 @@ def Call(arg):
         target_cell = find.attribute(seg_links["system"], "target_cell")
         append.call_stack("link", target_cell)
     else:
-        raise LowerCommandError(f"Поведение команды Cal с аргументом типа"
+        raise UndefinedArgument(f"Поведение команды Cal с аргументом типа"
                                 f"{arg_type} не определено")
 
 

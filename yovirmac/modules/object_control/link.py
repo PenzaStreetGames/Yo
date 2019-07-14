@@ -16,6 +16,6 @@ def memory_stack_get():
 def unpack(arg):
     arg_type, arg_value = arg
     if arg_type != "link":
-        raise LowerCommandError(f"Нельзя распаковать не-ссылку {arg_type}")
+        raise UndefinedArgument(f"Нельзя распаковать не-ссылку {arg_type}")
     obj_type, value = get(arg_value)
     return arg_type, obj_type, value

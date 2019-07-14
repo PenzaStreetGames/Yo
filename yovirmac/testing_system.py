@@ -37,7 +37,7 @@ tests = {
     33: jumps_operations_working,
     34: console_operations_working,
     35: length_operation_working,
-
+    36: subobject_operation_working,
 }
 
 memory_control.add_cells(64)

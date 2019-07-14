@@ -1,12 +1,19 @@
 from yovirmac.modules.segment_control.functions import *
 from yovirmac.modules.types_control import read
-from yovirmac.modules.segment_control import find
 
 
 def attribute(num, name):
     index, kind = find_attribute(num, name)
     kind, value = read.entity(index)
     return value
+
+
+def dictionary_item_key(num):
+    return dictionary_item_part(num, "key")
+
+
+def dictionary_item_value(num):
+    return dictionary_item_part(num, "value")
 
 
 def dictionary_item_part(num, part):
@@ -19,6 +26,14 @@ def dictionary_item_part(num, part):
     else:
         raise LowerCommandError(f"Несуществующий атрибут элемента словаря "
                                 f"{part}")
+    return kind, result
+
+
+def kind(num):
+    obj_kind = read.kind(num)
+    if obj_kind == "segment":
+        obj_kind = seg_types[attribute(num, "type")]
+    return obj_kind
 
 
 def list_segment(num, last=False):
@@ -53,9 +68,9 @@ def list_segment_length(num):
     end = attribute(num, "segment_end")
     top = attribute(num, "first_empty_cell")
     if top == end:
-        return end - begin
+        return (end - begin) // 2
     else:
-        return top - begin
+        return (top - begin) // 2
 
 
 def string_segment_length(num):
@@ -63,15 +78,29 @@ def string_segment_length(num):
     end = attribute(num, "segment_end")
     top = attribute(num, "first_empty_cell")
     if top == end:
-        return end - begin
+        return (end - begin) // 2
     else:
-        return top - begin
+        return (top - begin) // 2
 
 
-def list_element(num, index):
+def list_segment_element(num, index):
+    length = list_segment_length(num)
     data_begin, data_end = data_range(num)
-    data_length = data_end - data_begin
-    # надо: дописать эту функцию
+    if length >= index:
+        entity_index = data_begin + (index - 1) * 2
+        return "link", entity_index
+    else:
+        return "none", index - length
+
+
+def string_segment_element(num, index):
+    length = string_segment_length(num)
+    data_begin, data_end = data_range(num)
+    if length >= index:
+        entity_index = data_begin + (index - 1) * 2
+        return "link", entity_index
+    else:
+        return "none", index - length
 
 
 def data_range(num):
@@ -81,8 +110,16 @@ def data_range(num):
 
 
 def is_full(num):
-    top = find.attribute(num, "first_empty_cell")
-    end = find.attribute(num, "segment_end")
+    top = attribute(num, "first_empty_cell")
+    end = attribute(num, "segment_end")
     if top == end:
         return True
     return False
+
+
+def is_last(num):
+    next_segment = attribute(num, "next_segment")
+    if next_segment == 0:
+        return True
+    return False
+

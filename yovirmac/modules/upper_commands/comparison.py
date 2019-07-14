@@ -11,8 +11,8 @@ def Equal(left, right):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"сравнения Eql не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция сравнения Eql не определена")
 
 
 def Great(left, right):
@@ -23,8 +23,8 @@ def Great(left, right):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"больше Grt не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция больше Grt не определена")
 
 
 def Less(left, right):
@@ -35,5 +35,5 @@ def Less(left, right):
         num = append.data_segment("logic", value)
         append.memory_stack("link", num)
     else:
-        raise LowerCommandError(f"Для типов {left_type} и {right_type} операция"
-                                f"меньше Less не определена")
+        raise UndefinedBehaviour(f"Для типов {left_type} и {right_type} "
+                                 f"операция меньше Less не определена")

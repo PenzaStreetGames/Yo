@@ -11,8 +11,8 @@ def Jump(arg):
     if arg_type == "link":
         change.attribute(seg_links["system"], "target_cell", arg_value)
     else:
-        raise LowerCommandError(f"Поведение команды Jmp с аргументом типа"
-                                f"{arg_type} не определено")
+        raise UndefinedBehaviour(f"Поведение команды Jmp с аргументом типа"
+                                 f"{arg_type} не определено")
 
 
 def Jump_if(arg, condition):
@@ -23,10 +23,11 @@ def Jump_if(arg, condition):
             if cond_value:
                 change.attribute(seg_links["system"], "target_cell", arg_value)
         else:
-            raise LowerCommandError(f"Поведение команды Jif с аргументами типов"
-                                    f"{arg_type} и {cond_type} не определено")
+            raise UndefinedBehaviour(
+                f"Поведение команды Jif с аргументами типов {arg_type} и "
+                f"{cond_type} не определено")
     else:
-        raise LowerCommandError(f"Поведение команды Jif с аргументом типа"
+        raise UndefinedArgument(f"Поведение команды Jif с аргументом типа"
                                 f"{arg_type} не определено")
 
 

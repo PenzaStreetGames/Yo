@@ -17,9 +17,9 @@ def determine_object_size(obj_type, value):
         else:
             return len(value) + 2
     elif obj_type == "char_list":
-        return len(value)
+        return len(value) * 2
     elif obj_type == "link_list":
-        return len(value)
+        return len(value) * 2
     elif obj_type == "array":
         return len(value) * 2 + 4
     elif obj_type == "command_with_args":

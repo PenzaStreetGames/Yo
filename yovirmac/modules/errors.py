@@ -4,3 +4,11 @@ class BaseError(Exception):
 
 class LowerCommandError(BaseError):
     pass
+
+
+class UndefinedArgument(BaseError):
+    pass
+
+
+class UndefinedBehaviour(BaseError):
+    pass
