@@ -1,7 +1,7 @@
 from yovirmac.modules.constants import *
-from yovirmac.modules.tape_control import setting
+from yovirmac.modules.tape_control import setting, view
 from yovirmac.modules.segment_control import find, change, show
-from yovirmac.modules.types_control import read
+from yovirmac.modules.types_control import read, display
 from yovirmac.modules.upper_commands import *
 
 
@@ -13,12 +13,16 @@ def execute(path, debug=False):
     target_cell = find.attribute(seg_links["system"], "target_cell")
     # потом: сделать проверку на прекращение исполнения главной программой
     while target_cell != 0:
-        execute_command(target_cell)
+        execute_command(target_cell, debug=debug)
         target_cell = find.attribute(seg_links["system"], "target_cell")
 
 
-def execute_command(cell):
+def execute_command(cell, debug=False):
     command_name, args = read.command_with_args(cell)
+    if debug:
+        name_num = find.attribute(seg_links["system"], "target_namespace")
+        view.namespace_items(name_num)
+        display.command_with_args(cell)
     executing_list[command_name](*args)
     cell_now = find.attribute(seg_links["system"], "target_cell")
     if cell == cell_now:
@@ -33,7 +37,7 @@ executing_list = [
     objects.Find,
     objects.Equate,
     objects.Length,
-    objects.Subobject,
+    objects.Sub_object,
     console.Input,
     console.Output,
     stack.Push,

@@ -168,10 +168,10 @@ header_special_part = 30
 header_length = 64
 minimal_data_length = {
             "system": 0,
-            "call_stack": 16,  # 512
-            "memory_stack": 16,  # 512
+            "call_stack": 512,  # 512
+            "memory_stack": 512,  # 512
             "program": 32,
-            "data_segment": 16,  # 2048
+            "data_segment": 2048,  # 2048
             "list_segment": 2048,
             "string_segment": 64,
             "namespace": 256,

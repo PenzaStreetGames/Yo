@@ -15,9 +15,9 @@ def Jump(arg):
                                  f"{arg_type} не определено")
 
 
-def Jump_if(arg, condition):
-    arg_type, arg_value = arg
+def Jump_if(condition, arg):
     cond_arg_type, cond_type, cond_value = link.unpack(condition)
+    arg_type, arg_value = arg
     if arg_type == "link":
         if cond_type == "logic":
             if cond_value:

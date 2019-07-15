@@ -1,12 +1,12 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.segment_control import find
-from yovirmac.modules.types_control import write
+from yovirmac.modules.types_control import write, read
 from yovirmac.modules.tape_control import get, append, make
 from yovirmac.modules.object_control import link
 
 
-def Subobject(parent, index):
+def Sub_object(parent, index):
     par_type, par_value = parent
     ind_arg_type, ind_type, ind_value = link.unpack(index)
     if ind_type == "link":
@@ -18,9 +18,10 @@ def Subobject(parent, index):
         raise UndefinedBehaviour(f"Получение элемента командой Sob с "
                                  f"отрицательным индексом не определено")
     if par_type == "link":
-        kind = find.kind(par_value)
+        kind, link_value = read.entity(par_value)
         if kind == "link":
-            kind, par_value = link.get_link(par_value)
+            kind = find.kind(link_value)
+            par_value = link_value
         if kind == "string_segment":
             elem_type, elem_value = get.string_segment_element(par_value,
                                                                ind_value)

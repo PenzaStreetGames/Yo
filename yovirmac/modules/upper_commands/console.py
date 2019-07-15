@@ -16,6 +16,7 @@ def Output(arg):
         if value_type == "link":
             value_type, value = get.entity(value)
         print(value)
+        append.memory_stack("link", 0)
     else:
         raise UndefinedBehaviour(f"Поведение команды Out с аргументом типа"
                                  f"{arg_type} не определено")
