@@ -19,7 +19,7 @@ def link_on_link(arg):
 
 
 def memory_stack_link():
-    display.entity(pull.memory_stack()[1])
+    entity(pull.memory_stack()[1])
 
 
 def dictionary_item(num):

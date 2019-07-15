@@ -35,3 +35,10 @@ def relative_links(num):
             index += memory_control.determine_object_size(obj_type, obj_value)
         else:
             index += 2
+
+
+def target_cell(cell, args):
+    command_size = memory_control.determine_object_size("command_with_args",
+                                                        args)
+    cell += command_size
+    attribute(seg_links["system"], "target_cell", cell)

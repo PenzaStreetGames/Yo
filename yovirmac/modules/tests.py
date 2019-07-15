@@ -1,3 +1,4 @@
+from yovirmac import main
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import write, display, shift, read
@@ -538,3 +539,56 @@ def find_operation_working():
     value_link = pull.memory_stack()
     draw.link_on_link(value_link)
     minimal_data_length["namespace"] = real_namespace_size
+
+
+def create_operation_working():
+    """Проверка работы команды создания"""
+    setting.initialisation("program.yovc")
+    objects.Create(["none", 0])
+    draw.memory_stack_link()
+    objects.Create(["logic", True])
+    draw.memory_stack_link()
+    objects.Create(["number", 365])
+    draw.memory_stack_link()
+    objects.Create(["chars", "super_string"])
+    draw.memory_stack_link()
+    objects.Create(["array", [1, 2, 3, 4, 5]])
+    draw.memory_stack_link()
+    view.tape()
+
+
+def equate_operation_working():
+    """Проверка работы команды приравнивания"""
+    setting.initialisation("program.yovc")
+    objects.Create(["chars", "Крутой язык"])
+    str_num = make.string_segment("Ё")
+    objects.Find(["link", str_num])
+    name_num = pull.memory_stack()
+    value_num = pull.memory_stack()
+    objects.Equate(name_num, value_num)
+    namespace_num = find.attribute(seg_links["system"], "target_namespace")
+    view.namespace_items(namespace_num)
+    console.Output(name_num)
+
+    list_num = make.list_segment([0, 1, 2, 3, 4, 5])
+    index_num = make.entity("number", 3)
+    objects.Subobject(["link", list_num], ["link", index_num])
+    elem_num = pull.memory_stack()
+    objects.Create(["array", [6, 7, 8]])
+    value_num = pull.memory_stack()
+    objects.Equate(elem_num, value_num)
+    console.Output(elem_num)
+
+    objects.Subobject(["link", list_num], ["link", index_num])
+    str_num = make.string_segment("array")
+    objects.Find(["link", str_num])
+    name_num = pull.memory_stack()
+    elem_num = pull.memory_stack()
+    objects.Equate(name_num, elem_num)
+    view.namespace_items(namespace_num)
+    console.Output(name_num)
+
+
+def yovirmac_working():
+    """Проверка работы виртуальной машины"""
+    main.execute("program.yovc", debug=True)

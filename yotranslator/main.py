@@ -1,4 +1,5 @@
 from yotranslator.classes.byte.program import Program
+from yotranslator.classes.byte.command import Command
 from yotranslator.classes.binary.binary_program import BinaryProgram
 from yotranslator.stages.translate import translate
 from yotranslator.stages.assembly.get_vir_commands import get_vir_commands
@@ -21,6 +22,7 @@ def compile_program(filename, mode="main"):
 
     program = Program([])
     commands = get_vir_commands(result[0])
+    commands += [Command("End")]
     for command in commands:
         program.add(command)
     if mode == "main":

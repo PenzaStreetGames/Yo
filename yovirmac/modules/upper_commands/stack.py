@@ -34,7 +34,7 @@ def Call(arg):
     arg_type, arg_value = arg
     if arg_type == "link":
         target_cell = find.attribute(seg_links["system"], "target_cell")
-        append.call_stack("link", target_cell)
+        append.call_stack("link", target_cell + 4)
     else:
         raise UndefinedArgument(f"Поведение команды Cal с аргументом типа"
                                 f"{arg_type} не определено")
@@ -43,4 +43,3 @@ def Call(arg):
 def Return():
     link_type, target_cell = pull.call_stack()
     change.attribute(seg_links["system"], "target_cell", target_cell)
-    # надо: в этом месте сделать переход на следующую команду

@@ -49,9 +49,9 @@ def get_vir_commands(yo_object):
     elif yo_object.group == "sub_object":
         commands += [*get_vir_commands(yo_object.args[0]),
                      *get_vir_commands(yo_object.args[1])]
-        commands += [Command("Pop", Argument("lnk", "^a")),
-                     Command("Pop", Argument("lnk", "^b")),
-                     Command("Rar", Argument("lnk", "*a"),
+        commands += [Command("Pop", Argument("lnk", "^b")),
+                     Command("Pop", Argument("lnk", "^a")),
+                     Command("Sob", Argument("lnk", "*a"),
                              Argument("lnk", "*b"))]
     elif yo_object.group == "call":
         func_name = yo_object.args[0].name

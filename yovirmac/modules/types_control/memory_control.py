@@ -25,7 +25,7 @@ def determine_object_size(obj_type, value):
     elif obj_type == "command_with_args":
         size = 2
         for arg in value:
-            arg_type, arg_value = arg["type"], arg["value"]
+            arg_type, arg_value = arg
             size += determine_object_size(arg_type, arg_value)
         return size
     raise LowerCommandError(f"Для типа {obj_type} нет метода определения "

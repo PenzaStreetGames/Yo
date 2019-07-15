@@ -145,10 +145,13 @@ def segment(num):
 def command_with_args(num):
     args = []
     obj_type, command_name = entity(num)
+    if obj_type != "command":
+        raise LowerCommandError(f"Ячейка #{num} содержит не команду, а "
+                                f"{obj_type}")
     index = num + 2
     for i in range(commands_args_number[commands_abbreviation[command_name]]):
         obj_type, value = entity(index)
-        args += [{"type": obj_type, "value": value}]
+        args += [[obj_type, value]]
         index += memory_control.determine_object_size(obj_type, value)
     return command_name, args
 

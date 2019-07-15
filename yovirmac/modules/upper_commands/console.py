@@ -12,7 +12,9 @@ def Input():
 def Output(arg):
     arg_type, arg_value = arg
     if arg_type == "link":
-        value = get.string_segment(arg_value)
+        value_type, value = get.entity(arg_value)
+        if value_type == "link":
+            value_type, value = get.entity(value)
         print(value)
     else:
         raise UndefinedBehaviour(f"Поведение команды Out с аргументом типа"

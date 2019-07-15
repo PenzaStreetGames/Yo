@@ -38,7 +38,10 @@ tests = {
     34: console_operations_working,
     35: length_operation_working,
     36: subobject_operation_working,
-    37: find_operation_working
+    37: find_operation_working,
+    38: create_operation_working,
+    39: equate_operation_working,
+    40: yovirmac_working
 }
 
 memory_control.add_cells(64)
