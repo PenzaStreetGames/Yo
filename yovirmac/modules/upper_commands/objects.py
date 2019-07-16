@@ -17,6 +17,9 @@ def Sub_object(parent, index):
     if ind_value < 0:
         raise UndefinedBehaviour(f"Получение элемента командой Sob с "
                                  f"отрицательным индексом не определено")
+    if ind_value == 0:
+        raise UndefinedBehaviour(f"Получение элемента командой Sob с "
+                                 f"нулевым индексом не определено")
     if par_type == "link":
         kind, link_value = read.entity(par_value)
         if kind == "link":

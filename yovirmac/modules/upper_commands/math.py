@@ -1,6 +1,6 @@
 from yovirmac.modules.errors import *
 from yovirmac.modules.object_control import link
-from yovirmac.modules.tape_control import append
+from yovirmac.modules.tape_control import append, get
 
 
 def Negative(arg):

@@ -23,6 +23,8 @@ def execute_command(cell, debug=False):
         name_num = find.attribute(seg_links["system"], "target_namespace")
         view.namespace_items(name_num)
         display.command_with_args(cell)
+        if command_name == 19:
+            pass
     executing_list[command_name](*args)
     cell_now = find.attribute(seg_links["system"], "target_cell")
     if cell == cell_now:

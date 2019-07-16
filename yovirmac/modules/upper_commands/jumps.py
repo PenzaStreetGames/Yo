@@ -20,8 +20,9 @@ def Jump_if(condition, arg):
     arg_type, arg_value = arg
     if arg_type == "link":
         if cond_type == "logic":
-            if cond_value:
+            if not cond_value:
                 change.attribute(seg_links["system"], "target_cell", arg_value)
+                append.memory_stack("link", 0)
         else:
             raise UndefinedBehaviour(
                 f"Поведение команды Jif с аргументами типов {arg_type} и "

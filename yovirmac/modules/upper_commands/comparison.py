@@ -30,10 +30,6 @@ def Great(left, right):
 def Less(left, right):
     left_arg_type, left_type, left_value = link.unpack(left)
     right_arg_type, right_type, right_value = link.unpack(right)
-    if left_type == "link":
-        left_type, left_value = get.entity(left_value)
-    if right_type == "link":
-        right_type, right_value = get.entity(right_value)
     if left_type == "number" and right_type == "number":
         value = left_value < right_value
         num = append.data_segment("logic", value)

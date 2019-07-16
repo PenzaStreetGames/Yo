@@ -17,4 +17,6 @@ def unpack(arg):
     if arg_type != "link":
         raise UndefinedArgument(f"Нельзя распаковать не-ссылку {arg_type}")
     obj_type, value = get_link(arg_value)
+    if obj_type == "link":
+        obj_type, value = get.entity(value)
     return arg_type, obj_type, value

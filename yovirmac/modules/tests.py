@@ -591,4 +591,4 @@ def equate_operation_working():
 
 def yovirmac_working():
     """Проверка работы виртуальной машины"""
-    main.execute("program.yovc", debug=True)
+    main.execute("program.yovc", debug=False)
