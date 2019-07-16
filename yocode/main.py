@@ -17,7 +17,6 @@ class Highlighter(QSyntaxHighlighter):
     def __init__(self, document):
         super().__init__(document)
 
-
     def highlightBlock(self):
         pass
 
