@@ -8,6 +8,7 @@ from yotranslator.stages.assembly.get_relative_addresses import \
 from yotranslator.stages.assembly.get_binary_code import get_binary_code
 from yotranslator.stages.assembly.write_file import write_file
 import yotranslator.functions.highlight as highlight
+from argparse import ArgumentParser
 
 
 def compile_program(filename, mode="main"):
@@ -49,5 +50,14 @@ def compile_program(filename, mode="main"):
 
 
 if __name__ == '__main__':
-    file = input()
-    compile_program(file, mode="main")
+    parser = ArgumentParser()
+    parser.add_argument("-path", type=str, default="", required=False)
+    parser.add_argument("-mode", type=str, default="main", required=False)
+    args = parser.parse_args()
+    if args.path == "":
+        args.path = input()
+    if args.path.endswith(".yotext"):
+        args.path = args.path.replace(".yotext", "")
+    filename = compile_program(args.path, mode=args.mode)
+    if args.mode == "editor":
+        print(filename)

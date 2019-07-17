@@ -17,7 +17,10 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Yo Code</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(38, 37, 45);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTextEdit" name="CodeArea">
@@ -47,8 +50,28 @@
       <pointsize>15</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">border-width: 12;
+border-color: #a0a0a4;</string>
+    </property>
     <property name="acceptRichText">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="filename">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>0</y>
+      <width>191</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(215, 215, 215);</string>
+    </property>
+    <property name="text">
+     <string>Выберите файл для редактирования</string>
     </property>
    </widget>
   </widget>
@@ -61,8 +84,78 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #434750;
+color: #d7d7d7;</string>
+   </property>
+   <widget class="QMenu" name="file">
+    <property name="title">
+     <string>Файл</string>
+    </property>
+    <addaction name="open_button"/>
+    <addaction name="save_button"/>
+    <addaction name="separator"/>
+    <addaction name="exit_button"/>
+   </widget>
+   <widget class="QMenu" name="code">
+    <property name="title">
+     <string>Код</string>
+    </property>
+    <addaction name="build_button"/>
+    <addaction name="build_and_run_button"/>
+   </widget>
+   <widget class="QMenu" name="help">
+    <property name="title">
+     <string>Помощь</string>
+    </property>
+   </widget>
+   <addaction name="file"/>
+   <addaction name="code"/>
+   <addaction name="help"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="styleSheet">
+    <string notr="true">background-color: #434750;</string>
+   </property>
+  </widget>
+  <action name="open_button">
+   <property name="text">
+    <string>Открыть</string>
+   </property>
+  </action>
+  <action name="create">
+   <property name="text">
+    <string>Создать</string>
+   </property>
+  </action>
+  <action name="save_as">
+   <property name="text">
+    <string>Сохранить как</string>
+   </property>
+  </action>
+  <action name="save_button">
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+  </action>
+  <action name="exit_button">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="build_button">
+   <property name="text">
+    <string>Собрать</string>
+   </property>
+  </action>
+  <action name="build_and_run_button">
+   <property name="text">
+    <string>Собрать и запустить</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

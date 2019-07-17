@@ -2,7 +2,7 @@ key_words = ["while", "if", "else", "elseif", "break", "continue", "none",
              "true", "false", "not", "and", "or", "xor", "pass"]
 functions = ["print", "input", "len"]
 signs = ["=", "[", "]", "(", ")", "{", "}", ",", ";", ":", "+", "-", "*", "/",
-         "%", "|", ">", "<", "?"]
+         "%", ">", "<", "?"]
 sign_combos = ["=?"]
 quotes = ["'", '"']
 comment = "#"
