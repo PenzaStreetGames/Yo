@@ -1,14 +1,16 @@
 import sys
+import os
 import re
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFileDialog, \
     QMessageBox
 from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QColor, \
     QBrush, QIcon
-from PyQt5.QtCore import Qt, QSize
 from yocode.constants import *
 from yocode.format_objects import get_format_types
-import subprocess
+from yotranslator import main as translator
+import yovirmac.modules.constants as constants
+import yovirmac.main as virtual_machine
 
 
 class Editor(QMainWindow):
@@ -22,6 +24,7 @@ class Editor(QMainWindow):
         self.save_button.triggered.connect(self.save)
         self.exit_button.triggered.connect(self.close)
         self.build_button.triggered.connect(self.compile)
+        self.build_and_run_button.triggered.connect(self.compile_and_run)
         self.setWindowIcon(QIcon("YoCode.png"))
         self.setWindowTitle("Yo Code")
         self.filename_placeholder = "Выберите файл для редактирования"
@@ -59,12 +62,41 @@ class Editor(QMainWindow):
         if self.file == self.filename_placeholder:
             self.statusbar.showMessage("Выберите или сохраните файл для сборки")
             return
-        file_address = self.file.replace("/", "\\")
-        process = f"python ..\\yotranslator\\main.py -path {file_address} " \
-            f"-mode editor"
-        result = str(subprocess.check_output(process))
+        path = self.file.replace(".yotext", "")
+        result = translator.compile_program(path, mode="editor")
         self.statusbar.showMessage(f"Файл собран в {result}")
+        return result
 
+    def compile_and_run(self):
+        file = self.compile()
+        if file is None:
+            return
+        path = file.replace(".yotext", ".yovc")
+        constants.editor = editor
+        constants.mode = "editor"
+        try:
+            target_cell = virtual_machine.execute(path)
+        except Exception as error:
+            """text = self.errors.toPlainText()
+            self.error.setPlainText(text + str(error))"""
+            print(error)
+            return
+        while target_cell != 0:
+            target_cell = virtual_machine.next_command(target_cell)
+            """if virtual_machine.input_data:
+                text = self.console.toPlainText()
+                self.console.setPlainText(
+                    text + ["\n" + string for string in
+                            virtual_machine.input_data])
+                virtual_machine.input_data = []"""
+            print(constants.output_data)
+            if constants.output_data:
+                text = self.console.toPlainText()
+                string = text + "".join(["\n" + string for string in
+                                         constants.output_data])
+                print(string)
+                self.console.setText(string)
+                constants.output_data = []
 
 
 class Highlighter(QSyntaxHighlighter):
@@ -89,10 +121,24 @@ class Highlighter(QSyntaxHighlighter):
 
 
 if __name__ == '__main__':
-    command = r"python ..\yotranslator\main.py -path E:\PenzaStreetCompany\Python\-Yo-\yocode\hello_world.yotext -mode editor"
-    result = subprocess.check_output(command)
-    print(result)
     app = QApplication(sys.argv)
     editor = Editor()
+
+    file = "E:/PenzaStreetCompany/Python/-Yo-/yotranslator/program.yotext"
+    path = file.replace(".yotext", ".yovc")
+    constants.editor = editor
+    constants.mode = "editor"
+    try:
+        target_cell = virtual_machine.execute(path)
+    except Exception as error:
+        """text = self.errors.toPlainText()
+        self.error.setPlainText(text + str(error))"""
+        print(error)
+    while target_cell != 0:
+        target_cell = virtual_machine.next_command(target_cell)
+        print(constants.output_data)
+        if constants.output_data:
+            constants.output_data = []
+
     editor.show()
     sys.exit(app.exec_())

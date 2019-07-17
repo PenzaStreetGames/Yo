@@ -12,9 +12,18 @@ def execute(path, debug=False):
         show.program_code(program)
     target_cell = find.attribute(seg_links["system"], "target_cell")
     # потом: сделать проверку на прекращение исполнения главной программой
-    while target_cell != 0:
-        execute_command(target_cell, debug=debug)
-        target_cell = find.attribute(seg_links["system"], "target_cell")
+    if mode == "console":
+        while target_cell != 0:
+            execute_command(target_cell, debug=debug)
+            target_cell = find.attribute(seg_links["system"], "target_cell")
+    elif mode == "editor":
+        return target_cell
+
+
+def next_command(target_cell, debug=False):
+    execute_command(target_cell, debug=debug)
+    target_cell = find.attribute(seg_links["system"], "target_cell")
+    return target_cell
 
 
 def execute_command(cell, debug=False):
@@ -23,8 +32,6 @@ def execute_command(cell, debug=False):
         name_num = find.attribute(seg_links["system"], "target_namespace")
         view.namespace_items(name_num)
         display.command_with_args(cell)
-        if command_name == 19:
-            pass
     executing_list[command_name](*args)
     cell_now = find.attribute(seg_links["system"], "target_cell")
     if cell == cell_now:

@@ -2,6 +2,10 @@ from json import loads
 
 capacity = 32
 memory = []
+mode = "editor"
+editor = None
+input_data = []
+output_data = []
 
 
 def get_full_cell():
@@ -283,6 +287,3 @@ dictionary_item_structure = [
     "key",
     "value"
 ]
-
-with open("config.yocfg", "r") as infile:
-    config = loads(infile.read())

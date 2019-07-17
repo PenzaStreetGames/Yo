@@ -1,10 +1,23 @@
+from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.tape_control import make, append, get
 from yovirmac.modules.object_control import link
+from PyQt5.QtWidgets import QInputDialog
+import yovirmac.modules.constants as constants
 
 
 def Input():
-    value = input()
+    global input_data
+    if mode == "console":
+        value = input()
+    elif mode == "editor":
+        string, press = QInputDialog.getText(editor, "Ввод",
+                                             "Программа запрашивает ввод")
+        value = string if press else ""
+    else:
+        raise UndefinedBehaviour(f"Неопределённое поведение команды ввода "
+                                 f"для режима {mode}")
+    input_data += [value]
     num = make.string_segment(value)
     append.memory_stack("link", num)
 
@@ -15,7 +28,10 @@ def Output(arg):
         value_type, value = get.entity(arg_value)
         if value_type == "link":
             value_type, value = get.entity(value)
-        print(value)
+        if mode == "console":
+            print(value)
+        elif mode == "editor":
+            constants.output_data = constants.output_data + [str(value)]
         append.memory_stack("link", 0)
     else:
         raise UndefinedBehaviour(f"Поведение команды Out с аргументом типа"
