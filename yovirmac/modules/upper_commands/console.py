@@ -8,16 +8,16 @@ import yovirmac.modules.constants as constants
 
 def Input():
     global input_data
-    if mode == "console":
+    if constants.mode == "console":
         value = input()
-    elif mode == "editor":
+    elif constants.mode == "editor":
         string, press = QInputDialog.getText(editor, "Ввод",
                                              "Программа запрашивает ввод")
         value = string if press else ""
+        constants.input_data = constants.input_data + [value]
     else:
         raise UndefinedBehaviour(f"Неопределённое поведение команды ввода "
-                                 f"для режима {mode}")
-    input_data += [value]
+                                 f"для режима {constants.mode}")
     num = make.string_segment(value)
     append.memory_stack("link", num)
 
@@ -28,9 +28,9 @@ def Output(arg):
         value_type, value = get.entity(arg_value)
         if value_type == "link":
             value_type, value = get.entity(value)
-        if mode == "console":
+        if constants.mode == "console":
             print(value)
-        elif mode == "editor":
+        elif constants.mode == "editor":
             constants.output_data = constants.output_data + [str(value)]
         append.memory_stack("link", 0)
     else:

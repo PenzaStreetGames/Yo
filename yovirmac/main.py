@@ -3,6 +3,7 @@ from yovirmac.modules.tape_control import setting, view
 from yovirmac.modules.segment_control import find, change, show
 from yovirmac.modules.types_control import read, display
 from yovirmac.modules.upper_commands import *
+import yovirmac.modules.constants as constants
 
 
 def execute(path, debug=False):
@@ -12,11 +13,11 @@ def execute(path, debug=False):
         show.program_code(program)
     target_cell = find.attribute(seg_links["system"], "target_cell")
     # потом: сделать проверку на прекращение исполнения главной программой
-    if mode == "console":
+    if constants.mode == "console":
         while target_cell != 0:
             execute_command(target_cell, debug=debug)
             target_cell = find.attribute(seg_links["system"], "target_cell")
-    elif mode == "editor":
+    elif constants.mode == "editor":
         return target_cell
 
 
@@ -72,5 +73,7 @@ executing_list = [
 ]
 
 if __name__ == '__main__':
+    path = input()
+    constants.mode = "console"
     # надо: сделать запуск через аргументы консоли
-    execute("path")
+    execute(path)

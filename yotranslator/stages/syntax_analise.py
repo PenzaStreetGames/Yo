@@ -13,7 +13,6 @@ def syntax_analise(yo_object, result, stores):
             last_store.args[-1].is_close() and
             yo_object.name not in branching_continue_words and
             yo_object.name != "\n"):
-        print(yo_object)
         result = last_store.check_close(result)
         result = last_store.set_close(result)
         stores = stores[:-1]

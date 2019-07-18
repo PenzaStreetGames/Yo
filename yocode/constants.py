@@ -64,5 +64,9 @@ styles = {
     "structure":
         {
             "color": [253, 94, 83]
+        },
+    "error":
+        {
+            "color": [239, 48, 56]
         }
 }

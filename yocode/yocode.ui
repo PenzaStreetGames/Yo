@@ -79,7 +79,7 @@ border-color: #a0a0a4;</string>
      <rect>
       <x>20</x>
       <y>430</y>
-      <width>370</width>
+      <width>760</width>
       <height>120</height>
      </rect>
     </property>
@@ -91,25 +91,6 @@ border-color: #a0a0a4;</string>
     </property>
     <property name="styleSheet">
      <string notr="true">color: #d7d7d7;</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="errors">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>430</y>
-      <width>370</width>
-      <height>120</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>PSG-rounded</family>
-      <pointsize>15</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(239, 48, 56);</string>
     </property>
    </widget>
   </widget>
