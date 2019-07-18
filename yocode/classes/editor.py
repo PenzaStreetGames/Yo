@@ -7,6 +7,7 @@ from yotranslator import main as translator
 import yovirmac.modules.constants as constants
 import yovirmac.main as virtual_machine
 import traceback
+import webbrowser
 
 
 class Editor(QMainWindow):
@@ -20,6 +21,7 @@ class Editor(QMainWindow):
         self.save_button.triggered.connect(self.save)
         self.exit_button.triggered.connect(self.close)
         self.build_button.triggered.connect(self.compile)
+        self.help_button.triggered.connect(self.help_link)
         self.build_and_run_button.triggered.connect(self.compile_and_run)
         self.setWindowIcon(QIcon("YoCode.png"))
         self.setWindowTitle("Yo Code")
@@ -53,6 +55,10 @@ class Editor(QMainWindow):
             self.filename.setText(filename.split("/")[-1])
             with open(self.file, mode="w", encoding="utf-8") as outfile:
                 outfile.write(self.CodeArea.toPlainText())
+
+    def help_link(self):
+        link = "https://github.com/PenzaStreetGames/Yo/wiki"
+        webbrowser.open(link)
 
     def compile(self):
         self.clean_data(self.console)
