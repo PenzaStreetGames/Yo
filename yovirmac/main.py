@@ -2,7 +2,8 @@ from yovirmac.modules.constants import *
 from yovirmac.modules.tape_control import setting, view
 from yovirmac.modules.segment_control import find, change, show
 from yovirmac.modules.types_control import read, display
-from yovirmac.modules.upper_commands import *
+from yovirmac.modules.upper_commands import (comparison, console, jumps, logic,
+                                             math, objects, other, stack)
 import yovirmac.modules.constants as constants
 
 
