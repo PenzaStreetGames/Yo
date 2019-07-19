@@ -1,4 +1,0 @@
-structure(title="Title", charset="utf-8")
-{
-    text("Simple text i{Italic text} \n b{bold text}")
-}
