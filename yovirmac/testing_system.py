@@ -1,3 +1,5 @@
+"""Тестирующая система нужна для проверки отдельных функций виртуальной
+машины"""
 from yovirmac.modules.tests import *
 from yovirmac.modules.types_control import memory_control
 

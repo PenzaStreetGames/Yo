@@ -1,3 +1,4 @@
+"""Отображение простых объектов"""
 from yovirmac.modules.constants import *
 from yovirmac.modules.types_control import read, memory_control
 

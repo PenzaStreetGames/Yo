@@ -1,3 +1,4 @@
+"""Набор тестов для тестирующей системы"""
 from yovirmac import main
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *

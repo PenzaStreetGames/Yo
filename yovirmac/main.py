@@ -8,6 +8,7 @@ import yovirmac.modules.constants as constants
 
 
 def execute(path, debug=False):
+    """Запускает исполнение программы"""
     setting.initialisation(path)
     if debug:
         program = find.attribute(seg_links["system"], "main_program")
@@ -23,12 +24,14 @@ def execute(path, debug=False):
 
 
 def next_command(target_cell, debug=False):
+    """Используется в редакторе для перехода от команде к команде"""
     execute_command(target_cell, debug=debug)
     target_cell = find.attribute(seg_links["system"], "target_cell")
     return target_cell
 
 
 def execute_command(cell, debug=False):
+    """Выполняет команду в консольном режиме"""
     command_name, args = read.command_with_args(cell)
     if debug:
         name_num = find.attribute(seg_links["system"], "target_namespace")
