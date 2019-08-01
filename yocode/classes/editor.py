@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFileDialog, \
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
-from yotranslator import main as translator
+from yotranslator import yo_translator as translator
 import yovirmac.modules.constants as constants
-import yovirmac.main as virtual_machine
+import yovirmac.yo_vir_mac as virtual_machine
 import traceback
 import webbrowser
 

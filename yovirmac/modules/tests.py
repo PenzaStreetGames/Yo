@@ -1,5 +1,5 @@
 """Набор тестов для тестирующей системы"""
-from yovirmac import main
+from yovirmac import yo_vir_mac
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.types_control import write, display, shift, read
@@ -485,6 +485,13 @@ def length_operation_working():
     objects.Length(["link", list_num])
     kind, length_link = pull.memory_stack()
     draw.entity_link(length_link)
+    string_num = make.string_segment("a")
+    objects.Find(["link", string_num])
+    name_num = pull.memory_stack()
+    objects.Equate(name_num, ["link", list_num])
+    objects.Length(name_num)
+    kind, length_link = pull.memory_stack()
+    draw.entity_link(length_link)
     minimal_data_length["string_segment"] = real_string_segment_size
     minimal_data_length["list_segment"] = real_list_segment_size
 
@@ -592,4 +599,4 @@ def equate_operation_working():
 
 def yovirmac_working():
     """Проверка работы виртуальной машины"""
-    main.execute("program.yovc", debug=False)
+    yo_vir_mac.execute("program.yovc", debug=False)

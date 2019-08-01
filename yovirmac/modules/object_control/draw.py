@@ -9,7 +9,11 @@ def entity_link(arg):
 
 
 def entity(num):
-    print(*get.entity(num))
+    kind, value = get.entity(num)
+    if kind == "segment":
+        print(value)
+    else:
+        return display.entity(num)
 
 
 def link_on_link(arg):
@@ -25,3 +29,4 @@ def memory_stack_link():
 def dictionary_item(num):
     key, value = item.get_dictionary_item(num)
     print(f"{key}: {value}")
+

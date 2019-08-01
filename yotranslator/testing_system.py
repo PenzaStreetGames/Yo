@@ -1,5 +1,5 @@
 from yotranslator.modules.errors import *
-import yotranslator.main as shell
+import yotranslator.yo_translator as shell
 
 test_list = {
     "equating": {

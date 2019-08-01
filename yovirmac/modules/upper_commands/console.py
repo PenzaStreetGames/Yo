@@ -1,7 +1,7 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.tape_control import make, append, get
-from yovirmac.modules.object_control import link
+from yovirmac.modules.object_control import link, draw
 from PyQt5.QtWidgets import QInputDialog
 import yovirmac.modules.constants as constants
 
@@ -27,10 +27,13 @@ def Output(arg):
     if arg_type == "link":
         value_type, value = get.entity(arg_value)
         if value_type == "link":
+            arg_value = value
             value_type, value = get.entity(value)
         if constants.mode == "console":
-            print(value)
+            draw.entity(arg_value)
         elif constants.mode == "editor":
+            if value_type == "none":
+                value = "none"
             constants.output_data = constants.output_data + [str(value)]
         append.memory_stack("link", 0)
     else:

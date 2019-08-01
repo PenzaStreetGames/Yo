@@ -15,13 +15,14 @@ expressions = {
     "non_colored": r".",
     "comment": r"#.*",
     "sign": r"[\(\)\[\]\{\}\=\+\-\*\/\%\<\>\?:;,]",
-    "logic_value": r"\btrue\b|\bfalse\b",
+    "logic_value": r"\btrue\b|\bfalse\b|\bnone\b",
     "logic_operation": r"\bnot\b|\band\b|\bor\b|\bxor\b",
     "number": r"\b\d+\b",
     "string": r"\".*?\"|'.*?'",
     "object": r"\b\D\B\w*\b|\b\w\b",
     "built_in_function": r"\bprint\b|\binput\b|\blen\b",
     "structure": r"\bif\b|\belseif\b|\belse\b|\bwhile\b|\bbreak\b|\bcontinue\b"
+                 r"|\bpass\b"
 }
 
 styles = {

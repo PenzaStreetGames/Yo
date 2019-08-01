@@ -82,6 +82,12 @@ def syntax_analise(yo_object, result, stores):
         result = pre_object.set_close(result)
         result = result[-1].set_close(result)
         stores = stores[:-1]
+    # пустые списки - тоже списки
+    elif (pre_object.sub_group == "list"
+          and yo_object.name in last_store.points):
+        result = pre_object.set_close(result)
+        result = result[-1].set_close(result)
+        stores = stores[:-1]
     # обработка if
     elif (yo_object.group == "structure_word" and yo_object.name == "if" and
           last_store.group == "program"):

@@ -51,6 +51,9 @@ def Length(arg):
     arg_type, arg_value = arg
     if arg_type == "link":
         kind = find.kind(arg_value)
+        if kind == "link":
+            kind, arg_value = get.entity(arg_value)
+            kind = find.kind(arg_value)
         if kind == "string_segment":
             length = get.string_segment_length(arg_value)
         elif kind == "list_segment":

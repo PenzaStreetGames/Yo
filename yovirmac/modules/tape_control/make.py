@@ -7,7 +7,8 @@ from yovirmac.modules.segment_control import put
 
 def string_segment(data):
     data_size = memory_control.determine_object_size("char_list", data)
-    seg_size = memory_control.determine_segment_size(data_size)
+    seg_size = memory_control.determine_segment_size("string_segment",
+                                                     data_size)
     num = add.string_segment(self_length=seg_size)
     put.string_segment(num, "char_list", data)
     return num
@@ -15,7 +16,7 @@ def string_segment(data):
 
 def list_segment(data):
     data_size = memory_control.determine_object_size("link_list", data)
-    seg_size = memory_control.determine_segment_size(data_size)
+    seg_size = memory_control.determine_segment_size("list_segment", data_size)
     num = add.list_segment(self_length=seg_size)
     put.list_segment(num, "link_list", data)
     return num

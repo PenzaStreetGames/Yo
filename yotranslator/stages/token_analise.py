@@ -63,6 +63,7 @@ def token_analise(token, result, coords):
         group = "object"
         sub_group = "string"
         color_group = "string"
+        token = token[1:-1]  # обрезка кавычек
     elif token.isdigit():
         group = "object"
         sub_group = "number"
