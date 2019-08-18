@@ -7,4 +7,4 @@ path = sys.argv[1]
 pack(path)
 _open(path)
 _translate(path+".yotext")
-run(path+".yovc")=
+run(path+".yovc")
