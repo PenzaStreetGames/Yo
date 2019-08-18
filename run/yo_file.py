@@ -9,14 +9,12 @@ def _open(filename):
     if "temp" not in os.listdir():
         os.mkdir("temp")
     z = zipfile.ZipFile(filename+".yo",'r')
-    #z.printdir()
     os.chdir("temp")
     if filename not in os.listdir():
         os.mkdir(filename)
     os.chdir(filename)
     z.extract("1.yotext")
     z.extract("1.yovc")
-    #z.extractall()
     z.close()
 
 if __name__ == "__main__":
