@@ -132,9 +132,17 @@ color: #d7d7d7;</string>
     </property>
     <addaction name="help_button"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Язык</string>
+    </property>
+    <addaction name="lang_en"/>
+    <addaction name="lang_ru"/>
+   </widget>
    <addaction name="file"/>
    <addaction name="code"/>
    <addaction name="help"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="styleSheet">
@@ -180,6 +188,16 @@ color: #d7d7d7;</string>
   <action name="help_button">
    <property name="text">
     <string>Помощь</string>
+   </property>
+  </action>
+  <action name="lang_en">
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="lang_ru">
+   <property name="text">
+    <string>Русский</string>
    </property>
   </action>
  </widget>

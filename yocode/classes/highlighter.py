@@ -6,10 +6,13 @@ import re
 
 class Highlighter(QSyntaxHighlighter):
 
-    def __init__(self, document):
+    def __init__(self, document, lang):
         super().__init__(document)
         self.colored_document = document
-        self.styles = get_format_types()
+        self.styles = get_format_types(lang)
+
+    def update_styles(self, lang):
+        self.styles = get_format_types(lang)
 
     def color(self):
         self.highlightBlock(self.colored_document.toPlainText())

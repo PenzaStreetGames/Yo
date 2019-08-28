@@ -11,9 +11,9 @@ import yotranslator.functions.highlight as highlight
 from argparse import ArgumentParser
 
 
-def compile_program(filename, mode="main"):
+def compile_program(filename, language, mode="main"):
     with open(f"{filename}.yotext", "r", encoding="utf-8") as infile:
-        result = translate(infile.read())
+        result = translate(infile.read(), language)
     if mode == "main":
         print("\nСинтаксическое дерево программы:\n")
         print(result[0])
@@ -50,7 +50,7 @@ def compile_program(filename, mode="main"):
 
 
 if __name__ == '__main__':
-    path = input()
+    path, lang = input(), input()
     if path.endswith(".yotext"):
         path = path.replace(".yotext", "")
-    filename = compile_program(path, mode="main")
+    filename = compile_program(path, language=lang, mode="main")

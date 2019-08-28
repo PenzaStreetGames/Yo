@@ -3,10 +3,11 @@ from yotranslator.modules.constants import *
 from yotranslator.stages.token_analise import token_analise
 from yotranslator.stages.syntax_analise import syntax_analise
 from yotranslator.classes.yo_object import YoObject
+from yotransliteration import transliterator
 import yotranslator.functions.highlight as highlight
 
 
-def translate(program):
+def translate(program, language):
     """обработка символов и превращение их в слова"""
     program += "\n\n"
     pre_symbol, word, pre_group, quote = "\n", "", "line feed", ""
@@ -28,7 +29,7 @@ def translate(program):
             if pre_group != "comment":
                 if quote == empty:
                     word, result, stores = add_word(word, result, stores,
-                                                    [row, col])
+                                                    [row, col], language)
                     pre_group = "comment"
                 else:
                     word += symbol
@@ -36,7 +37,7 @@ def translate(program):
             if pre_group != "line feed":
                 if word:
                     word, result, stores = add_word(word, result, stores,
-                                                    [row, col])
+                                                    [row, col], language)
                     word += symbol
                 pre_group = "line feed"
             row += 1
@@ -46,7 +47,7 @@ def translate(program):
         elif symbol in quotes:
             if quote == empty:
                 word, result, stores = add_word(word, result, stores,
-                                                [row, col])
+                                                [row, col], language)
                 quote = symbol
                 pre_group = "quote"
             elif symbol == quote:
@@ -59,30 +60,30 @@ def translate(program):
             if pre_group == "line feed":
                 if pre_symbol in ["\n", "\r"]:
                     word, result, stores = add_word(word, result, stores,
-                                                    [row, col])
+                                                    [row, col], language)
                 word += symbol
             elif pre_group != "space":
                 word, result, stores = add_word(word, result, stores,
-                                                [row, col])
+                                                [row, col], language)
                 pre_group = "space"
             else:
                 pass
         elif symbol in signs:
             if not (pre_group == "sign" and word + symbol in sign_combos):
                 word, result, stores = add_word(word, result, stores,
-                                                [row, col])
+                                                [row, col], language)
             pre_group = "sign"
             word += symbol
         elif symbol.isalpha():
             if pre_group in ["sign", "line feed"]:
                 word, result, stores = add_word(word, result, stores,
-                                                [row, col])
+                                                [row, col], language)
             pre_group = "alpha"
             word += symbol
         elif symbol.isdigit():
             if pre_group in ["sign", "line feed"]:
                 word, result, stores = add_word(word, result, stores,
-                                                [row, col])
+                                                [row, col], language)
             pre_group = "digit"
             word += symbol
         else:
@@ -90,7 +91,7 @@ def translate(program):
         pre_symbol = symbol
         col += 1
     word, result, stores = add_word(word, result, stores,
-                                    [row, col])
+                                    [row, col], language)
 
     if stores[0].args:
         result = stores[0].args[-1].check_close(result)
@@ -101,9 +102,10 @@ def translate(program):
     return result
 
 
-def add_word(word, result, stores, coords):
+def add_word(word, result, stores, coords, language):
     """добавление токена к программе"""
     if word != empty:
+        word = transliterator.transliterate(word, lang_current=language, lang_need="en")
         obj = token_analise(word, result, coords)
         highlight.add_token(obj)
         result, stores = syntax_analise(obj, result, stores)

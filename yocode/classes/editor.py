@@ -4,18 +4,26 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
 from yotranslator import main as translator
+from yotransliteration import transliterator
+
 import yovirmac.modules.constants as constants
 import yovirmac.main as virtual_machine
+from yocode.format_objects import ValidExpressions
 import traceback
 import webbrowser
 
 
+class Language:
+    pass
+
+
 class Editor(QMainWindow):
+    language = "en"
 
     def __init__(self):
         super().__init__()
         uic.loadUi("yocode.ui", self)
-        self.code_highlighter = Highlighter(self.CodeArea.document())
+        self.code_highlighter = Highlighter(self.CodeArea.document(), Editor.language)
         self.CodeArea.textChanged.connect(self.code_highlighter.color)
         self.open_button.triggered.connect(self.load)
         self.save_button.triggered.connect(self.save)
@@ -27,6 +35,15 @@ class Editor(QMainWindow):
         self.setWindowTitle("Yo Code")
         self.filename_placeholder = "Выберите файл для редактирования"
         self.file = "Выберите файл для редактирования"
+
+        self.lang_ru.triggered.connect(self.select_rus)
+
+    def select_rus(self):
+        Editor.language = "ru"
+        self.code_highlighter.update_styles("ru")
+        self.code_highlighter.color()
+        self.CodeArea
+
 
     def load(self):
         dialog = QFileDialog(self)
@@ -68,7 +85,7 @@ class Editor(QMainWindow):
         self.save_file()
         path = self.file.replace(".yotext", "")
         try:
-            result = translator.compile_program(path, mode="editor")
+            result = translator.compile_program(path, language=Editor.language, mode="editor")
         except Exception as error:
             self.show_data(self.console, "Ошибка компиляции:")
             trace = traceback.format_exception(error.__class__, error,
@@ -76,6 +93,10 @@ class Editor(QMainWindow):
             self.show_data(self.console, "".join(trace))
             return
         self.statusbar.showMessage(f"Файл собран в {result}")
+        return result
+
+    def transliterate(self):
+        result = self.file
         return result
 
     def compile_and_run(self):
