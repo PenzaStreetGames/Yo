@@ -1,0 +1,16 @@
+while пока
+if если
+else иначе
+elseif иначе_если
+break прервать
+continue продолжить
+none ничего
+true истина
+false ложь
+not не
+and и
+or или
+xor или
+pass нулевая_команда
+print печать
+len длин
