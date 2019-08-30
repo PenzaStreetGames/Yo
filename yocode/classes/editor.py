@@ -8,7 +8,7 @@ from yotransliteration import transliterator
 
 import yovirmac.modules.constants as constants
 import yovirmac.yo_vir_mac as virtual_machine
-from yocode.format_objects import ValidExpressions
+from yocode.format_objects import get_expression_group
 import traceback
 import webbrowser
 
@@ -37,6 +37,8 @@ class Editor(QMainWindow):
         self.file = "Выберите файл для редактирования"
 
         self.lang_ru.triggered.connect(self.select_rus)
+
+
 
     def select_rus(self):
         Editor.language = "ru"

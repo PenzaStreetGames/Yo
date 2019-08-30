@@ -1,3 +1,8 @@
+import json
+
+with open("basic.yolp", "r", encoding="utf-8") as infile:
+    langpack = json.loads(infile.read())
+
 groups = [
     "non_colored",
     "sign",
@@ -29,6 +34,45 @@ exprs_words_default = {
     "logic_operation": ["not", "and", "or", "xor"],
     "built_in_function": ["print", "input", "len"],
     "structure": ["if", "else", "elseif", "while", "break", "continue"],
+}
+
+translated_groups = [
+    "logic_value",
+    "logic_operation",
+    "built_in_function",
+    "structure"
+]
+
+translated_words = {
+    "logic_value":
+    [
+        "true",
+        "false",
+        "none"
+    ],
+    "logic_operation":
+    [
+        "not",
+        "and",
+        "or",
+        "xor"
+    ],
+    "built_in_function":
+    [
+        "print",
+        "input",
+        "len"
+    ],
+    "structure":
+    [
+        "if",
+        "elseif",
+        "else",
+        "while",
+        "break",
+        "continue",
+        "pass"
+    ]
 }
 
 styles = {
