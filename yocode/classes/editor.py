@@ -18,7 +18,6 @@ class Language:
 
 
 class Editor(QMainWindow):
-    language = "en"
 
     def __init__(self):
         super().__init__()
@@ -35,14 +34,14 @@ class Editor(QMainWindow):
         self.setWindowTitle("Yo Code")
         self.filename_placeholder = "Выберите файл для редактирования"
         self.file = "Выберите файл для редактирования"
+        self.language = "en"
 
         self.lang_ru.triggered.connect(self.select_rus)
 
     def select_rus(self):
-        Editor.language = "ru"
+        self.language = "ru"
         self.code_highlighter.update_styles("ru")
         self.code_highlighter.color()
-        self.CodeArea
 
 
     def load(self):
