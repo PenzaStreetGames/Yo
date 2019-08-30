@@ -6,7 +6,10 @@ from yovirmac.modules.upper_commands import (comparison, console, jumps, logic,
                                              math, objects, other, stack)
 import yovirmac.modules.constants as constants
 
-
+def run(path):
+    constants.mode = "console"
+    # надо: сделать запуск через аргументы консоли
+    execute(path)
 def execute(path, debug=False):
     """Запускает исполнение программы"""
     setting.initialisation(path)
