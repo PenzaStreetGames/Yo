@@ -2,8 +2,8 @@ array = [1, 6, 7, 5, 4, 3]
 length = 6
 index = 1
 max = array[1]
-while index < length + 1:
-    if array[index] > max:
+пока index < length + 1:
+    если array[index] > max:
         max = array[index]
     index = index + 1
 print(max)

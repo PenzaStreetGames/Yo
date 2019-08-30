@@ -15,14 +15,20 @@ expressions = {
     "non_colored": r".",
     "comment": r"#.*",
     "sign": r"[\(\)\[\]\{\}\=\+\-\*\/\%\<\>\?:;,]",
-    "logic_value": r"\btrue\b|\bfalse\b|\bnone\b",
-    "logic_operation": r"\bnot\b|\band\b|\bor\b|\bxor\b",
+    "logic_value": r"\b{}\b|",
+    "logic_operation": r"\b{}\b|",
     "number": r"\b\d+\b",
     "string": r"\".*?\"|'.*?'",
     "object": r"\b\D\B\w*\b|\b\w\b",
-    "built_in_function": r"\bprint\b|\binput\b|\blen\b",
-    "structure": r"\bif\b|\belseif\b|\belse\b|\bwhile\b|\bbreak\b|\bcontinue\b"
-                 r"|\bpass\b"
+    "built_in_function": r"\b{}\b|",
+    "structure": r"\b{}\b|"
+}
+
+exprs_words_default = {
+    "logic_value": ["true", "false"],
+    "logic_operation": ["not", "and", "or", "xor"],
+    "built_in_function": ["print", "input", "len"],
+    "structure": ["if", "else", "elseif", "while", "break", "continue"],
 }
 
 styles = {
