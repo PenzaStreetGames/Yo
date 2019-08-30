@@ -1,28 +1,34 @@
 import zipfile
 import os
-import sys
-from ..yotranslator.yo_translator import compile_program
-from yovirmac.yo_vir_mac import execute
+from yotranslator.yo_translator import compile_program
+from yovirmac.yo_vir_mac import run
+
 
 def pack(filename):
-    with zipfile.ZipFile(filename+".yo", 'w') as myzip:
+    with zipfile.ZipFile(filename + ".yo", 'w') as myzip:
         myzip.write(f"{filename}.yotext")
         myzip.write(f"{filename}.yovc")
         myzip.close()
 
+
 def unpack(filename):
     if "temp" not in os.listdir():
         os.mkdir("temp")
-    z = zipfile.ZipFile(filename+".yo",'r')
+    z = zipfile.ZipFile(filename + ".yo", 'r')
     os.chdir("temp")
-    if filename not in os.listdir():
+    try:
         os.mkdir(filename)
+    except:
+        pass
     os.chdir(filename)
     z.extractall(path=os.getcwd())
     z.close()
 
-path = sys.argv[1]
-compile_program("temp/"+path+".yotext")
+
+print(os.getcwd())
+path = input()
+compile_program(path, "en", mode="1")
 pack(path)
 unpack(path)
-execute("temp/"+path+".yovc")
+print(path + ".yovc")
+run(path + ".yovc")
