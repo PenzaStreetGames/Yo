@@ -1,4 +1,6 @@
+import json
 
+"""
 def transliterate(word, lang_current, lang_need):
 
     languages = ["en", "ru"]
@@ -15,5 +17,19 @@ def transliterate(word, lang_current, lang_need):
     word_index = selection.index(word)
 
     return data[word_index][languages.index(lang_need)]
+"""
 
 
+def transliterate(word, lang_current, lang_need):
+    with open("../yotransliteration/basic.yolp", "r", encoding="utf8") as file:
+        data = json.loads(file.read())
+
+    if lang_current == lang_need:
+        return word
+
+    if lang_current == "en":
+        return data[word][lang_need]
+
+    for dict_word, dict_value in data.items():
+        if dict_value[lang_current] == word:
+            return dict_word if lang_need == "en" else dict_value[lang_need]

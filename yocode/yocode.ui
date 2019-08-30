@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>816</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -99,7 +99,7 @@ border-color: #a0a0a4;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>816</width>
      <height>21</height>
     </rect>
    </property>
@@ -108,6 +108,10 @@ border-color: #a0a0a4;</string>
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: #434750;
+border-color: rgb(85, 85, 255);
+color: rgb(85, 85, 255);
+alternate-background-color: rgb(85, 85, 255);
+selection-background-color: rgb(85, 85, 255);
 color: #d7d7d7;</string>
    </property>
    <widget class="QMenu" name="file">
@@ -132,7 +136,7 @@ color: #d7d7d7;</string>
     </property>
     <addaction name="help_button"/>
    </widget>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="language">
     <property name="title">
      <string>Язык</string>
     </property>
@@ -142,7 +146,7 @@ color: #d7d7d7;</string>
    <addaction name="file"/>
    <addaction name="code"/>
    <addaction name="help"/>
-   <addaction name="menu"/>
+   <addaction name="language"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="styleSheet">
@@ -181,6 +185,9 @@ color: #d7d7d7;</string>
    </property>
   </action>
   <action name="build_and_run_button">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Собрать и запустить</string>
    </property>
@@ -191,11 +198,20 @@ color: #d7d7d7;</string>
    </property>
   </action>
   <action name="lang_en">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>English</string>
    </property>
   </action>
   <action name="lang_ru">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Русский</string>
    </property>

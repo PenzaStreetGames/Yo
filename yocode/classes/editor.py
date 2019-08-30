@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFileDialog, \
-    QMessageBox
+    QMessageBox, QActionGroup
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
@@ -18,12 +18,12 @@ class Language:
 
 
 class Editor(QMainWindow):
-    language = "en"
 
     def __init__(self):
         super().__init__()
         uic.loadUi("yocode.ui", self)
-        self.code_highlighter = Highlighter(self.CodeArea.document(), Editor.language)
+        self.language = "en"
+        self.code_highlighter = Highlighter(self.CodeArea.document(), self.language)
         self.CodeArea.textChanged.connect(self.code_highlighter.color)
         self.open_button.triggered.connect(self.load)
         self.save_button.triggered.connect(self.save)
@@ -36,16 +36,28 @@ class Editor(QMainWindow):
         self.filename_placeholder = "Выберите файл для редактирования"
         self.file = "Выберите файл для редактирования"
 
-        self.lang_ru.triggered.connect(self.select_rus)
+        self.lang_group = QActionGroup(self)
+        self.lang_group.addAction(self.lang_ru)
+        self.lang_group.addAction(self.lang_en)
+        self.lang_group.setExclusive(True)
 
+        self.lang_ru.triggered.connect(self.select_ru)
+        self.lang_en.triggered.connect(self.select_en)
 
+    def select_en(self):
+        self.switch_language("en")
 
-    def select_rus(self):
-        Editor.language = "ru"
-        self.code_highlighter.update_styles("ru")
+    def select_ru(self):
+        self.switch_language("ru")
+
+    def switch_language(self, language):
+        self.language = language
+        self.code_highlighter.update_styles(language)
+        old_text = self.CodeArea.toPlainText()
+        new_text = old_text.replace("\n", " \n")
+        self.CodeArea.setPlainText(new_text)
         self.code_highlighter.color()
-        self.CodeArea
-
+        self.CodeArea.setPlainText(old_text)
 
     def load(self):
         dialog = QFileDialog(self)
@@ -87,7 +99,7 @@ class Editor(QMainWindow):
         self.save_file()
         path = self.file.replace(".yotext", "")
         try:
-            result = translator.compile_program(path, language=Editor.language, mode="editor")
+            result = translator.compile_program(path, language=self.language, mode="editor")
         except Exception as error:
             self.show_data(self.console, "Ошибка компиляции:")
             trace = traceback.format_exception(error.__class__, error,
