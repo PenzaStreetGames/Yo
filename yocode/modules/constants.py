@@ -1,6 +1,6 @@
 import json
 
-with open("basic.yolp", "r", encoding="utf-8") as infile:
+with open("modules/basic.yolp", "r", encoding="utf-8") as infile:
     langpack = json.loads(infile.read())
 
 groups = [

@@ -3,7 +3,7 @@ from yotranslator.modules.constants import *
 from yotranslator.stages.token_analise import token_analise
 from yotranslator.stages.syntax_analise import syntax_analise
 from yotranslator.classes.yo_object import YoObject
-from yotranslator.stages.yotransliteration import transliterator
+from yotranslator.stages.transliteration import transliterate
 import yotranslator.functions.highlight as highlight
 
 
@@ -105,7 +105,7 @@ def translate(program, language):
 def add_word(word, result, stores, coords, language):
     """добавление токена к программе"""
     if word != empty:
-        word = transliterator.transliterate(yolp_basic, word, lang_current=language, lang_need="en")
+        word = transliterate(yolp_basic, word, lang_current=language, lang_need="en")
         obj = token_analise(word, result, coords)
         highlight.add_token(obj)
         result, stores = syntax_analise(obj, result, stores)

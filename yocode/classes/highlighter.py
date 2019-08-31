@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QSyntaxHighlighter
 from yocode.format_objects import get_format_types
-from yocode.constants import *
+from yocode.modules.constants import *
 import re
 
 

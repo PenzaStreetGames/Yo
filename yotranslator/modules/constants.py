@@ -1,4 +1,5 @@
 import json
+
 with open("modules/basic.yolp", "r", encoding="utf8") as file:
     yolp_basic = json.loads(file.read())
 

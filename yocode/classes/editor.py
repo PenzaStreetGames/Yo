@@ -4,13 +4,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
 from yotranslator import yo_translator as translator
-from yotransliteration import transliterator
 
 import yovirmac.modules.constants as constants
 import yovirmac.yo_vir_mac as virtual_machine
-from yocode.format_objects import get_expression_group
 import traceback
 import webbrowser
+import json
 
 
 class Language:
@@ -22,8 +21,9 @@ class Editor(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("yocode.ui", self)
-        self.language = "en"
-        self.code_highlighter = Highlighter(self.CodeArea.document(), self.language)
+        self.settings = {}
+        self.load_settings()
+        self.code_highlighter = Highlighter(self.CodeArea.document(), self.settings["language"])
         self.CodeArea.textChanged.connect(self.code_highlighter.color)
         self.open_button.triggered.connect(self.load)
         self.save_button.triggered.connect(self.save)
@@ -36,10 +36,15 @@ class Editor(QMainWindow):
         self.filename_placeholder = "Выберите файл для редактирования"
         self.file = "Выберите файл для редактирования"
 
+        self.lang_buttons = {
+            "en": self.lang_en,
+            "ru": self.lang_ru
+        }
         self.lang_group = QActionGroup(self)
         self.lang_group.addAction(self.lang_ru)
         self.lang_group.addAction(self.lang_en)
         self.lang_group.setExclusive(True)
+        self.switch_language(self.settings["language"])
 
         self.lang_ru.triggered.connect(self.select_ru)
         self.lang_en.triggered.connect(self.select_en)
@@ -51,13 +56,24 @@ class Editor(QMainWindow):
         self.switch_language("ru")
 
     def switch_language(self, language):
-        self.language = language
+        self.settings["language"] = language
+        self.dump_settings()
+        for lang, button in self.lang_buttons.items():
+            button.setChecked(lang == language)
         self.code_highlighter.update_styles(language)
         old_text = self.CodeArea.toPlainText()
         new_text = old_text.replace("\n", " \n")
         self.CodeArea.setPlainText(new_text)
-        self.code_highlighter.color()
+        # self.code_highlighter.color()
         self.CodeArea.setPlainText(old_text)
+
+    def load_settings(self):
+        with open("settings.json", "r", encoding="utf-8") as infile:
+            self.settings = json.loads(infile.read())
+
+    def dump_settings(self):
+        with open("settings.json", "w", encoding="utf-8") as outfile:
+            outfile.write(json.dumps(self.settings, indent=2))
 
     def load(self):
         dialog = QFileDialog(self)
@@ -99,7 +115,7 @@ class Editor(QMainWindow):
         self.save_file()
         path = self.file.replace(".yotext", "")
         try:
-            result = translator.compile_program(path, language=self.language, mode="editor")
+            result = translator.compile_program(path, language=self.settings["language"], mode="editor")
         except Exception as error:
             self.show_data(self.console, "Ошибка компиляции:")
             trace = traceback.format_exception(error.__class__, error,

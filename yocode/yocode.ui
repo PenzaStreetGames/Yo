@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
-    <height>639</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -99,7 +99,7 @@ border-color: #a0a0a4;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>816</width>
+     <width>800</width>
      <height>21</height>
     </rect>
    </property>
@@ -202,7 +202,7 @@ color: #d7d7d7;</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>English</string>

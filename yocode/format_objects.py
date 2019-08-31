@@ -1,7 +1,5 @@
 from PyQt5.QtGui import QTextCharFormat, QColor
-from yocode.constants import *
-from yotransliteration import transliterator
-
+from yocode.modules.constants import *
 
 
 class FormatType:
