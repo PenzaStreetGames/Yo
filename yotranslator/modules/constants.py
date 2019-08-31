@@ -1,3 +1,8 @@
+import json
+with open("modules/basic.yolp", "r", encoding="utf8") as file:
+    yolp_basic = json.loads(file.read())
+
+
 key_words = ["while", "if", "else", "elseif", "break", "continue", "none",
              "true", "false", "not", "and", "or", "xor", "pass"]
 functions = ["print", "input", "len"]
