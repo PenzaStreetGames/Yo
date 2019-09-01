@@ -38,22 +38,28 @@ class Editor(QMainWindow):
 
         self.lang_buttons = {
             "en": self.lang_en,
-            "ru": self.lang_ru
+            "ru": self.lang_ru,
+            "tt": self.lang_tt
         }
         self.lang_group = QActionGroup(self)
         self.lang_group.addAction(self.lang_ru)
         self.lang_group.addAction(self.lang_en)
+        self.lang_group.addAction(self.lang_tt)
         self.lang_group.setExclusive(True)
         self.switch_language(self.settings["language"])
 
         self.lang_ru.triggered.connect(self.select_ru)
         self.lang_en.triggered.connect(self.select_en)
+        self.lang_tt.triggered.connect(self.select_tt)
 
     def select_en(self):
         self.switch_language("en")
 
     def select_ru(self):
         self.switch_language("ru")
+
+    def select_tt(self):
+        self.switch_language("tt")
 
     def switch_language(self, language):
         self.settings["language"] = language
