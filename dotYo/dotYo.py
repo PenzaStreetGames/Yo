@@ -50,4 +50,4 @@ if __name__ == '__main__':
     filename = input()
     create_yo_archive(filename)
     write_yotext(filename, "print(1)")
-    write_yovc(filename,b"1")
+    write_yovc(filename, b"1")
