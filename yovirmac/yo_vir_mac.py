@@ -20,7 +20,6 @@ def execute_file(path, debug=False):
 def execute_program(program, debug=False):
     """Запускает исполнение программы"""
     setting.initialisation(program)
-    view.tape()
     if debug:
         program = find.attribute(seg_links["system"], "main_program")
         show.program_code(program)
