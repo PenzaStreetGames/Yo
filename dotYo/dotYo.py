@@ -1,69 +1,48 @@
 import zipfile
 import os
 from yotranslator.yo_translator import compile_program
-from yovirmac.yo_vir_mac import run
+
+try: #знаю, так делать не надо
+    from yovirmac.yo_vir_mac import run
+except:
+    pass
 
 
-def pack(filename):
-    with zipfile.ZipFile(filename + ".yo", 'w') as myzip:
-        myzip.write(f"{filename}.yotext")
-        myzip.write(f"{filename}.yovc")
-        myzip.close()
+def create_yo_archive(name):
+    """Создаёт архив .yo с заданным именем. Файлы .yotext и .yovc """
+    with zipfile.ZipFile(name + ".yo", 'w') as myzip:
+        myzip.write(f"{name}.yotext")
+        myzip.write(f"{name}.yovc")
 
 
-def unpack(filename):
-    print(os.listdir())
-    z = zipfile.ZipFile(filename + ".yo", 'r')
-    # if filename + ".yotext" in os.listdir():
-    z.extract(filename + ".yotext")
-    # if filename + ".yovc" in os.listdir():
-    z.extract(filename + ".yovc")
-    z.close()
+def write_yotext(name, text):
+    """Записывает текст программы в заданный файл yo/yotext"""
+    # if f"{name}.yo" in os.listdir():
+    with zipfile.ZipFile(name + ".yo", 'w') as myzip:
+        with myzip.open(name + ".yotext", 'w') as f:
+            f.write(text)
 
 
-def get_yotext(path):
-    # todo: добавить проверку на последнее редактирование файла .yotext
-    if f"{path}.yotext" in os.listdir():
-        compile_program(path, "en", mode="1")
-        pack(path)
-    if f"{path}.yo" not in os.listdir():
-        pack(path)
-    else:
-        unpack(path)
-    with open(path + ".yotext", encoding="utf-8") as f:
-        text = f.read()
-    os.remove(path + ".yotext")
-    return text
+def write_yovc(name, b):
+    """Записывает двоичную запись программы в заданный файл yo/yovc"""
+    # if f"{name}.yo" in os.listdir():
+    with zipfile.ZipFile(name + ".yo", 'w') as myzip:
+        with myzip.open(name + ".yotext", 'wb') as f:
+            f.write(b)
 
 
-def get_yovc(path):
-    # todo: добавить проверку на последнее редактирование файла .yotext
-    compile_program(path, "en", mode="1")
-    if f"{path}.yo" not in os.listdir():
-        pack(path)
-    else:
-        unpack(path)
-    with open(path + ".yovc", "rb") as f:
-        code = f.read()
-    os.remove(path + ".yovc")
-    return code
+def get_yotext(name):
+    with zipfile.ZipFile(name + ".yo", 'r') as myzip:
+        with myzip.open(name + ".yotext", 'r') as f:
+            return f.read()
 
 
-def main():
-    # print(os.getcwd())
-    path = "program"  # input()
-    if f"{path}.yotext" in os.listdir():
-        compile_program(path, "en", mode="1")
-        pack(path)
-    if f"{path}.yo" not in os.listdir():
-        pack(path)
-    else:
-        unpack(path)
-    print(path + ".yovc")
-    run(path + ".yovc")
-    # os.remove(path+".yotext")
-    os.remove(path + ".yovc")
+def get_yovc(name):
+    with zipfile.ZipFile(name + ".yo", 'r') as myzip:
+        with myzip.open(name + ".yovc", 'rb') as f:
+            return f.read()
 
 
 if __name__ == '__main__':
-    print(get_yotext("program"))
+    filename = input()
+    create_yo_archive(filename)
