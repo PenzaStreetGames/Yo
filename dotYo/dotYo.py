@@ -1,11 +1,4 @@
 import zipfile
-import os
-from yotranslator.yo_translator import compile_program
-
-try:  # знаю, так делать не надо
-    from yovirmac.yo_vir_mac import run
-except:
-    pass
 
 
 def create_yo_archive(name):
@@ -13,8 +6,8 @@ def create_yo_archive(name):
     with zipfile.ZipFile(name + ".yo", 'w') as myzip:
         with myzip.open(f"{name}.yotext", 'w') as f:
             f.write(b"")
-            #myzip.close()
-        with myzip.open(f"{name}.yovc",'w') as f:
+            # myzip.close()
+        with myzip.open(f"{name}.yovc", 'w') as f:
             f.write(b"")
 
 
@@ -23,7 +16,7 @@ def write_yotext(name, text):
     # if f"{name}.yo" in os.listdir():
     with zipfile.ZipFile(name + ".yo", 'w') as myzip:
         with myzip.open(name + ".yotext", 'w') as f:
-            f.write(bytes(text,encoding="utf-8"))
+            f.write(bytes(text, encoding="utf-8"))
 
 
 def write_yovc(name, b):
@@ -50,4 +43,4 @@ if __name__ == '__main__':
     filename = input()
     create_yo_archive(filename)
     write_yotext(filename, "print(1)")
-    write_yovc(filename,b"1")
+    write_yovc(filename, b"1")
