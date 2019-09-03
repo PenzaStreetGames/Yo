@@ -6,20 +6,32 @@ from yotranslator.stages.assembly.get_vir_commands import get_vir_commands
 from yotranslator.stages.assembly.get_relative_addresses import \
     get_relative_addresses
 from yotranslator.stages.assembly.get_binary_code import get_binary_code
-from yotranslator.stages.assembly.write_file import write_file
+from yotranslator.stages.assembly.get_bytes import get_bytes
 import yotranslator.functions.highlight as highlight
 from argparse import ArgumentParser
 
 
-def compile_program(filename, language, mode="main"):
+def compile_file(filename, language, mode="main"):
     with open(f"{filename}.yotext", "r", encoding="utf-8") as infile:
-        result = translate(infile.read(), language)
+        program = infile.read()
+
+    byte_array = compile_program(program, language, mode)
+
+    with open(f"{filename}.yovm", "wb") as file:
+        file.write(byte_array)
+
+    if mode == "main":
+        print(f"\nСодержимое файла {filename}.yovm:\n")
+        print(*byte_array)
+
+    return f"{filename}.yovm"
+
+
+def compile_program(program, language, mode="main"):
+    result = translate(program, language)
     if mode == "main":
         print("\nСинтаксическое дерево программы:\n")
         print(result[0])
-    elif mode == "edit":
-        highlight.make_hint(filename)
-        return f"{filename}.yohl"
 
     program = Program([])
     commands = get_vir_commands(result[0])
@@ -42,15 +54,12 @@ def compile_program(filename, language, mode="main"):
         print(binary_program)
 
     binary_program.set_tape()
-    content = write_file(filename, binary_program.tape)
-    if mode == "main":
-        print(f"\nСодержимое файла {filename}.yovc:\n")
-        print(*content)
-    return f"{filename}.yovc"
+    byte_array = get_bytes(binary_program.tape)
+    return byte_array
 
 
 if __name__ == '__main__':
     path, lang = input(), input()
     if path.endswith(".yotext"):
         path = path.replace(".yotext", "")
-    filename = compile_program(path, language=lang, mode="main")
+    filename = compile_file(path, language=lang, mode="main")

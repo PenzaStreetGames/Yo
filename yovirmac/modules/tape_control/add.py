@@ -45,8 +45,7 @@ def data_segment():
     return num
 
 
-def program(path):
-    cells = read_assembly(path)
+def program(cells):
     length = memory_control.determine_segment_size("program", len(cells))
     num = create_segment("program", self_length=length)
     # потом: сделать механизм проверки главности программы

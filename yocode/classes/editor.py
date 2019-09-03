@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
 from yotranslator import yo_translator as translator
-
+import yopacker.yo_packer as packer
 import yovirmac.modules.constants as constants
 import yovirmac.yo_vir_mac as virtual_machine
 import traceback
@@ -87,13 +87,13 @@ class Editor(QMainWindow):
         filename, _ = dialog.getOpenFileName(self,
                                              "Открыть",
                                              "",
-                                             "Yo Program Text Files (*.yotext)",
+                                             "Yo Program Package (*.yo)",
                                              options=options)
         if filename:
             self.file = filename
             self.filename.setText(filename.split("/")[-1])
-            with open(self.file, mode="r", encoding="utf-8") as infile:
-                self.CodeArea.setText(infile.read())
+            text = packer.read_yotext(filename)
+            self.CodeArea.setText(text)
 
     def save(self):
         dialog = QFileDialog(self)
@@ -101,13 +101,15 @@ class Editor(QMainWindow):
         filename, _ = dialog.getSaveFileName(self,
                                              "Сохранить",
                                              "",
-                                             "Yo Program Text Files (*.yotext)",
+                                             "Yo Program Package (*.yo)",
                                              options=options)
         if filename:
             self.file = filename
             self.filename.setText(filename.split("/")[-1])
-            with open(self.file, mode="w", encoding="utf-8") as outfile:
-                outfile.write(self.CodeArea.toPlainText())
+            if not packer.exists_yo_archive(filename):
+                packer.create_yo_archive(filename)
+            text = self.CodeArea.toPlainText()
+            packer.write_yotext(filename, text)
 
     def help_link(self):
         link = "https://github.com/PenzaStreetGames/Yo/wiki"
@@ -119,17 +121,18 @@ class Editor(QMainWindow):
             self.statusbar.showMessage("Выберите или сохраните файл для сборки")
             return
         self.save_file()
-        path = self.file.replace(".yotext", "")
+        text = self.CodeArea.toPlainText()
         try:
-            result = translator.compile_program(path, language=self.settings["language"], mode="editor")
+            result = translator.compile_program(text, language=self.settings["language"], mode="editor")
         except Exception as error:
             self.show_data(self.console, "Ошибка компиляции:")
             trace = traceback.format_exception(error.__class__, error,
                                                error.__traceback__)
             self.show_data(self.console, "".join(trace))
             return
-        self.statusbar.showMessage(f"Файл собран в {result}")
-        return result
+        packer.write_yovm(self.file, result)
+        self.statusbar.showMessage(f"Файл собран")
+        return self.file
 
     def transliterate(self):
         result = self.file
@@ -144,7 +147,7 @@ class Editor(QMainWindow):
         path = file.replace(".yotext", ".yovc")
         constants.editor = self
         constants.mode = "editor"
-        target_cell = virtual_machine.execute(path)
+        target_cell = virtual_machine.execute_file(path)
         while target_cell != 0:
             try:
                 target_cell = virtual_machine.next_command(target_cell)
@@ -181,5 +184,4 @@ class Editor(QMainWindow):
         widget.setText("")
 
     def save_file(self):
-        with open(self.file, mode="w", encoding="utf-8") as outfile:
-            outfile.write(self.CodeArea.toPlainText())
+        packer.write_yotext(self.file, self.CodeArea.toPlainText())

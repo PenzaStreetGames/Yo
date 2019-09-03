@@ -14,7 +14,7 @@ for group in test_list.keys():
     for test in test_list[group].keys():
         filename = f"tests/{group}/{test}"
         try:
-            shell.compile_program(filename, mode="test")
+            shell.compile_file(filename, mode="test")
         except BaseYoError as error:
             print("\t", test, error)
         else:

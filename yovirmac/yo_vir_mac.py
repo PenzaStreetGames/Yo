@@ -1,5 +1,5 @@
 from yovirmac.modules.constants import *
-from yovirmac.modules.tape_control import setting, view
+from yovirmac.modules.tape_control import setting, view, add
 from yovirmac.modules.segment_control import find, change, show
 from yovirmac.modules.types_control import read, display
 from yovirmac.modules.upper_commands import (comparison, console, jumps, logic,
@@ -7,9 +7,15 @@ from yovirmac.modules.upper_commands import (comparison, console, jumps, logic,
 import yovirmac.modules.constants as constants
 
 
-def execute(path, debug=False):
+def execute_file(path, debug=False):
+    """Запускает исполнение файла с программой"""
+    cells = add.read_assembly(path)
+    execute_program(cells, debug=debug)
+
+
+def execute_program(program, debug=False):
     """Запускает исполнение программы"""
-    setting.initialisation(path)
+    setting.initialisation(program)
     if debug:
         program = find.attribute(seg_links["system"], "main_program")
         show.program_code(program)
@@ -80,4 +86,4 @@ if __name__ == '__main__':
     path = input()
     constants.mode = "console"
     # надо: сделать запуск через аргументы консоли
-    execute(path)
+    execute_file(path)
