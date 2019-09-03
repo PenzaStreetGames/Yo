@@ -27,7 +27,7 @@ def write_yovc(name, b):
 def get_yotext(name):
     with zipfile.ZipFile(name + ".yo", 'r') as myzip:
         with myzip.open(name + ".yotext", 'r') as f:
-            return f.read()
+            return f.read().decode(encoding="utf-8")
 
 
 def get_yovc(name):
