@@ -5,17 +5,22 @@ from yovirmac.modules.types_control import read, display
 from yovirmac.modules.upper_commands import (comparison, console, jumps, logic,
                                              math, objects, other, stack)
 import yovirmac.modules.constants as constants
+from yopacker import yo_packer as packer
 
 
 def execute_file(path, debug=False):
     """Запускает исполнение файла с программой"""
-    cells = add.read_assembly(path)
+    if path.endswith(".yo"):
+        cells = add.decode_assembly(packer.read_yovm(path))
+    else:
+        cells = add.read_assembly(path)
     execute_program(cells, debug=debug)
 
 
 def execute_program(program, debug=False):
     """Запускает исполнение программы"""
     setting.initialisation(program)
+    view.tape()
     if debug:
         program = find.attribute(seg_links["system"], "main_program")
         show.program_code(program)
@@ -43,6 +48,7 @@ def execute_command(cell, debug=False):
         name_num = find.attribute(seg_links["system"], "target_namespace")
         view.namespace_items(name_num)
         display.command_with_args(cell)
+        view.tape()
     executing_list[command_name](*args)
     cell_now = find.attribute(seg_links["system"], "target_cell")
     if cell == cell_now:
@@ -86,4 +92,4 @@ if __name__ == '__main__':
     path = input()
     constants.mode = "console"
     # надо: сделать запуск через аргументы консоли
-    execute_file(path)
+    execute_file(path, debug=True)

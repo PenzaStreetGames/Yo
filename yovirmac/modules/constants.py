@@ -166,6 +166,10 @@ seg_header_types = {
         },
     "dictionary_segment": {},
 }
+seg_visible_types = [
+    "string_segment",
+    "list_segment"
+]
 header_part_length = 32
 header_base_part_length = 32
 header_special_part = 30

@@ -13,13 +13,13 @@ def file_existing():
 
 def yotext_working():
     create_yo_archive("archive.yo")
-    write_yotext("archive", "print('Hello, World!')")
+    write_archive("archive.yo", yotext="print('Hello, World!')")
     print(read_yotext("archive.yo"))
 
 
 def yovm_working():
     create_yo_archive("archive.yo")
-    write_yovm("archive", b"\x03\x05\x06")
+    write_archive("archive.yo", yovm=b"\x03\x05\x06")
     print(read_yovm("archive.yo"))
 
 

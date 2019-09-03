@@ -10,6 +10,24 @@ def exists_yo_archive(path):
         return False
 
 
+def write_archive(path, yotext="", yovm=""):
+    name = get_filename(path)
+    with zipfile.ZipFile(path, "r") as myzip:
+        with myzip.open(f"{name}.yotext", "r") as outfile:
+            old_yotext = outfile.read()
+        with myzip.open(f"{name}.yovm", "r") as outfile:
+            old_yovm = outfile.read()
+    with zipfile.ZipFile(path, "w") as myzip:
+        with myzip.open(f"{name}.yotext", "w") as infile:
+            data = yotext if yotext else old_yotext
+            if type(data) == str:
+                data = bytes(data, encoding="utf-8")
+            infile.write(data)
+        with myzip.open(f"{name}.yovm", "w") as infile:
+            data = yovm if yovm else old_yovm
+            infile.write(data)
+
+
 def create_yo_archive(path):
     """Создаёт архив .yo с заданным именем. Файлы .yotext и .yovm """
     name = get_filename(path)

@@ -34,7 +34,7 @@ def determine_object_size(obj_type, value):
 
 def determine_segment_size(seg_type, length):
     if length != 0:
-        indicator = math.ceil(math.log2(length))
+        indicator = math.ceil(math.log2(length + 1))
         if 2 ** indicator < minimal_data_length[seg_type]:
             return minimal_data_length[seg_type]
         return 2 ** indicator

@@ -7,6 +7,7 @@ from yotranslator import yo_translator as translator
 import yopacker.yo_packer as packer
 import yovirmac.modules.constants as constants
 import yovirmac.yo_vir_mac as virtual_machine
+from yovirmac.modules.tape_control.add import decode_assembly
 import traceback
 import webbrowser
 import json
@@ -109,7 +110,7 @@ class Editor(QMainWindow):
             if not packer.exists_yo_archive(filename):
                 packer.create_yo_archive(filename)
             text = self.CodeArea.toPlainText()
-            packer.write_yotext(filename, text)
+            packer.write_archive(filename, yotext=text)
 
     def help_link(self):
         link = "https://github.com/PenzaStreetGames/Yo/wiki"
@@ -120,8 +121,8 @@ class Editor(QMainWindow):
         if self.file == self.filename_placeholder:
             self.statusbar.showMessage("Выберите или сохраните файл для сборки")
             return
-        self.save_file()
         text = self.CodeArea.toPlainText()
+        packer.write_archive(self.file, yotext=text)
         try:
             result = translator.compile_program(text, language=self.settings["language"], mode="editor")
         except Exception as error:
@@ -130,9 +131,9 @@ class Editor(QMainWindow):
                                                error.__traceback__)
             self.show_data(self.console, "".join(trace))
             return
-        packer.write_yovm(self.file, result)
+        packer.write_archive(self.file, yovm=result)
         self.statusbar.showMessage(f"Файл собран")
-        return self.file
+        return result
 
     def transliterate(self):
         result = self.file
@@ -140,14 +141,13 @@ class Editor(QMainWindow):
 
     def compile_and_run(self):
         self.clean_data(self.console)
-        file = self.compile()
-        if file is None:
+        code = self.compile()
+        if code is None:
             return
-        self.save_file()
-        path = file.replace(".yotext", ".yovc")
+        code = decode_assembly(packer.read_yovm(self.file))
         constants.editor = self
         constants.mode = "editor"
-        target_cell = virtual_machine.execute_file(path)
+        target_cell = virtual_machine.execute_program(code)
         while target_cell != 0:
             try:
                 target_cell = virtual_machine.next_command(target_cell)
@@ -182,6 +182,3 @@ class Editor(QMainWindow):
 
     def clean_data(self, widget):
         widget.setText("")
-
-    def save_file(self):
-        packer.write_yotext(self.file, self.CodeArea.toPlainText())

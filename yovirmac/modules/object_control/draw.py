@@ -2,6 +2,8 @@ from yovirmac.modules.tape_control import pull, get
 from yovirmac.modules.types_control import display, read
 from yovirmac.modules.segment_control import find
 from yovirmac.modules.object_control import item
+from yovirmac.modules.constants import *
+from yovirmac.modules.errors import *
 
 
 def entity_link(arg):
@@ -10,8 +12,11 @@ def entity_link(arg):
 
 def entity(num):
     kind, value = get.entity(num)
-    if kind == "segment":
-        print(value)
+    if kind in seg_types:
+        if kind in seg_visible_types:
+            print(value)
+        else:
+            raise LowerCommandError(f"Неотображаемый тип сегмента {kind}")
     else:
         return display.entity(num)
 

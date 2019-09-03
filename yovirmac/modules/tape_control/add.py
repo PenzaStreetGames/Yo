@@ -106,17 +106,22 @@ def stream_data(num, stream):
 
 def read_assembly(path):
     with open(path, mode="rb") as assembly:
-        cells = []
-        target_cell = 0
-        size = capacity // 8
-        i = 0
-        for cell in assembly.read():
-            i += 1
-            target_cell <<= 8
-            target_cell += cell
-            if i == size:
-                cells += [target_cell]
-                target_cell = 0
-                i = 0
-            cell = assembly.read(1)
+        return decode_assembly(assembly.read())
+
+
+def decode_assembly(assembly):
+    cells = []
+    target_cell = 0
+    size = capacity // 8
+    i = 0
+    for cell in assembly:
+        i += 1
+        target_cell <<= 8
+        target_cell += cell
+        if i == size:
+            cells += [target_cell]
+            target_cell = 0
+            i = 0
+        cell = assembly[0]
+        assembly = assembly[1:]
     return cells
