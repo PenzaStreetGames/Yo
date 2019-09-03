@@ -6,14 +6,12 @@ def create_yo_archive(name):
     with zipfile.ZipFile(name + ".yo", 'w') as myzip:
         with myzip.open(f"{name}.yotext", 'w') as f:
             f.write(b"")
-            # myzip.close()
         with myzip.open(f"{name}.yovc", 'w') as f:
             f.write(b"")
 
 
 def write_yotext(name, text):
     """Записывает текст программы в заданный файл yo/yotext"""
-    # if f"{name}.yo" in os.listdir():
     with zipfile.ZipFile(name + ".yo", 'w') as myzip:
         with myzip.open(name + ".yotext", 'w') as f:
             f.write(bytes(text, encoding="utf-8"))
@@ -21,7 +19,6 @@ def write_yotext(name, text):
 
 def write_yovc(name, b):
     """Записывает двоичную запись программы в заданный файл yo/yovc"""
-    # if f"{name}.yo" in os.listdir():
     with zipfile.ZipFile(name + ".yo", 'a') as myzip:
         with myzip.open(name + ".yovc", 'w') as f:
             f.write(b)
