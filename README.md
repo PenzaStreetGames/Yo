@@ -1,6 +1,8 @@
 # Yo
 Разработка языка программирования
 
+[Посмотреть на GitHub](https://github.com/PenzaStreetGames/Yo)
+
 [Скачать для Windows](https://github.com/PenzaStreetGames/Yo/releases)
 
 ## В идеале
