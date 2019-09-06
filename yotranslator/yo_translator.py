@@ -8,17 +8,24 @@ from yotranslator.stages.assembly.get_relative_addresses import \
 from yotranslator.stages.assembly.get_binary_code import get_binary_code
 from yotranslator.stages.assembly.get_bytes import get_bytes
 import yotranslator.functions.highlight as highlight
+from yopacker import yo_packer as packer
 from argparse import ArgumentParser
 
 
 def compile_file(filename, language, mode="main"):
-    with open(f"{filename}.yotext", "r", encoding="utf-8") as infile:
-        program = infile.read()
+    if filename.endswith(".yo"):
+        program = packer.read_yotext(filename)
+    else:
+        with open(filename, "r", encoding="utf-8") as infile:
+            program = infile.read()
 
     byte_array = compile_program(program, language, mode)
 
-    with open(f"{filename}.yovm", "wb") as file:
-        file.write(byte_array)
+    if filename.endswith(".yo"):
+        packer.write_archive(filename, yovm=byte_array)
+    else:
+        with open(f"{filename}.yovm", "wb") as file:
+            file.write(byte_array)
 
     if mode == "main":
         print(f"\nСодержимое файла {filename}.yovm:\n")
@@ -60,6 +67,4 @@ def compile_program(program, language, mode="main"):
 
 if __name__ == '__main__':
     path, lang = input(), input()
-    if path.endswith(".yotext"):
-        path = path.replace(".yotext", "")
     filename = compile_file(path, language=lang, mode="main")

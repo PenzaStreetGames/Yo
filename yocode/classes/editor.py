@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFileDialog, \
     QMessageBox, QActionGroup
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeyEvent
+from PyQt5.QtCore import Qt
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
 from yotranslator import yo_translator as translator
