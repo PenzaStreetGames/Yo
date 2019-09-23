@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QFileDialog, \
     QMessageBox
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeyEvent
+from PyQt5.QtCore import Qt
+from PyQt5 import QtCore
 from PyQt5 import uic
 from yocode.classes.highlighter import Highlighter
 from yotranslator import yo_translator as translator
@@ -37,6 +39,13 @@ class Editor(QMainWindow):
         self.file = "Выберите файл для редактирования"
 
         self.lang_ru.triggered.connect(self.select_rus)
+        
+    
+    def keyPressEvent(self, e):
+        if e.key() == QtCore.Qt.Key_F5:
+            self.compile_and_run()
+        if e.key() == QtCore.Qt.Key_Tab:
+            self.CodeArea.setText(self.CodeArea.toPlainText()+"    ")
 
     def select_rus(self):
         Editor.language = "ru"
