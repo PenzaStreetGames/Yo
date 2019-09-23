@@ -44,8 +44,8 @@ class Editor(QMainWindow):
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_F5:
             self.compile_and_run()
-        if e.key() == QtCore.Qt.Key_Tab:
-            self.CodeArea.setText(self.CodeArea.toPlainText()+"    ")
+#         if e.key() == QtCore.Qt.Key_Tab:
+#             self.CodeArea.setText(self.CodeArea.toPlainText()+"    ")
 
     def select_rus(self):
         Editor.language = "ru"
