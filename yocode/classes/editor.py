@@ -54,6 +54,10 @@ class Editor(QMainWindow):
         self.lang_en.triggered.connect(self.select_en)
         self.lang_tt.triggered.connect(self.select_tt)
 
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_F5:
+            self.compile_and_run()
+
     def select_en(self):
         self.switch_language("en")
 
