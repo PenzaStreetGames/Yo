@@ -1,7 +1,7 @@
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 from yovirmac.modules.tape_control import make, append, get
-from yovirmac.modules.object_control import link, draw
+from yovirmac.modules.object_control import link, draw, to_string
 from PyQt5.QtWidgets import QInputDialog
 import yovirmac.modules.constants as constants
 
@@ -34,7 +34,7 @@ def Output(arg):
         elif constants.mode == "editor":
             if value_type == "none":
                 value = "none"
-            constants.output_data = constants.output_data + [str(value)]
+            constants.output_data = constants.output_data + [to_string.entity(arg_value)]
         append.memory_stack("link", 0)
     else:
         raise UndefinedBehaviour(f"Поведение команды Out с аргументом типа"

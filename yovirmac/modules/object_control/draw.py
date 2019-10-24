@@ -1,7 +1,7 @@
 from yovirmac.modules.tape_control import pull, get
 from yovirmac.modules.types_control import display, read
 from yovirmac.modules.segment_control import find
-from yovirmac.modules.object_control import item
+from yovirmac.modules.object_control import item, to_string
 from yovirmac.modules.constants import *
 from yovirmac.modules.errors import *
 
@@ -14,6 +14,8 @@ def entity(num):
     kind, value = get.entity(num)
     if kind in seg_types:
         if kind in seg_visible_types:
+            if kind == "list_segment":
+                print(to_string.list_segment(value))
             print(value)
         else:
             raise LowerCommandError(f"Неотображаемый тип сегмента {kind}")
