@@ -6,7 +6,7 @@ html(lang="en"):
         h1(): "Header"
         p(): "Paragraph example"
         p():
-            "Insert ", "(style="i")italic text", "into paragraph"
+            "Insert ", i():"italic text", "into paragraph"
         table():
             thead(): "Someone table"
             tr():
