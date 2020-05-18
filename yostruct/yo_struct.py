@@ -18,9 +18,27 @@ def token_split(text, debug=False):
     word = ""
     category = "space"
     quote, quote_type = False, ""
+    comment, comment_type = False, ""
     unexpected = {}
     for symbol in text:
-        if symbol in {"\'", "\"", "`"}:
+        if symbol == "#":
+            if not quote:
+                tokens.append(word)
+                comment = True
+                comment_type = "one_line"
+                category = "comment"
+                word = symbol
+            else:
+                word += symbol
+        elif comment:
+            if symbol != "\n":
+                word += symbol
+            else:
+                comment = False
+                tokens.append(word)
+                category = "signs"
+                word = symbol
+        elif symbol in {"\'", "\"", "`"}:
             if not quote:
                 tokens.append(word)
                 quote = True
@@ -68,11 +86,69 @@ def token_split(text, debug=False):
             print("Неожидаемые символы:")
             for key, value in unexpected.items():
                 print(f'"{key}":', value)
+    if tokens:
+        tokens.pop(0)
     return tokens
+
+
+class Node:
+    """Узел дерева тегов"""
+
+    def __init__(self, name, parent, stage="tag_named"):
+        self.name = name
+        self.parent = parent
+        self.kind = "single"
+        self.indent = 0
+        self.children = []
+        self.attributes = {}
+        self.stage = stage
+        # "tag_named" -> "attributes_opened" -> "attributes_closed" ->
+        # -> "children_opened" -> "closed"
+
+    def add_children(self, node):
+        self.children.append(node)
+        node.parent = self
+
+    def set_attributes(self, attributes):
+        self.attributes = attributes
+
+    def set_indent(self, indent):
+        self.indent = indent
+
+    def to_html(self):
+        if self.kind == "single":
+            pass
+
+
+class BaseYoStructException(Exception):
+    """Базовая ошибка YoStruct"""
+
+
+class StructSyntaxError(BaseYoStructException):
+    """Синтаксическая ошибка YoStruct"""
 
 
 def syntax_analise(tokens):
     """Осмысление потока токенов и создание дерева"""
+    root = Node("!root", None, stage="children_opened")
+    stack = [root]
+    for token in tokens:
+        target = stack[-1]
+        parent = target.parent
+        if target.stage == "tag_named":
+            pass
+        elif target.stage == "attributes_opened":
+            pass
+        elif target.stage == "attributes_closed":
+            pass
+        elif target.stage == "children_opened":
+            pass
+        elif target.stage == "closed":
+            pass
+        else:
+            raise StructSyntaxError(
+                f"Неизвестное состояние тега {target.name}: {target.stage}")
+
 
 
 def to_html(tree):
