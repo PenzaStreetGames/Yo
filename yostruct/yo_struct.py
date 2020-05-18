@@ -94,16 +94,19 @@ def token_split(text, debug=False):
 class Node:
     """Узел дерева тегов"""
 
-    def __init__(self, name, parent, stage="tag_named"):
+    def __init__(self, name, parent, stage="tag_named", indent=0):
         self.name = name
         self.parent = parent
         self.kind = "single"
-        self.indent = 0
+        # "double_one_line" "double_indent" "double_scope"
+        self.indent = indent
         self.children = []
         self.attributes = {}
         self.stage = stage
         # "tag_named" -> "attributes_opened" -> "attributes_closed" ->
         # -> "children_opened" -> "closed"
+        self.parent.add_children(self)
+        self.separated = False
 
     def add_children(self, node):
         self.children.append(node)
@@ -119,6 +122,15 @@ class Node:
         if self.kind == "single":
             pass
 
+class Content:
+    """Информационное наполнение - лист дерева тегов"""
+
+    def __init__(self, content, parent):
+        self.content = content
+        self.parent = parent
+        self.parent.add_children(self)
+        self.separated = False
+
 
 class BaseYoStructException(Exception):
     """Базовая ошибка YoStruct"""
@@ -130,8 +142,10 @@ class StructSyntaxError(BaseYoStructException):
 
 def syntax_analise(tokens):
     """Осмысление потока токенов и создание дерева"""
-    root = Node("!root", None, stage="children_opened")
+    root = Node("!root", None, stage="children_opened", indent=-1)
     stack = [root]
+    indent = 0
+    prev_token = None
     for token in tokens:
         target = stack[-1]
         parent = target.parent
@@ -142,12 +156,41 @@ def syntax_analise(tokens):
         elif target.stage == "attributes_closed":
             pass
         elif target.stage == "children_opened":
-            pass
+            if prev_token == "\n":
+                indent = len(token) if token[0] == " " else 0
+                while indent <= target.indent and target.kind == "double_indent":
+                    target.stage = "closed"
+                    stack.pop()
+                    target = parent
+                    parent = target.parent
+            if token[0].isalpha():
+                new_node = Node(token, target, indent=indent)
+                stack.append(new_node)
+            elif token[0] in {"\'", "\"", "`"} or token[0].isalpha():
+                new_node = Content(token, target)
+            elif token[0] == " " and prev_token == "\n":
+                indent = len(token)
+            elif token == "}":
+                if target.kind == "double_scope":
+                    target.stage = "closed"
+                    stack.pop()
+                    target = parent
+                    parent = target.parent
+                else:
+                    raise StructSyntaxError(f"Неожиданный символ: {token}")
+            elif token == "\n":
+                pass
+                while target.kind == "double_one_line":
+                    pass
+            elif token == ",":
+                pass
+
         elif target.stage == "closed":
             pass
         else:
             raise StructSyntaxError(
                 f"Неизвестное состояние тега {target.name}: {target.stage}")
+        prev_token = token
 
 
 
