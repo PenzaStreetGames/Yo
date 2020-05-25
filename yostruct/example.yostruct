@@ -1,6 +1,5 @@
 html(lang="en"):
     head():
-        # Comment
         meta(charset="UTF-8")
         title("Title")
     body():
