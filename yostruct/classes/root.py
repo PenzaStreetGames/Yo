@@ -6,7 +6,7 @@ class Root(Node):
     """Корень структуры"""
 
     def __init__(self):
-        super().__init__(name="!root", parent=None, state="root_open",
+        super().__init__(name="!root", parent=None, state="root_indent",
                          properties={}, children=[], indent=-1)
 
     def to_html_attributes(self):

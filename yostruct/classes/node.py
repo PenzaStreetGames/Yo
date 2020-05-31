@@ -7,10 +7,15 @@ class Node:
         self.parent = parent
         if parent is not None:
             self.parent.add_children(self)
+            self.indent = parent.inside_indent
+        else:
+            self.indent = indent
+        self.inside_indent = indent + 1
         self.state = state
         self.properties = properties
         self.children = children
         self.indent = indent
+        self.inside_indent = indent + 1
 
     def set_parent(self, parent):
         pass

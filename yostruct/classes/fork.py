@@ -25,7 +25,7 @@ class Fork(Node):
     def to_html_attributes(self):
         attributes_code = []
         for attribute, value in self.properties.items():
-            if value:
+            if value is True:
                 attributes_code.append(f"{attribute}")
             else:
                 attributes_code.append(f"{attribute}={value}")

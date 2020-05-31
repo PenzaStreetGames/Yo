@@ -5,70 +5,61 @@ def token_split(text, debug=False):
     """Разбиение текста на токены"""
     signs = "():{},\n=\"\'\\`"
     tokens = []
-    word = ""
-    category = "space"
-    quote, quote_type = False, ""
-    comment, comment_type = False, ""
+    line = 1
+    token = Token(" ", "space", 1)
     unexpected = {}
     for symbol in text:
         if symbol == "#":
-            if not quote:
-                tokens.append(word)
-                comment = True
-                comment_type = "one_line"
-                category = "comment"
-                word = symbol
+            if not token.quote:
+                tokens.append(token)
+                token = Token(symbol, "comment", line)
             else:
-                word += symbol
-        elif comment:
+                token.add_symbol(symbol)
+        elif token.comment:
             if symbol != "\n":
-                word += symbol
+                token.add_symbol(symbol)
             else:
-                comment = False
-                tokens.append(word)
-                category = "signs"
-                word = symbol
+                tokens.append(token)
+                token = Token(symbol, "signs", line)
+                line += 1
         elif symbol in {"\'", "\"", "`"}:
-            if not quote:
-                tokens.append(word)
-                quote = True
-                quote_type = symbol
-                category = "string"
-                word = symbol
-            elif symbol != quote_type:
-                word += symbol
-            elif word[-1] == "\\":
-                word += symbol
+            if not token.quote:
+                tokens.append(token)
+                token = Token(symbol, "string", line)
+            elif symbol != token.quote_type:
+                token.add_symbol(symbol)
+            elif token.name == "\\":
+                token.add_symbol(symbol)
             else:
-                quote = False
-                word += symbol
-        elif quote:
-            word += symbol
+                token.quote = False
+                token.add_symbol(symbol)
+        elif token.quote:
+            token.add_symbol(symbol)
         elif symbol == " ":
-            if category != "space":
-                tokens.append(word)
-                category = "space"
-                word = symbol
+            if token.category != "space":
+                tokens.append(token)
+                token = Token(symbol, "space", line)
             else:
-                word += symbol
+                token.add_symbol(symbol)
+        elif symbol == "\n":
+            tokens.append(token)
+            token = Token(symbol, "sign", line)
+            line += 1
         elif symbol in signs:
-            tokens.append(word)
-            word = symbol
-            category = "signs"
+            tokens.append(token)
+            token = Token(symbol, "sign", line)
         elif symbol.isalpha():
-            if category != "word":
-                tokens.append(word)
-                category = "word"
-                word = symbol
+            if token.category != "word":
+                tokens.append(token)
+                token = Token(symbol, "word", line)
             else:
-                word += symbol
+                token.add_symbol(symbol)
         elif symbol.isdigit():
-            if category != "digit":
-                tokens.append(word)
-                category = "digit"
-                word = symbol
+            if token.category not in {"digit", "word"}:
+                tokens.append(token)
+                token = Token(symbol, "digit", line)
             else:
-                word += symbol
+                token.add_symbol(symbol)
         else:
             unexpected[symbol] = unexpected.get(symbol, 0) + 1
     if debug:
