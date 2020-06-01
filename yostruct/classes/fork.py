@@ -1,15 +1,12 @@
 from yostruct.classes.node import Node
-from yostruct.errors.errors import HTMLTrasformError, StructBuildError
+from yostruct.errors import HTMLTrasformError, StructBuildError
 
 
 class Fork(Node):
     """Родоначальник семейства узлов"""
 
-    def __init__(self, name, parent, state="tag_open", properties=None,
-                 children=None, indent=0):
-        super().__init__(name=name, parent=parent, state=state,
-                         properties=properties, children=children,
-                         indent=indent)
+    def __init__(self, name, parent, state="tag_open"):
+        super().__init__(name=name, parent=parent, state=state)
 
     def set_parent(self, parent):
         self.parent = parent
@@ -37,7 +34,7 @@ class Fork(Node):
         for child in self.children:
             children_code.append(child.to_html())
         if style == "pretty":
-            children_code = "\n    ".join(children_code)
+            children_code = "\n".join(children_code)
         elif style == "oneline":
             children_code = " ".join(children_code)
         else:
@@ -60,7 +57,7 @@ class Fork(Node):
             children_code = self.to_html_children(style=style)
             if style == "pretty":
                 children_code = children_code.replace("\n", "\n    ")
-                code = f"{code}\n{children_code}\n</{self.name}>"
+                code = f"{code}\n    {children_code}\n</{self.name}>"
             elif style == "oneline":
                 code = f"{code} {children_code} </{self.name}>"
             else:
@@ -70,7 +67,8 @@ class Fork(Node):
 
     def __str__(self):
         if self.children:
-            children = "\n    ".join(map(str, self.children))
+            children = "\n".join(map(str, self.children))
+            children = children.replace("\n", "\n    ")
             res = f"{self.name} {self.properties}:\n    {children}"
         else:
             res = f"{self.name} {self.properties}"

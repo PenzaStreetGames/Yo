@@ -1,3 +1,3 @@
-def build_html(tree):
+def build_html(tree, style="pretty"):
     """Преобразование дерева в html-текст"""
-    pass
+    return tree.to_html(style=style)

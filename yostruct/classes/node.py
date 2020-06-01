@@ -14,8 +14,6 @@ class Node:
         self.state = state
         self.properties = properties
         self.children = children
-        self.indent = indent
-        self.inside_indent = indent + 1
 
     def set_parent(self, parent):
         pass
@@ -34,3 +32,6 @@ class Node:
 
     def __str__(self):
         return ""
+
+    def __repr__(self):
+        return f"{self.name} {self.state}"

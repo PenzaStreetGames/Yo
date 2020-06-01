@@ -15,7 +15,7 @@ class Comment(Node):
         return ""
 
     def to_html(self, style="pretty"):
-        return f"<!--{self.name}-->"
+        return f"<!--{self.name[1:]} -->"
 
     def __str__(self):
         return self.name

@@ -49,13 +49,13 @@ def token_split(text, debug=False):
             tokens.append(token)
             token = Token(symbol, "sign", line)
         elif symbol.isalpha():
-            if token.category != "word":
+            if token.category != "name":
                 tokens.append(token)
-                token = Token(symbol, "word", line)
+                token = Token(symbol, "name", line)
             else:
                 token.add_symbol(symbol)
         elif symbol.isdigit():
-            if token.category not in {"digit", "word"}:
+            if token.category not in {"digit", "name"}:
                 tokens.append(token)
                 token = Token(symbol, "digit", line)
             else:

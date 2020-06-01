@@ -17,9 +17,12 @@ class Token:
 
     def __str__(self):
         if self.name == "\n":
-            name = "\\n"
+            name = "\"\\n\""
         elif self.category == "space":
             name = f"\"{self.name}\""
         else:
-            name = self.name
+            name = f"\"{self.name}\""
         return f"{self.category} {name}"
+
+    def __repr__(self):
+        return self.__str__()

@@ -1,5 +1,5 @@
 from yostruct.classes.node import Node
-from yostruct.errors.errors import HTMLTrasformError
+from yostruct.errors import HTMLTrasformError, StructBuildError
 
 
 class Root(Node):
@@ -8,6 +8,14 @@ class Root(Node):
     def __init__(self):
         super().__init__(name="!root", parent=None, state="root_indent",
                          properties={}, children=[], indent=-1)
+
+    def add_children(self, child):
+        if self.children is not None:
+            self.children.append(child)
+            child.set_parent(self)
+        else:
+            raise StructBuildError(f"Попытка добавить дочерний элемент в "
+                                   f"{self.name}")
 
     def to_html_attributes(self):
         return ""
@@ -36,8 +44,9 @@ class Root(Node):
 
     def __str__(self):
         if self.children:
-            children = "\n    ".join(map(str, self.children))
-            res = f"{self.name}:\n    {children}"
+            children = "\n".join(map(str, self.children))
+            children = children.replace("\n", "\n    ")
+            res = f"{self.name} {self.properties}:\n    {children}"
         else:
-            res = f"{self.name}"
+            res = f"{self.name} {self.properties}"
         return res

@@ -15,7 +15,7 @@ class Leaf(Node):
         return ""
 
     def to_html(self, style="pretty"):
-        return self.name
+        return self.name[1:-1]
 
     def __str__(self):
         return self.name
