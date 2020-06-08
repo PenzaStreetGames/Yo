@@ -20,4 +20,5 @@ html(lang="en"):
                 td: "6"
         q: "Small idea"
         blockquote: "Idea"
+        `<p> Paragraph </p>`
 

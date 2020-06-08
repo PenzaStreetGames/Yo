@@ -67,6 +67,15 @@ color: rgb(215,215,215);</string>
       <pointsize>11</pointsize>
      </font>
     </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustIgnored</enum>
+    </property>
+    <property name="lineWrapMode">
+     <enum>QPlainTextEdit::NoWrap</enum>
+    </property>
+    <property name="centerOnScroll">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QPlainTextEdit" name="html_area">
     <property name="geometry">
@@ -146,7 +155,7 @@ color: rgb(215,215,215);</string>
      <string>Область кода Yo Struct</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="html_label">
     <property name="geometry">
      <rect>
       <x>780</x>
@@ -162,7 +171,7 @@ color: rgb(215,215,215);</string>
      <string>Область кода HTML</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="files_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -178,7 +187,7 @@ color: rgb(215,215,215);</string>
      <string>Файлы</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="console_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -285,6 +294,45 @@ color: rgb(215,215,215);</string>
      </property>
     </widget>
    </widget>
+   <widget class="QLabel" name="yostruct_file_label">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>0</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Файл</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="html_file_label">
+    <property name="geometry">
+     <rect>
+      <x>1030</x>
+      <y>0</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Файл</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="file_name_label">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>0</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Файл</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -299,79 +347,79 @@ color: rgb(215,215,215);</string>
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="action_2"/>
-    <addaction name="action_6"/>
-    <addaction name="action_yo_struct"/>
-    <addaction name="action_html"/>
-    <addaction name="action_5"/>
+    <addaction name="new_file_action"/>
+    <addaction name="open_file_action"/>
+    <addaction name="save_yo_struct_action"/>
+    <addaction name="save_html_action"/>
+    <addaction name="save_all_action"/>
     <addaction name="separator"/>
-    <addaction name="action"/>
+    <addaction name="exit_action"/>
    </widget>
    <widget class="QMenu" name="help">
     <property name="title">
      <string>Помощь</string>
     </property>
-    <addaction name="help_button"/>
+    <addaction name="help_action"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
      <string>Код</string>
     </property>
-    <addaction name="action_7"/>
-    <addaction name="action_8"/>
-    <addaction name="action_9"/>
+    <addaction name="transfrom_action"/>
+    <addaction name="browser_action"/>
+    <addaction name="transfrom_browser_action"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_3"/>
    <addaction name="help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action">
+  <action name="exit_action">
    <property name="text">
     <string>Выход</string>
    </property>
   </action>
-  <action name="action_2">
+  <action name="new_file_action">
    <property name="text">
     <string>Новый</string>
    </property>
   </action>
-  <action name="action_yo_struct">
+  <action name="save_yo_struct_action">
    <property name="text">
     <string>Сохранить .yostruct</string>
    </property>
   </action>
-  <action name="action_html">
+  <action name="save_html_action">
    <property name="text">
     <string>Сохранить .html</string>
    </property>
   </action>
-  <action name="action_5">
+  <action name="save_all_action">
    <property name="text">
     <string>Сохранить всё</string>
    </property>
   </action>
-  <action name="action_6">
+  <action name="open_file_action">
    <property name="text">
     <string>Открыть</string>
    </property>
   </action>
-  <action name="action_7">
+  <action name="transfrom_action">
    <property name="text">
     <string>Преобразовать</string>
    </property>
   </action>
-  <action name="action_8">
+  <action name="browser_action">
    <property name="text">
     <string>Открыть в браузере</string>
    </property>
   </action>
-  <action name="action_9">
+  <action name="transfrom_browser_action">
    <property name="text">
     <string>Преобразовать и открыть в браузере</string>
    </property>
   </action>
-  <action name="help_button">
+  <action name="help_action">
    <property name="text">
     <string>Помощь</string>
    </property>
