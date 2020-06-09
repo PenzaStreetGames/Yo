@@ -110,6 +110,9 @@ color: rgb(215,215,215);</string>
       <pointsize>11</pointsize>
      </font>
     </property>
+    <property name="lineWrapMode">
+     <enum>QPlainTextEdit::NoWrap</enum>
+    </property>
     <property name="tabStopWidth">
      <number>32</number>
     </property>
@@ -146,6 +149,9 @@ color: rgb(215,215,215);</string>
       <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
+    </property>
+    <property name="lineWrapMode">
+     <enum>QPlainTextEdit::NoWrap</enum>
     </property>
     <property name="tabStopWidth">
      <number>32</number>

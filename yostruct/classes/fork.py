@@ -32,8 +32,8 @@ class Fork(Node):
     def to_html_children(self, style="pretty"):
         children_code = []
         for child in self.children:
-            children_code.append(child.to_html())
-        if style == "pretty":
+            children_code.append(child.to_html(style=style))
+        if style == "pretty" or style == "rich":
             children_code = "\n".join(children_code)
         elif style == "oneline":
             children_code = " ".join(children_code)
@@ -55,9 +55,15 @@ class Fork(Node):
             else:
                 code = f"<{self.name}>"
             children_code = self.to_html_children(style=style)
-            if style == "pretty":
+            if style == "rich":
                 children_code = children_code.replace("\n", "\n    ")
                 code = f"{code}\n    {children_code}\n</{self.name}>"
+            elif style == "pretty":
+                if "\n" not in children_code and len(children_code) <= 60:
+                    code = f"{code}{children_code}</{self.name}>"
+                else:
+                    children_code = children_code.replace("\n", "\n    ")
+                    code = f"{code}\n    {children_code}\n</{self.name}>"
             elif style == "oneline":
                 code = f"{code} {children_code} </{self.name}>"
             else:

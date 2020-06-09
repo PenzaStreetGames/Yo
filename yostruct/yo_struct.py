@@ -40,7 +40,7 @@ if __name__ == '__main__':
         print(f"{number} {lines[int(number) - 1]}")
         tree = []
     # print(tree)
-    html = build_html(tree)
+    html = build_html(tree, style="oneline")
     print(html)
     with open(f"{file}.html", "w", encoding="utf-8") as outfile:
         outfile.write(html)

@@ -131,6 +131,7 @@ class Editor(QMainWindow):
 
     def explorer_double_click(self, item):
         path = self.file_system.filePath(item)
+        self.save_all()
         self.open_file(path)
 
     def open_file(self, path):

@@ -24,7 +24,7 @@ class HtmlHighlighter(Highlighter):
         }
         self.expressions = {
             "non_colored": r".",
-            "comment": r"\<\!\-\-.*\-\-\>",
+            "comment": r"\<\!\-\-.*?\-\-\>",
             "sign": r"[\<\>\/\=]",
             "string": r"\".*?\"|'.*?'",
             "tag": r"\<.*\>",

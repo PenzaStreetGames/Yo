@@ -6,7 +6,7 @@ class Root(Node):
     """Корень структуры"""
 
     def __init__(self):
-        super().__init__(name="!root", parent=None, state="root_indent",
+        super().__init__(name="!root", parent=None, state="root_open",
                          properties={}, children=[], indent=-1)
 
     def add_children(self, child):
@@ -23,8 +23,8 @@ class Root(Node):
     def to_html_children(self, style="pretty"):
         children_code = []
         for child in self.children:
-            children_code.append(child.to_html())
-        if style == "pretty":
+            children_code.append(child.to_html(style=style))
+        if style == "pretty" or style == "rich":
             children_code = "\n".join(children_code)
         elif style == "oneline":
             children_code = " ".join(children_code)
@@ -35,7 +35,7 @@ class Root(Node):
     def to_html(self, style="pretty"):
         code = ""
         children_code = self.to_html_children(style=style)
-        if style in {"pretty", "oneline"}:
+        if style in {"pretty", "oneline", "rich"}:
             code = f"{children_code}"
         else:
             raise HTMLTrasformError(

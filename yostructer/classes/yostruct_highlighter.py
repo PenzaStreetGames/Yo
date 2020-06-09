@@ -8,6 +8,7 @@ class YoStructHighlighter(Highlighter):
         self.groups = [
             "non_colored",
             "tag",
+            "pass",
             "attribute",
             "sign",
             "string",
@@ -22,6 +23,7 @@ class YoStructHighlighter(Highlighter):
             "raw_string": {"color": [102, 153, 204]},
             "tag": {"color": [242, 221, 198]},
             "attribute": {"color": [253, 234, 168]},
+            "pass": {"color": [218, 165, 32]},
             "error": {"color": [239, 48, 56]}
         }
         self.expressions = {
@@ -31,6 +33,7 @@ class YoStructHighlighter(Highlighter):
             "string": r"\".*?\"|'.*?'",
             "raw_string": r"`.*?`",
             "tag": r".",
-            "attribute": r"\w*\=|\w*\,|\w*?\b\)"
+            "attribute": r"\w*\=|\w*\,|\w*?\b\)",
+            "pass": r"pass"
         }
         self.styles = self.get_format_types()
