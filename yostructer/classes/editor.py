@@ -27,6 +27,7 @@ class Editor(QMainWindow):
         self.exit_action.triggered.connect(self.close)
         self.help_action.triggered.connect(self.help_link)
         # Buttons
+        self.browser_button.clicked.connect(self.open_in_browser)
         # Variables
         self.target_yostruct = ""
         self.target_html = ""
@@ -45,15 +46,18 @@ class Editor(QMainWindow):
             self.load_text(path, self.yostruct_area)
             self.yostruct_file_label.setText(self.target_file + ".yostruct")
             if not os.path.exists(self.target_html):
-                with open(self.target_html, "w", encoding="utf-8"):
-                    pass
+                with open(self.target_html, "w", encoding="utf-8") as infile:
+                    infile.write("")
             self.load_text(self.target_html, self.html_area)
         elif last.endswith(".html"):
-            path_name = path[:-5]
-            path_yostruct = path_name + ".yostruct"
-            self.load_text(path, self.html_area)
-            if os.path.exists(path_yostruct):
-                self.load_text(path_yostruct, self.yostruct_area)
+            self.target_path = path[:-5]
+            self.target_yostruct = self.target_path + ".yostruct"
+            self.load_text(self.target_path, self.html_area)
+            if not os.path.exists(self.target_yostruct):
+                with open(self.target_yostruct, "w", encoding="utf-8") \
+                as infile:
+                    infile.write("")
+            self.load_text(self.target_yostruct, self.yostruct_area)
 
     @staticmethod
     def load_text(path, area):
@@ -62,7 +66,8 @@ class Editor(QMainWindow):
         area.setPlainText(text)
 
     def open_in_browser(self):
-        webbrowser.open("file://" + self.target_path + ".html")
+        if self.target_html:
+            webbrowser.open("file://" + self.target_html)
 
     @staticmethod
     def help_link():

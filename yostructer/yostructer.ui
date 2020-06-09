@@ -216,7 +216,7 @@ color: rgb(215,215,215);</string>
      <string>Преобразовать</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="open_button">
+   <widget class="QPushButton" name="browser_button">
     <property name="geometry">
      <rect>
       <x>780</x>
@@ -340,7 +340,7 @@ color: rgb(215,215,215);</string>
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
