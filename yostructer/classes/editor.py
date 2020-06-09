@@ -26,6 +26,13 @@ class Editor(QMainWindow):
         # Toolbar Buttons
         self.exit_action.triggered.connect(self.close)
         self.help_action.triggered.connect(self.help_link)
+        # Buttons
+        # Variables
+        self.target_yostruct = ""
+        self.target_html = ""
+        self.target_file = ""
+        self.target_path = ""
+        self.style = "pretty"
 
     def open_file(self, item):
         path = self.file_system.filePath(item)
