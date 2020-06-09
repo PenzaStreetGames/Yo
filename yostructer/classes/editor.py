@@ -39,7 +39,7 @@ class Editor(QMainWindow):
         self.save_all_action.triggered.connect(self.save_all)
         self.exit_action.triggered.connect(self.close)
         self.browser_action.triggered.connect(self.open_in_browser)
-        self.help_action.triggered.connect(self.help_link)
+        self.yostruct_help_action.triggered.connect(self.help_link)
         # Buttons
         self.browser_button.clicked.connect(self.open_in_browser)
         self.convert_button.clicked.connect(self.convert_yostruct)
