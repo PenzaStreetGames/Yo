@@ -4,6 +4,7 @@ from yostructer.classes.html_highlighter import HtmlHighlighter
 from yostructer.classes.yostruct_highlighter import YoStructHighlighter
 from yostruct.yo_struct import convert_yostruct
 from yostruct.errors import BaseYoStructError
+from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 import traceback
 import os
@@ -16,6 +17,7 @@ class Editor(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("yostructer.ui", self)
+        self.setWindowIcon(QIcon("YoStructer.png"))
         # Settings
         self.settings = {}
         self.load_settings()
