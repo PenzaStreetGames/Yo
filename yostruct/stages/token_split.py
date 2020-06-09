@@ -8,6 +8,7 @@ def token_split(text, debug=False):
     line = 1
     token = Token(" ", "space", 1)
     unexpected = {}
+    text += "\n"
     for symbol in text:
         if symbol == "#":
             if not token.quote:

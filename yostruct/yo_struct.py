@@ -16,6 +16,14 @@ def build_tree(text):
     return tree
 
 
+def convert_yostruct(text, style="pretty"):
+    """Поэтапное преобразование"""
+    tokens = token_split(text)
+    tree = syntax_analise(tokens)
+    html = build_html(tree, style=style)
+    return html
+
+
 if __name__ == '__main__':
     """Сначала файл считывается, преобразуется в дерево тегов, затем в html"""
     file = "example"

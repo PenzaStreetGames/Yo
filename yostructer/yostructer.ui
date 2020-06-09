@@ -73,6 +73,12 @@ color: rgb(215,215,215);</string>
     <property name="lineWrapMode">
      <enum>QPlainTextEdit::NoWrap</enum>
     </property>
+    <property name="plainText">
+     <string/>
+    </property>
+    <property name="tabStopWidth">
+     <number>32</number>
+    </property>
     <property name="centerOnScroll">
      <bool>true</bool>
     </property>
@@ -103,6 +109,9 @@ color: rgb(215,215,215);</string>
       <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
+    </property>
+    <property name="tabStopWidth">
+     <number>32</number>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="console">
@@ -137,6 +146,9 @@ color: rgb(215,215,215);</string>
       <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
+    </property>
+    <property name="tabStopWidth">
+     <number>32</number>
     </property>
    </widget>
    <widget class="QLabel" name="yostruct_area_label">
@@ -203,7 +215,7 @@ color: rgb(215,215,215);</string>
      <string>Консоль</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="transform_button">
+   <widget class="QPushButton" name="convert_button">
     <property name="geometry">
      <rect>
       <x>660</x>
@@ -229,7 +241,7 @@ color: rgb(215,215,215);</string>
      <string>Открыть в браузере</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="transform_open_button">
+   <widget class="QPushButton" name="convert_open_button">
     <property name="geometry">
      <rect>
       <x>970</x>
@@ -306,6 +318,9 @@ color: rgb(215,215,215);</string>
     <property name="text">
      <string>Файл</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
    <widget class="QLabel" name="html_file_label">
     <property name="geometry">
@@ -318,6 +333,9 @@ color: rgb(215,215,215);</string>
     </property>
     <property name="text">
      <string>Файл</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="file_name_label">
@@ -332,6 +350,9 @@ color: rgb(215,215,215);</string>
     <property name="text">
      <string>Файл</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -340,7 +361,7 @@ color: rgb(215,215,215);</string>
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -348,8 +369,7 @@ color: rgb(215,215,215);</string>
      <string>Файл</string>
     </property>
     <addaction name="new_file_action"/>
-    <addaction name="open_file_action"/>
-    <addaction name="save_yo_struct_action"/>
+    <addaction name="save_yostruct_action"/>
     <addaction name="save_html_action"/>
     <addaction name="save_all_action"/>
     <addaction name="separator"/>
@@ -381,10 +401,10 @@ color: rgb(215,215,215);</string>
   </action>
   <action name="new_file_action">
    <property name="text">
-    <string>Новый</string>
+    <string>Новый .yosrtuct</string>
    </property>
   </action>
-  <action name="save_yo_struct_action">
+  <action name="save_yostruct_action">
    <property name="text">
     <string>Сохранить .yostruct</string>
    </property>
