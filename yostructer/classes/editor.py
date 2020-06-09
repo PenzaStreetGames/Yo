@@ -39,13 +39,15 @@ class Editor(QMainWindow):
         last, package = path.split("/")[-1], "/".join(path.split("/")[:-1])
 
         if last.endswith(".yostruct"):
-            path_name = path[:-9]
-            path_html = path_name + ".html"
-            self_name = path_name.split("/")[-1]
+            self.target_path = path[:-9]
+            self.target_html = self.target_path + ".html"
+            self.target_file = self.target_path.split("/")[-1]
             self.load_text(path, self.yostruct_area)
-            self.yostruct_file_label.setText(self_name + ".yostruct")
-            if os.path.exists(path_html):
-                self.load_text(path_html, self.html_area)
+            self.yostruct_file_label.setText(self.target_file + ".yostruct")
+            if not os.path.exists(self.target_html):
+                with open(self.target_html, "w", encoding="utf-8"):
+                    pass
+            self.load_text(self.target_html, self.html_area)
         elif last.endswith(".html"):
             path_name = path[:-5]
             path_yostruct = path_name + ".yostruct"
@@ -58,6 +60,9 @@ class Editor(QMainWindow):
         with open(path, "r", encoding="utf-8") as infile:
             text = infile.read()
         area.setPlainText(text)
+
+    def open_in_browser(self):
+        webbrowser.open("file://" + self.target_path + ".html")
 
     @staticmethod
     def help_link():
