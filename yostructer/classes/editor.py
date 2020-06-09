@@ -65,7 +65,8 @@ class Editor(QMainWindow):
         self.target_file = ""
         self.target_path = ""
         self.style = "pretty"
-        if self.settings["last_file"]:
+        if self.settings["last_file"] and \
+                os.path.exists(self.settings["last_file"]):
             self.open_file(self.settings["last_file"])
 
     def switch_pretty_style(self):
