@@ -89,7 +89,7 @@ def syntax_analise(tokens):
         elif node.state == "property_open":
             if token.category == "name":
                 node.state = "property_key"
-                node.properties[token.name] = True
+                node.properties[token.name] = None
             elif token.name == ")":
                 node.state = "property_close"
             elif token.category == "space":
@@ -103,8 +103,16 @@ def syntax_analise(tokens):
                 node.state = "property_equal"
             elif token.name == ",":
                 node.state = "property_open"
+                for key, value in node.properties.items():
+                    if value is None:
+                        node.properties[key] = True
+                        break
             elif token.name == ")":
                 node.state = "property_close"
+                for key, value in node.properties.items():
+                    if value is None:
+                        node.properties[key] = True
+                        break
             elif token.category == "space":
                 pass
             elif token.name == "\n":

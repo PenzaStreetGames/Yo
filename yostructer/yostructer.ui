@@ -370,6 +370,14 @@ color: rgb(215,215,215);</string>
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #434750;
+border-color: rgb(85, 85, 255);
+color: rgb(85, 85, 255);
+alternate-background-color: rgb(85, 85, 255);
+selection-background-color: rgb(85, 85, 255);
+color: #d7d7d7;</string>
+   </property>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Файл</string>
@@ -386,7 +394,7 @@ color: rgb(215,215,215);</string>
      <string>Помощь</string>
     </property>
     <addaction name="yostruct_help_action"/>
-    <addaction name="action"/>
+    <addaction name="editor_help_action"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
@@ -451,7 +459,7 @@ color: rgb(215,215,215);</string>
     <string>Как писать на Yo Struct?</string>
    </property>
   </action>
-  <action name="action">
+  <action name="editor_help_action">
    <property name="text">
     <string>Руководство по редактору</string>
    </property>

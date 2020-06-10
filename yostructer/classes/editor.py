@@ -42,6 +42,7 @@ class Editor(QMainWindow):
         self.exit_action.triggered.connect(self.close)
         self.browser_action.triggered.connect(self.open_in_browser)
         self.yostruct_help_action.triggered.connect(self.help_link)
+        self.editor_help_action.triggered.connect(self.help_editor_link)
         # Buttons
         self.browser_button.clicked.connect(self.open_in_browser)
         self.convert_button.clicked.connect(self.convert_yostruct)
@@ -204,6 +205,12 @@ class Editor(QMainWindow):
     def help_link():
         link = "https://github.com/PenzaStreetGames/Yo/wiki/" \
                "Yo-Struct-Руководство-пользователя"
+        webbrowser.open(link)
+
+    @staticmethod
+    def help_editor_link():
+        link = "https://github.com/PenzaStreetGames/Yo/wiki/" \
+               "Yo-Structer-Среда-Разработки"
         webbrowser.open(link)
 
     @staticmethod
